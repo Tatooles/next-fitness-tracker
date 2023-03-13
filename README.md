@@ -34,4 +34,4 @@ This is a nice looking top nav that I would like to replicate
 
 Here is an idea for how the data for a user's exercises could be organized
 
-<img src="public/data-model-screenshot.png" alt="" width="300" />
+<img src="public/data-model.png" alt="" width="300" />
