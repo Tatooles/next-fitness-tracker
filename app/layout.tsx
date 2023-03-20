@@ -12,16 +12,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className=" bg-[#171717] h-screen container mx-auto flex flex-col">
+      <body className="container mx-auto flex h-screen flex-col bg-[#171717]">
         <header>
-          <nav className="text-white flex justify-between p-5 text-lg">
+          <nav className="flex justify-between p-5 text-lg text-white">
             <div>Menu</div>
             <div>Logo</div>
             <div>Profile</div>
           </nav>
         </header>
         <main className="grow bg-white">{children}</main>
-        <footer className="text-white text-center">
+        <footer className="text-center text-white">
           Created by Kevin Tatooles
         </footer>
       </body>
