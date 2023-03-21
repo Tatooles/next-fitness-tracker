@@ -1,4 +1,6 @@
+import { useState } from "react";
 import "./globals.css";
+import Sidebar from "./Sidebar";
 
 export const metadata = {
   title: "Create Next App",
@@ -10,9 +12,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
     <html lang="en">
       <body className="container mx-auto flex h-screen flex-col bg-[#171717]">
+        <Sidebar isOpen={true} />
         <header>
           <nav className="flex justify-between p-5 text-lg text-white">
             <div>Menu</div>
