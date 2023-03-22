@@ -10,7 +10,9 @@ export default function Sidebar({ isOpen }: any) {
     >
       <ul className="p-5">
         <li className="mb-5 text-xl">
-          <Link href="/">Home</Link>
+          {/* TODO: Need sidebar to close on link click 
+              Pass a callback function to do this */}
+          <Link href="/home">Home</Link>
         </li>
         <li className="mb-5 text-xl">
           <Link href="/">Workouts</Link>
