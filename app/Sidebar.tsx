@@ -15,13 +15,13 @@ export default function Sidebar({ isOpen }: any) {
           <Link href="/home">Home</Link>
         </li>
         <li className="mb-5 text-xl">
-          <Link href="/">Workouts</Link>
+          <Link href="/workouts">Workouts</Link>
         </li>
         <li className="mb-5 text-xl">
-          <Link href="/">Records</Link>
+          <Link href="/records">Records</Link>
         </li>
         <li className="mb-5 text-xl">
-          <Link href="/">Settings</Link>
+          <Link href="/settings">Settings</Link>
         </li>
       </ul>
     </div>
