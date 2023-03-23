@@ -12,7 +12,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="container mx-auto flex h-screen flex-col bg-[#171717]">
-        <Sidebar isOpen={sidebarOpen} />
+        <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
         <div
           onClick={() => setSidebarOpen(false)}
           className={`fixed top-0 bottom-0 left-0 right-0 z-10 bg-black bg-opacity-50 ${
