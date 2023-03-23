@@ -5,5 +5,12 @@ export default function Home() {
    * Create a modal to enter the info
    * Display the list of workouts
    */
-  return <div className="">This is the workouts page!!!</div>;
+  return (
+    <div className="p-5 text-center">
+      <h1 className="mb-5 text-3xl">Workouts</h1>
+      <button className=" rounded-md bg-gray-500 p-2 text-white">
+        Add a Workout
+      </button>
+    </div>
+  );
 }
