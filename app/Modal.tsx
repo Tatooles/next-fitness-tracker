@@ -1,4 +1,6 @@
-export default function AddWorkoutModal({
+import { createPortal } from "react-dom";
+
+export default function Modal({
   children,
   isOpen,
   handleClose,
@@ -11,10 +13,11 @@ export default function AddWorkoutModal({
 
   // This is where we will use a portal
   // Return two divs within that portal, the actual modal with the children inside, and the background 1/2 opacity div
-  return (
-    <div className="p-5 text-center">
-      <h1 className="mb-5 text-3xl">Add Workout</h1>
-      <div>Create some fields to fill out</div>
-    </div>
+  return createPortal(
+    <>
+      <div className="fixed top-0 left-0 bottom-0 right-0 z-10 bg-black bg-opacity-50"></div>
+      {children}
+    </>,
+    document.getElementById("modal")!
   );
 }
