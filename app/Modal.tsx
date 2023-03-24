@@ -15,7 +15,10 @@ export default function Modal({
   // Return two divs within that portal, the actual modal with the children inside, and the background 1/2 opacity div
   return createPortal(
     <>
-      <div className="fixed top-0 left-0 bottom-0 right-0 z-10 bg-black bg-opacity-50"></div>
+      <div
+        onClick={handleClose}
+        className="fixed top-0 left-0 bottom-0 right-0 z-10 bg-black bg-opacity-50"
+      ></div>
       {children}
     </>,
     document.getElementById("modal")!
