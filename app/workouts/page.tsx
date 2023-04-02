@@ -20,13 +20,17 @@ export default function Home() {
     });
   };
 
+  const getDate = (date: string) => {
+    return new Date(date).toLocaleDateString();
+  };
+
   return (
     <div className="p-5 text-center">
       <h1 className="mb-5 text-3xl">Workouts</h1>
       <ul>
         {workouts.map((workout: any, index) => (
           <li key={index} className="mb-2 border-2 border-black">
-            <h3 className="text-xl">{workout.date}</h3>
+            <h3 className="text-xl">{getDate(workout.date)}</h3>
             <p>{workout.name}</p>
             <p>{workout.notes}</p>
           </li>
