@@ -4,12 +4,12 @@ import Modal from "../Modal";
 export default function Home() {
   const [addWorkoutModalOpen, setAddWorkoutModalOpen] = useState(false);
 
-  const [workouts, setWorkouts] = useState<Object[]>([]);
+  const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [formData, setFormData] = useState({});
 
-  const handleSubmit = (event: any) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setWorkouts([...workouts, formData]);
+    setWorkouts([...workouts, formData as Workout]);
     setAddWorkoutModalOpen(false);
   };
 
@@ -28,7 +28,7 @@ export default function Home() {
     <div className="p-5 text-center">
       <h1 className="mb-5 text-3xl">Workouts</h1>
       <ul>
-        {workouts.map((workout: any, index) => (
+        {workouts.map((workout: Workout, index) => (
           <li key={index} className="mb-2 border-2 border-black">
             <h3 className="text-xl">{getDate(workout.date)}</h3>
             <p>{workout.name}</p>
@@ -83,4 +83,19 @@ export default function Home() {
       </Modal>
     </div>
   );
+}
+
+interface Workout {
+  date: string;
+  name: string;
+  notes: string;
+  exercises: Exercise[];
+}
+
+// Reps and sets are strings because they can be a range
+interface Exercise {
+  name: string;
+  notes: string;
+  sets: string;
+  reps: string;
 }
