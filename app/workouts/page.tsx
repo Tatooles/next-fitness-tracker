@@ -7,6 +7,11 @@ export default function Home() {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [formData, setFormData] = useState({});
 
+  const [exerciseFields, setExerciseFields] = useState([
+    { name: "input1", value: "" },
+  ]);
+  const [exerciseFieldCount, setExerciseFieldCount] = useState(1);
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setWorkouts([...workouts, formData as Workout]);
@@ -18,6 +23,15 @@ export default function Home() {
       ...formData,
       [event.target.name]: event.target.value,
     });
+  };
+
+  const handleExerciseInputChange = (
+    index: number,
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const values = [...exerciseFields];
+    values[index].value = event.target.value;
+    setExerciseFields(values);
   };
 
   const getDate = (date: string) => {
@@ -49,35 +63,52 @@ export default function Home() {
         <div className="fixed top-20 left-1/2 z-10 w-4/5 translate-x-[-50%] translate-y-[-10%] rounded-lg bg-white p-5">
           <h2 className="text-3xl">Add Workout</h2>
           <form onSubmit={handleSubmit} className="flex flex-col">
-            <label htmlFor="date">Date:</label>
-            <input
-              className="mb-5 bg-gray-200"
-              type="date"
-              id="date"
-              name="date"
-              onChange={handleChange}
-            />
-            <label htmlFor="name">Workout Name:</label>
-            <input
-              className="mb-5 bg-gray-200"
-              type="text"
-              id="name"
-              name="name"
-              onChange={handleChange}
-            />
-            {/* TODO: Allow the user to add exercises */}
-            <label htmlFor="notes">Notes:</label>
-            <textarea
-              className="mb-5 bg-gray-200"
-              name="notes"
-              id="notes"
-              cols={10}
-              rows={5}
-              onChange={handleChange}
-            ></textarea>
-            <button className="self-center rounded-md bg-blue-400 p-2 text-white">
-              Submit
-            </button>
+            <>
+              <label htmlFor="date">Date:</label>
+              <input
+                className="mb-5 bg-gray-200"
+                type="date"
+                id="date"
+                name="date"
+                onChange={handleChange}
+              />
+              <label htmlFor="name">Workout Name:</label>
+              <input
+                className="mb-5 bg-gray-200"
+                type="text"
+                id="name"
+                name="name"
+                onChange={handleChange}
+              />
+              {/* TODO: Allow the user to add exercises */}
+              <h1>Exercises:</h1>
+              {exerciseFields.map((input, index) => {
+                <div key={input.name}>
+                  <label htmlFor={input.name}>{input.name}</label>
+                  <input
+                    type="text"
+                    name={input.name}
+                    value={input.value}
+                    onChange={(event) =>
+                      handleExerciseInputChange(index, event)
+                    }
+                  />
+                </div>;
+              })}
+              <button>Add Exercise</button>
+              <label htmlFor="notes">Notes:</label>
+              <textarea
+                className="mb-5 bg-gray-200"
+                name="notes"
+                id="notes"
+                cols={10}
+                rows={5}
+                onChange={handleChange}
+              ></textarea>
+              <button className="self-center rounded-md bg-blue-400 p-2 text-white">
+                Submit
+              </button>
+            </>
           </form>
         </div>
       </Modal>
