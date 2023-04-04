@@ -7,8 +7,8 @@ export default function Home() {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [formData, setFormData] = useState({});
 
-  const [exerciseFields, setExerciseFields] = useState([
-    { name: "input1", value: "" },
+  const [exerciseFields, setExerciseFields] = useState<Exercise[]>([
+    { key: 1, name: "", sets: "", reps: "", notes: "" },
   ]);
   const [exerciseFieldCount, setExerciseFieldCount] = useState(1);
 
@@ -16,6 +16,7 @@ export default function Home() {
     event.preventDefault();
     setWorkouts([...workouts, formData as Workout]);
     setAddWorkoutModalOpen(false);
+    console.log(exerciseFields);
   };
 
   const handleChange = (event: any) => {
@@ -25,12 +26,37 @@ export default function Home() {
     });
   };
 
-  const handleExerciseInputChange = (
+  const handleExerciseNameChange = (
     index: number,
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const values = [...exerciseFields];
-    values[index].value = event.target.value;
+    values[index].name = event.target.value;
+    setExerciseFields(values);
+  };
+
+  const handleExerciseSetsChange = (
+    index: number,
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const values = [...exerciseFields];
+    values[index].sets = event.target.value;
+    setExerciseFields(values);
+  };
+  const handleExerciseRepsChange = (
+    index: number,
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const values = [...exerciseFields];
+    values[index].reps = event.target.value;
+    setExerciseFields(values);
+  };
+  const handleExerciseNotesChange = (
+    index: number,
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const values = [...exerciseFields];
+    values[index].notes = event.target.value;
     setExerciseFields(values);
   };
 
@@ -38,7 +64,13 @@ export default function Home() {
     setExerciseFieldCount(exerciseFieldCount + 1);
     setExerciseFields([
       ...exerciseFields,
-      { name: `input${exerciseFieldCount + 1}`, value: "" },
+      {
+        key: exerciseFieldCount + 1,
+        name: "",
+        sets: "",
+        reps: "",
+        notes: "",
+      },
     ]);
   };
 
@@ -91,14 +123,31 @@ export default function Home() {
               {/* TODO: Allow the user to add exercises */}
               <h1 className=" border-b-2 border-black">Exercises:</h1>
               {exerciseFields.map((input, index) => (
-                <div key={input.name} className="mt-2">
+                <div key={input.key} className="mt-2">
                   <input
                     type="text"
                     placeholder="Exercise Name"
-                    name={input.name}
-                    value={input.value}
+                    value={input.name}
+                    onChange={(event) => handleExerciseNameChange(index, event)}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Sets"
+                    value={input.sets}
+                    onChange={(event) => handleExerciseSetsChange(index, event)}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Reps"
+                    value={input.reps}
+                    onChange={(event) => handleExerciseRepsChange(index, event)}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Notes"
+                    value={input.notes}
                     onChange={(event) =>
-                      handleExerciseInputChange(index, event)
+                      handleExerciseNotesChange(index, event)
                     }
                   />
                 </div>
@@ -133,6 +182,7 @@ interface Workout {
 
 // Reps and sets are strings because they can be a range
 interface Exercise {
+  key: number;
   name: string;
   notes: string;
   sets: string;
