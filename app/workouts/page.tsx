@@ -34,6 +34,14 @@ export default function Home() {
     setExerciseFields(values);
   };
 
+  const handleAddField = () => {
+    setExerciseFieldCount(exerciseFieldCount + 1);
+    setExerciseFields([
+      ...exerciseFields,
+      { name: `input${exerciseFieldCount + 1}`, value: "" },
+    ]);
+  };
+
   const getDate = (date: string) => {
     return new Date(date).toLocaleDateString();
   };
@@ -60,7 +68,7 @@ export default function Home() {
         isOpen={addWorkoutModalOpen}
         handleClose={() => setAddWorkoutModalOpen(false)}
       >
-        <div className="fixed top-20 left-1/2 z-10 w-4/5 translate-x-[-50%] translate-y-[-10%] rounded-lg bg-white p-5">
+        <div className="fixed top-20 left-1/2 z-10 max-h-[80%] w-4/5 translate-x-[-50%] translate-y-[-10%] overflow-scroll rounded-lg bg-white p-5">
           <h2 className="text-3xl">Add Workout</h2>
           <form onSubmit={handleSubmit} className="flex flex-col">
             <>
@@ -81,31 +89,31 @@ export default function Home() {
                 onChange={handleChange}
               />
               {/* TODO: Allow the user to add exercises */}
-              <h1>Exercises:</h1>
-              {exerciseFields.map((input, index) => {
-                <div key={input.name}>
-                  <label htmlFor={input.name}>{input.name}</label>
+              <h1 className=" border-b-2 border-black">Exercises:</h1>
+              {exerciseFields.map((input, index) => (
+                <div key={input.name} className="mt-2">
                   <input
                     type="text"
+                    placeholder="Exercise Name"
                     name={input.name}
                     value={input.value}
                     onChange={(event) =>
                       handleExerciseInputChange(index, event)
                     }
                   />
-                </div>;
-              })}
-              <button>Add Exercise</button>
-              <label htmlFor="notes">Notes:</label>
-              <textarea
-                className="mb-5 bg-gray-200"
-                name="notes"
-                id="notes"
-                cols={10}
-                rows={5}
-                onChange={handleChange}
-              ></textarea>
-              <button className="self-center rounded-md bg-blue-400 p-2 text-white">
+                </div>
+              ))}
+              <button
+                type="button"
+                className="my-4 rounded-md border-2 border-black"
+                onClick={handleAddField}
+              >
+                Add Exercise
+              </button>
+              <button
+                type="submit"
+                className="self-center rounded-md bg-blue-400 p-2 text-white"
+              >
                 Submit
               </button>
             </>
