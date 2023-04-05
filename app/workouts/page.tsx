@@ -9,15 +9,15 @@ export default function Home() {
 
   const [exerciseFields, setExerciseFields] = useState<Exercise[]>([
     {
-      key: 1,
+      key: 0,
       name: "",
-      sets: [{ key: 1, reps: "", weight: "" }],
+      sets: [{ key: 0, reps: "", weight: "" }],
       reps: "",
       notes: "",
     },
   ]);
-  const [exerciseFieldCount, setExerciseFieldCount] = useState(1);
-  const [setFieldCount, setSetFieldCount] = useState<Number[]>([1]);
+  const [exerciseFieldCount, setExerciseFieldCount] = useState(0);
+  const [setFieldCount, setSetFieldCount] = useState<number[]>([0]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -82,18 +82,34 @@ export default function Home() {
     setExerciseFields(exercises);
   };
 
-  const handleAddField = () => {
+  const handleAddExercise = () => {
     setExerciseFieldCount(exerciseFieldCount + 1);
     setExerciseFields([
       ...exerciseFields,
       {
         key: exerciseFieldCount + 1,
         name: "",
-        sets: [{ key: 1, reps: "", weight: "" }],
+        sets: [{ key: 0, reps: "", weight: "" }],
         reps: "",
         notes: "",
       },
     ]);
+  };
+
+  const handleAddSet = (exerciseIndex: number) => {
+    // Need to update the set key number for this specific exercise
+    const localSetFieldCount = setFieldCount;
+    localSetFieldCount[exerciseFieldCount] += 1;
+    setSetFieldCount(localSetFieldCount);
+    // Now update exercise fields
+    // Need to update just this exercise to have an extra set
+    const exercises = exerciseFields;
+    exercises[exerciseIndex].sets.push({
+      key: setFieldCount[exerciseIndex],
+      reps: "",
+      weight: "",
+    });
+    setSetFieldCount([...setFieldCount, 0]);
   };
 
   const getDate = (date: string) => {
@@ -160,7 +176,7 @@ export default function Home() {
                   {/* TODO: Another loop here for sets */}
                   {exercise.sets.map((set, setIndex) => (
                     <div key={set.key} className="flex justify-between">
-                      <h3>Set {set.key}:</h3>
+                      <h3>Set {set.key + 1}:</h3>
                       <input
                         type="text"
                         placeholder="Reps"
@@ -181,7 +197,11 @@ export default function Home() {
                       />
                     </div>
                   ))}
-                  <button className="w-20 rounded-md bg-green-500 py-1 px-2 text-sm text-white">
+                  <button
+                    type="button"
+                    onClick={() => handleAddSet(exerciseIndex)}
+                    className="w-20 rounded-md bg-green-500 py-1 px-2 text-sm text-white"
+                  >
                     Add Set
                   </button>
                   <textarea
@@ -196,7 +216,7 @@ export default function Home() {
               <button
                 type="button"
                 className="my-4 rounded-md border-2 border-black"
-                onClick={handleAddField}
+                onClick={handleAddExercise}
               >
                 Add Exercise
               </button>
