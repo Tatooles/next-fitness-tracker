@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Modal from "../Modal";
+import Workouts from "./Workouts";
 export default function Home() {
   const [addWorkoutModalOpen, setAddWorkoutModalOpen] = useState(false);
 
@@ -27,9 +28,17 @@ export default function Home() {
     setAddWorkoutModalOpen(false);
 
     // Reset Exercises
-    // setExerciseFields([{ key: 1, name: "", sets: "", reps: "", notes: "" }]);
-    // setExerciseFieldCount(1);
-    console.log(workouts);
+    setExerciseFields([
+      {
+        key: 0,
+        name: "",
+        sets: [{ key: 0, reps: "", weight: "" }],
+        reps: "",
+        notes: "",
+      },
+    ]);
+    setExerciseFieldCount(0);
+    setSetFieldCount([0]);
   };
 
   const handleChange = (event: any) => {
@@ -112,23 +121,10 @@ export default function Home() {
     setSetFieldCount([...setFieldCount, 0]);
   };
 
-  const getDate = (date: string) => {
-    return new Date(date).toLocaleDateString();
-  };
-
   return (
     <div className="p-5 text-center">
       <h1 className="mb-5 text-3xl">Workouts</h1>
-      <ul>
-        {workouts.map((workout: Workout, index) => (
-          // TODO: Display exercises and sets for each workout, will need nested loops
-          <li key={index} className="mb-2 border-2 border-black">
-            <h3 className="text-xl">{getDate(workout.date)}</h3>
-            <p>{workout.name}</p>
-            <p>{workout.notes}</p>
-          </li>
-        ))}
-      </ul>
+      <Workouts workouts={workouts}></Workouts>
       <button
         onClick={() => setAddWorkoutModalOpen(true)}
         className="rounded-md bg-gray-500 p-2 text-white"
@@ -173,7 +169,6 @@ export default function Home() {
                       handleExerciseNameChange(exerciseIndex, event)
                     }
                   />
-                  {/* TODO: Another loop here for sets */}
                   {exercise.sets.map((set, setIndex) => (
                     <div key={set.key} className="flex justify-between">
                       <h3>Set {set.key + 1}:</h3>
@@ -234,15 +229,14 @@ export default function Home() {
   );
 }
 
-interface Workout {
+export interface Workout {
   date: string;
   name: string;
-  notes: string;
   exercises: Exercise[];
 }
 
 // Reps and sets are strings because they can be a range
-interface Exercise {
+export interface Exercise {
   sets: Set[];
   key: number;
   name: string;
@@ -250,7 +244,7 @@ interface Exercise {
   reps: string;
 }
 
-interface Set {
+export interface Set {
   reps: string;
   weight: string;
   key: number;
