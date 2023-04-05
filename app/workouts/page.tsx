@@ -8,15 +8,28 @@ export default function Home() {
   const [formData, setFormData] = useState({});
 
   const [exerciseFields, setExerciseFields] = useState<Exercise[]>([
-    { key: 1, name: "", sets: "", reps: "", notes: "" },
+    {
+      key: 1,
+      name: "",
+      sets: [{ key: 1, reps: "", weight: "" }],
+      reps: "",
+      notes: "",
+    },
   ]);
   const [exerciseFieldCount, setExerciseFieldCount] = useState(1);
+  const [setFieldCount, setSetFieldCount] = useState<Number[]>([1]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setWorkouts([...workouts, formData as Workout]);
+    const workout = formData as Workout;
+    workout.exercises = exerciseFields;
+    setWorkouts([...workouts, workout]);
     setAddWorkoutModalOpen(false);
-    console.log(exerciseFields);
+
+    // Reset Exercises
+    // setExerciseFields([{ key: 1, name: "", sets: "", reps: "", notes: "" }]);
+    // setExerciseFieldCount(1);
+    console.log(workouts);
   };
 
   const handleChange = (event: any) => {
@@ -30,34 +43,43 @@ export default function Home() {
     index: number,
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const values = [...exerciseFields];
-    values[index].name = event.target.value;
-    setExerciseFields(values);
+    const exercises = [...exerciseFields];
+    exercises[index].name = event.target.value;
+    setExerciseFields(exercises);
   };
 
-  const handleExerciseSetsChange = (
-    index: number,
+  const handleRepsChange = (
+    exerciseIndex: number,
+    setIndex: number,
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const values = [...exerciseFields];
-    values[index].sets = event.target.value;
-    setExerciseFields(values);
+    const exercises = [...exerciseFields];
+    const sets = exercises[exerciseIndex].sets;
+    sets[setIndex].reps = event.target.value;
+    exercises[exerciseIndex].sets = sets;
+    setExerciseFields(exercises);
   };
-  const handleExerciseRepsChange = (
-    index: number,
+
+  const handleWeightChange = (
+    exerciseIndex: number,
+    setIndex: number,
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const values = [...exerciseFields];
-    values[index].reps = event.target.value;
-    setExerciseFields(values);
+    const exercises = [...exerciseFields];
+    // Need to set sets to the full value of the currently changed set
+    const sets = exercises[exerciseIndex].sets;
+    sets[setIndex].weight = event.target.value;
+    exercises[exerciseIndex].sets = sets;
+    setExerciseFields(exercises);
   };
-  const handleExerciseNotesChange = (
-    index: number,
-    event: React.ChangeEvent<HTMLInputElement>
+
+  const handleNotesChange = (
+    exerciseIndex: number,
+    event: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
-    const values = [...exerciseFields];
-    values[index].notes = event.target.value;
-    setExerciseFields(values);
+    const exercises = [...exerciseFields];
+    exercises[exerciseIndex].notes = event.target.value;
+    setExerciseFields(exercises);
   };
 
   const handleAddField = () => {
@@ -67,7 +89,7 @@ export default function Home() {
       {
         key: exerciseFieldCount + 1,
         name: "",
-        sets: "",
+        sets: [{ key: 1, reps: "", weight: "" }],
         reps: "",
         notes: "",
       },
@@ -83,6 +105,7 @@ export default function Home() {
       <h1 className="mb-5 text-3xl">Workouts</h1>
       <ul>
         {workouts.map((workout: Workout, index) => (
+          // TODO: Display exercises and sets for each workout, will need nested loops
           <li key={index} className="mb-2 border-2 border-black">
             <h3 className="text-xl">{getDate(workout.date)}</h3>
             <p>{workout.name}</p>
@@ -120,34 +143,52 @@ export default function Home() {
                 name="name"
                 onChange={handleChange}
               />
-              {/* TODO: Allow the user to add exercises */}
               <h1 className=" border-b-2 border-black">Exercises:</h1>
-              {exerciseFields.map((input, index) => (
-                <div key={input.key} className="mt-2">
+              {exerciseFields.map((exercise, exerciseIndex) => (
+                <div
+                  key={exercise.key}
+                  className="mt-2 mb-5 flex flex-col gap-4"
+                >
                   <input
                     type="text"
                     placeholder="Exercise Name"
-                    value={input.name}
-                    onChange={(event) => handleExerciseNameChange(index, event)}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Sets"
-                    value={input.sets}
-                    onChange={(event) => handleExerciseSetsChange(index, event)}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Reps"
-                    value={input.reps}
-                    onChange={(event) => handleExerciseRepsChange(index, event)}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Notes"
-                    value={input.notes}
+                    value={exercise.name}
                     onChange={(event) =>
-                      handleExerciseNotesChange(index, event)
+                      handleExerciseNameChange(exerciseIndex, event)
+                    }
+                  />
+                  {/* TODO: Another loop here for sets */}
+                  {exercise.sets.map((set, setIndex) => (
+                    <div key={set.key} className="flex justify-between">
+                      <h3>Set {set.key}:</h3>
+                      <input
+                        type="text"
+                        placeholder="Reps"
+                        value={set.reps}
+                        className=" w-16"
+                        onChange={(event) =>
+                          handleRepsChange(exerciseIndex, setIndex, event)
+                        }
+                      />
+                      <input
+                        type="text"
+                        placeholder="Weight"
+                        value={set.weight}
+                        className=" w-16"
+                        onChange={(event) =>
+                          handleWeightChange(exerciseIndex, setIndex, event)
+                        }
+                      />
+                    </div>
+                  ))}
+                  <button className="w-20 rounded-md bg-green-500 py-1 px-2 text-sm text-white">
+                    Add Set
+                  </button>
+                  <textarea
+                    placeholder="Notes"
+                    value={exercise.notes}
+                    onChange={(event) =>
+                      handleNotesChange(exerciseIndex, event)
                     }
                   />
                 </div>
@@ -182,9 +223,15 @@ interface Workout {
 
 // Reps and sets are strings because they can be a range
 interface Exercise {
+  sets: Set[];
   key: number;
   name: string;
   notes: string;
-  sets: string;
   reps: string;
+}
+
+interface Set {
+  reps: string;
+  weight: string;
+  key: number;
 }
