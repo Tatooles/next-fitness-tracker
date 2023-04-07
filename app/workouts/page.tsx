@@ -126,7 +126,7 @@ export default function Home() {
         },
         {
           key: 1,
-          name: "",
+          name: "Hack Squat",
           sets: [
             {
               reps: "10",
