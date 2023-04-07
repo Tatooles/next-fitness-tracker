@@ -10,14 +10,12 @@ export default function Home() {
 
   const [exerciseFields, setExerciseFields] = useState<Exercise[]>([
     {
-      key: 0,
       name: "",
       sets: [{ reps: "", weight: "" }],
       reps: "",
       notes: "",
     },
   ]);
-  const [exerciseFieldCount, setExerciseFieldCount] = useState(0);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -29,14 +27,12 @@ export default function Home() {
     // Reset Exercises
     setExerciseFields([
       {
-        key: 0,
         name: "",
         sets: [{ reps: "", weight: "" }],
         reps: "",
         notes: "",
       },
     ]);
-    setExerciseFieldCount(0);
   };
 
   const handleChange = (event: any) => {
@@ -89,11 +85,9 @@ export default function Home() {
   };
 
   const handleAddExercise = () => {
-    setExerciseFieldCount(exerciseFieldCount + 1);
     setExerciseFields([
       ...exerciseFields,
       {
-        key: exerciseFieldCount + 1,
         name: "",
         sets: [{ reps: "", weight: "" }],
         reps: "",
@@ -149,7 +143,7 @@ export default function Home() {
               <h1 className=" border-b-2 border-black">Exercises:</h1>
               {exerciseFields.map((exercise, exerciseIndex) => (
                 <div
-                  key={exercise.key}
+                  key={exerciseIndex}
                   className="mt-2 mb-5 flex flex-col gap-4"
                 >
                   <input
@@ -229,7 +223,6 @@ export interface Workout {
 // Reps and sets are strings because they can be a range
 export interface Exercise {
   sets: Set[];
-  key: number;
   name: string;
   notes: string;
   reps: string;
