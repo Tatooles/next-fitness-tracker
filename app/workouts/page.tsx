@@ -12,13 +12,12 @@ export default function Home() {
     {
       key: 0,
       name: "",
-      sets: [{ key: 0, reps: "", weight: "" }],
+      sets: [{ reps: "", weight: "" }],
       reps: "",
       notes: "",
     },
   ]);
   const [exerciseFieldCount, setExerciseFieldCount] = useState(0);
-  const [setFieldCount, setSetFieldCount] = useState<number[]>([0]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -32,13 +31,12 @@ export default function Home() {
       {
         key: 0,
         name: "",
-        sets: [{ key: 0, reps: "", weight: "" }],
+        sets: [{ reps: "", weight: "" }],
         reps: "",
         notes: "",
       },
     ]);
     setExerciseFieldCount(0);
-    setSetFieldCount([0]);
   };
 
   const handleChange = (event: any) => {
@@ -75,7 +73,6 @@ export default function Home() {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const exercises = [...exerciseFields];
-    // Need to set sets to the full value of the currently changed set
     const sets = exercises[exerciseIndex].sets;
     sets[setIndex].weight = event.target.value;
     exercises[exerciseIndex].sets = sets;
@@ -98,7 +95,7 @@ export default function Home() {
       {
         key: exerciseFieldCount + 1,
         name: "",
-        sets: [{ key: 0, reps: "", weight: "" }],
+        sets: [{ reps: "", weight: "" }],
         reps: "",
         notes: "",
       },
@@ -106,19 +103,13 @@ export default function Home() {
   };
 
   const handleAddSet = (exerciseIndex: number) => {
-    // Need to update the set key number for this specific exercise
-    const localSetFieldCount = setFieldCount;
-    localSetFieldCount[exerciseFieldCount] += 1;
-    setSetFieldCount(localSetFieldCount);
-    // Now update exercise fields
     // Need to update just this exercise to have an extra set
-    const exercises = exerciseFields;
+    const exercises = [...exerciseFields];
     exercises[exerciseIndex].sets.push({
-      key: setFieldCount[exerciseIndex],
       reps: "",
       weight: "",
     });
-    setSetFieldCount([...setFieldCount, 0]);
+    setExerciseFields(exercises);
   };
 
   return (
@@ -170,8 +161,8 @@ export default function Home() {
                     }
                   />
                   {exercise.sets.map((set, setIndex) => (
-                    <div key={set.key} className="flex justify-between">
-                      <h3>Set {set.key + 1}:</h3>
+                    <div key={setIndex} className="flex justify-between">
+                      <h3>Set {setIndex + 1}:</h3>
                       <input
                         type="text"
                         placeholder="Reps"
@@ -247,5 +238,4 @@ export interface Exercise {
 export interface Set {
   reps: string;
   weight: string;
-  key: number;
 }
