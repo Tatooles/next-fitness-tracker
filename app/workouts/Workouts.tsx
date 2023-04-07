@@ -8,7 +8,6 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
   return (
     <ul>
       {workouts.map((workout: Workout, index) => (
-        // TODO: Display exercises and sets for each workout, will need nested loops
         // TODO: Break exercise into it's own component inside this file
         <li key={index} className="mb-2 border-2 border-black p-2">
           <h3 className="text-xl">{getDate(workout.date)}</h3>
@@ -20,13 +19,16 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
             >
               <>
                 <h3>{exercise.name}</h3>
-                {exercise.sets.map((set: Set, index3) => (
-                  <div key={index3} className="flex justify-around">
-                    <div>Reps: {set.reps}</div>
-                    <div>Weight: {set.weight}</div>
-                  </div>
-                ))}
-                <p>Notes: {exercise.notes}</p>
+                {exercise.sets.map(
+                  (set: Set, index3) =>
+                    (set.reps || set.weight) && (
+                      <div key={index3} className="flex justify-around">
+                        <div>Reps: {set.reps}</div>
+                        <div>Weight: {set.weight}</div>
+                      </div>
+                    )
+                )}
+                {exercise.notes && <p>Notes: {exercise.notes}</p>}
               </>
             </div>
           ))}
