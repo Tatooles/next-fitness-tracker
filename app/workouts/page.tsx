@@ -106,6 +106,92 @@ export default function Home() {
     setExerciseFields(exercises);
   };
 
+  const addTestWorkout = () => {
+    const workout = {
+      date: "2023-04-07",
+      name: "Volume Lower",
+      exercises: [
+        {
+          key: 0,
+          name: "Sled Drag",
+          sets: [
+            {
+              reps: "",
+              weight: "",
+            },
+          ],
+          reps: "",
+          notes:
+            "Gym too packed for this shit smh, should prob use the machine.",
+        },
+        {
+          key: 1,
+          name: "",
+          sets: [
+            {
+              reps: "10",
+              weight: "215",
+            },
+            {
+              reps: "10",
+              weight: "215",
+            },
+            {
+              reps: "10",
+              weight: "215",
+            },
+          ],
+          reps: "",
+          notes:
+            "1 plate pretty hard, feel like my quads need more warmup. First set pretty tough, can def feel that I'm targeting glutes which is good. This is likely because feet are pretty far forward on the pad. Second set also pretty hard. Not feeling a big pump so maybe need less weight more reps",
+        },
+        {
+          key: 2,
+          name: "Good Morning",
+          sets: [
+            {
+              reps: "10",
+              weight: "135",
+            },
+            {
+              reps: "10",
+              weight: "145",
+            },
+            {
+              reps: "10",
+              weight: "155",
+            },
+          ],
+          reps: "",
+          notes:
+            "Going low bar beltless with normal foot width. feel pretty confident about 135 . 135 very solid. Lower back a bit sore after first set. Not sure about effect of elevated heel shoes on these. Maybe more lower back? Second set kinda the same but thinking maybe I have more hamstring rom and lower back is the limiter, which honestly is probably better. Gonna send 155",
+        },
+        {
+          key: 3,
+          name: "Standing Calf Raise",
+          sets: [
+            {
+              reps: "15",
+              weight: "35",
+            },
+            {
+              reps: "15",
+              weight: "35",
+            },
+            {
+              reps: "15",
+              weight: "35",
+            },
+          ],
+          reps: "",
+          notes:
+            "Gonna try 35. 4s up and down for 15 first set but needed a regrip with feet, cadence pretty good. Sale pause second set, later reps also definitely slower. Got 15 last set too but same thing as the ones before. Also note that shoulder placement on the pad matters",
+        },
+      ],
+    };
+    setWorkouts([workout]);
+  };
+
   return (
     <div className="p-5 text-center">
       <h1 className="mb-5 text-3xl">Workouts</h1>
@@ -115,6 +201,14 @@ export default function Home() {
         className="rounded-md bg-gray-500 p-2 text-white"
       >
         Add a Workout
+      </button>
+      <button
+        onClick={addTestWorkout}
+        className={`mt-10 rounded-md bg-yellow-300 p-1 ${
+          workouts.length ? "hidden" : ""
+        }`}
+      >
+        Add Test Workout (for debugging)
       </button>
       <Modal
         isOpen={addWorkoutModalOpen}
