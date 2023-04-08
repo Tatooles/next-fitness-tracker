@@ -249,15 +249,17 @@ export default function Home() {
                       <h3>Set {setIndex + 1}:</h3>
                       <input
                         type="text"
+                        inputMode="numeric"
                         placeholder="Reps"
                         value={set.reps}
-                        className=" w-16"
+                        className="w-16"
                         onChange={(event) =>
                           handleRepsChange(exerciseIndex, setIndex, event)
                         }
                       />
                       <input
                         type="text"
+                        inputMode="numeric"
                         placeholder="Weight"
                         value={set.weight}
                         className=" w-16"
