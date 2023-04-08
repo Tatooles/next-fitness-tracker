@@ -21,14 +21,23 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
               <h3 className="self-center text-center text-lg font-bold">
                 {exercise.name}
               </h3>
+
+              {exercise.sets && (
+                // Could have global state (set in settings) to determine if this
+                // has other columns like RPE, would need changes in the input modal too
+                <div className="flex justify-around">
+                  <div>Reps</div>
+                  <div>Weight</div>
+                </div>
+              )}
               {exercise.sets.map(
                 (set: Set, index3) =>
                   // TODO: Need to add some color
                   // TODO: Make this into more of a grid with weight and reps at the top
                   (set.reps || set.weight) && (
                     <div key={index3} className="flex justify-around">
-                      <div>Reps: {set.reps}</div>
-                      <div>Weight: {set.weight}</div>
+                      <div>{set.reps}</div>
+                      <div>{set.weight}</div>
                     </div>
                   )
               )}

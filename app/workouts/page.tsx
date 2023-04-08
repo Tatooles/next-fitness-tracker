@@ -11,7 +11,7 @@ export default function Home() {
   const [exerciseFields, setExerciseFields] = useState<Exercise[]>([
     {
       name: "",
-      sets: [{ reps: "", weight: "" }],
+      sets: [],
       reps: "",
       notes: "",
     },
@@ -28,7 +28,7 @@ export default function Home() {
     setExerciseFields([
       {
         name: "",
-        sets: [{ reps: "", weight: "" }],
+        sets: [],
         reps: "",
         notes: "",
       },
@@ -89,7 +89,7 @@ export default function Home() {
       ...exerciseFields,
       {
         name: "",
-        sets: [{ reps: "", weight: "" }],
+        sets: [],
         reps: "",
         notes: "",
       },
@@ -112,7 +112,6 @@ export default function Home() {
       name: "Volume Lower",
       exercises: [
         {
-          key: 0,
           name: "Sled Drag",
           sets: [
             {
@@ -125,7 +124,6 @@ export default function Home() {
             "Gym too packed for this shit smh, should prob use the machine.",
         },
         {
-          key: 1,
           name: "Hack Squat",
           sets: [
             {
@@ -146,7 +144,6 @@ export default function Home() {
             "1 plate pretty hard, feel like my quads need more warmup. First set pretty tough, can def feel that I'm targeting glutes which is good. This is likely because feet are pretty far forward on the pad. Second set also pretty hard. Not feeling a big pump so maybe need less weight more reps",
         },
         {
-          key: 2,
           name: "Good Morning",
           sets: [
             {
@@ -167,7 +164,6 @@ export default function Home() {
             "Going low bar beltless with normal foot width. feel pretty confident about 135 . 135 very solid. Lower back a bit sore after first set. Not sure about effect of elevated heel shoes on these. Maybe more lower back? Second set kinda the same but thinking maybe I have more hamstring rom and lower back is the limiter, which honestly is probably better. Gonna send 155",
         },
         {
-          key: 3,
           name: "Standing Calf Raise",
           sets: [
             {
