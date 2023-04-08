@@ -236,6 +236,7 @@ export default function Home() {
                   key={exerciseIndex}
                   className="mt-2 mb-5 flex flex-col gap-4"
                 >
+                  {/* TODO: This would be a search of a list of exercises */}
                   <input
                     type="text"
                     placeholder="Exercise Name"
@@ -259,7 +260,7 @@ export default function Home() {
                       />
                       <input
                         type="text"
-                        inputMode="numeric"
+                        inputMode="decimal"
                         placeholder="Weight"
                         value={set.weight}
                         className=" w-16"
