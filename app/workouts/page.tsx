@@ -113,12 +113,7 @@ export default function Home() {
       exercises: [
         {
           name: "Sled Drag",
-          sets: [
-            {
-              reps: "",
-              weight: "",
-            },
-          ],
+          sets: [],
           reps: "",
           notes:
             "Gym too packed for this shit smh, should prob use the machine.",

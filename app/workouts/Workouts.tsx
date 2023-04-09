@@ -25,14 +25,14 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
   );
 }
 
-function Exercise({ exercise, key }: { exercise: Exercise; key: number }) {
+function Exercise({ exercise }: { exercise: Exercise }) {
   return (
-    <div className="border-black p-2 text-left" key={key}>
+    <div className="border-black p-2 text-left">
       <h3 className="self-center text-center text-lg font-bold">
         {exercise.name}
       </h3>
 
-      {exercise.sets && (
+      {exercise.sets.length > 0 && (
         // Could have global state (set in settings) to determine if this
         // has other columns like RPE, would need changes in the input modal too
         <div className="flex justify-around">
