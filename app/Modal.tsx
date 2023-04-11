@@ -17,7 +17,7 @@ export default function Modal({
     <>
       <div
         onClick={handleClose}
-        className="fixed top-0 left-0 bottom-0 right-0 z-10 bg-black bg-opacity-50"
+        className="fixed top-0 left-0 bottom-0 right-0 z-10 bg-slate-700 bg-opacity-50"
       ></div>
       {children}
     </>,

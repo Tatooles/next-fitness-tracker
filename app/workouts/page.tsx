@@ -91,7 +91,7 @@ export default function Home() {
       <Workouts workouts={workouts}></Workouts>
       <button
         onClick={() => setAddWorkoutModalOpen(true)}
-        className="rounded-md bg-gray-500 p-2 text-white"
+        className="rounded-md bg-slate-700 p-2 text-white"
       >
         Add a Workout
       </button>

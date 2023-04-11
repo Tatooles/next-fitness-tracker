@@ -54,7 +54,7 @@ function Exercise({ exercise }: { exercise: Exercise }) {
         // TODO: Notes take up a lot of space so they should default to collapsed and be openable
         <p>Notes:</p>
       )}
-      <p className="rounded-md bg-gray-400 p-2">{exercise.notes}</p>
+      <p className="rounded-md bg-slate-300 p-2">{exercise.notes}</p>
     </div>
   );
 }

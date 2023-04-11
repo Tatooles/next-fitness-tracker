@@ -15,24 +15,31 @@ export default function RootLayout({
         <div id="modal"></div>
         <div
           id="root"
-          className="container mx-auto flex h-screen flex-col bg-[#171717]"
+          className="container mx-auto flex h-screen flex-col bg-white"
         >
           <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
           <div
             onClick={() => setSidebarOpen(false)}
-            className={`fixed top-0 bottom-0 left-0 right-0 z-10 bg-black bg-opacity-50 ${
+            className={`fixed top-0 bottom-0 left-0 right-0 z-10 bg-slate-700 bg-opacity-50 ${
               sidebarOpen ? "" : "hidden"
             }`}
           ></div>
           <header>
-            <nav className="flex justify-between p-5 text-lg text-white">
-              <div onClick={() => setSidebarOpen(true)}>Menu</div>
-              <div>Logo</div>
-              <div>Profile</div>
+            <nav className="flex items-center justify-between border-b-2 p-5 text-lg text-black">
+              <div
+                onClick={() => setSidebarOpen(true)}
+                className="flex h-[20px] w-[20px] flex-col justify-between overflow-hidden"
+              >
+                <div className="h-[2px] w-7 bg-slate-700"></div>
+                <div className="h-[2px] w-7 bg-slate-700"></div>
+                <div className="h-[2px] w-7 bg-slate-700 "></div>
+              </div>
+              <div className="flex items-center text-slate-700">Logo</div>
+              <div className="text-s-700 flex items-center">Profile</div>
             </nav>
           </header>
-          <main className="grow bg-white">{children}</main>
-          <footer className="text-center text-white">
+          <main className="grow">{children}</main>
+          <footer className="py-2 text-center text-slate-700">
             Created by Kevin Tatooles
           </footer>
         </div>
