@@ -150,6 +150,8 @@ export default function AddWorkoutModal({
                   onChange={(event) =>
                     handleExerciseNameChange(exerciseIndex, event)
                   }
+                  // TODO: Maybe have main exercise name (bench press, squat, deadlift) in one dropdown
+                  // Then another dropdown with modifications susch a incline, low bar, pause, pin, bands, chains, etc
                 />
                 {exercise.sets.map((set, setIndex) => (
                   <div key={setIndex} className="flex justify-between">
