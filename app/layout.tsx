@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 import "./globals.css";
 import Sidebar from "./Sidebar";
 
@@ -25,30 +26,33 @@ export default function RootLayout({
             }`}
           ></div>
           <header>
-            <nav className="flex items-center justify-between border-b-2 p-5 text-lg text-black">
-              <div
-                onClick={() => setSidebarOpen(true)}
-                className="flex h-[20px] w-[20px] flex-col justify-between overflow-hidden"
-              >
-                <div className="h-[2px] w-7 bg-slate-700"></div>
-                <div className="h-[2px] w-7 bg-slate-700"></div>
-                <div className="h-[2px] w-7 bg-slate-700 "></div>
+            <nav className="flex items-center justify-between border-b-2 text-lg text-black">
+              <div onClick={() => setSidebarOpen(true)} className="p-5">
+                <div className="flex h-[20px] w-[20px] flex-col justify-between overflow-hidden">
+                  <div className="h-[2px] w-7 bg-slate-700"></div>
+                  <div className="h-[2px] w-7 bg-slate-700"></div>
+                  <div className="h-[2px] w-7 bg-slate-700 "></div>
+                </div>
               </div>
-              <div className="flex items-center text-slate-700">Logo</div>
-              <div className="relative h-10 w-10 overflow-hidden rounded-full bg-slate-700">
-                <svg
-                  className="absolute -left-1 h-12 w-12 text-slate-300"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                    clip-rule="evenodd"
-                  ></path>
-                </svg>
-              </div>
+              <Link href="/home">
+                <div className="flex items-center p-5 text-slate-700">Logo</div>
+              </Link>
+              <Link className="p-5" href="/profile">
+                <div className="relative h-10 w-10 overflow-hidden rounded-full bg-slate-700">
+                  <svg
+                    className="absolute -left-1 h-12 w-12 text-slate-300"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                </div>
+              </Link>
             </nav>
           </header>
           <main className="grow">{children}</main>
