@@ -12,7 +12,7 @@ export default function Home() {
 
   const addTestWorkout = () => {
     const workout = {
-      id: 99999,
+      id: 0,
       date: "2023-04-07",
       name: "Volume Lower",
       exercises: [
@@ -142,7 +142,6 @@ export interface Exercise {
   sets: Set[];
   name: string;
   notes: string;
-  reps: string;
 }
 
 export interface Set {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from "../Modal";
 import { Workout, Exercise } from "./page";
 
@@ -16,17 +16,50 @@ export default function WorkoutModal({
   editWorkoutId: number;
 }) {
   // Gonna condiaitonally fill formData
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState<Workout>({
+    id: 0,
+    date: "",
+    name: "",
+    exercises: [
+      {
+        sets: [{ reps: "", weight: "" }],
+        name: "",
+        notes: "",
+      },
+    ],
+  });
   const [workoutId, setWorkoutId] = useState(0);
 
   const [exerciseFields, setExerciseFields] = useState<Exercise[]>([
     {
       name: "",
       sets: [],
-      reps: "",
       notes: "",
     },
   ]);
+
+  useEffect(() => {
+    if (editWorkoutId != -1) {
+      // Pre fill
+      let workout = currentWorkouts[editWorkoutId];
+      console.log("prefilling modal");
+      // setFormData(currentWorkouts[editWorkoutId]);
+      setFormData(workout);
+    } else {
+      setFormData({
+        id: 0,
+        date: "",
+        name: "",
+        exercises: [
+          {
+            sets: [{ reps: "", weight: "" }],
+            name: "",
+            notes: "",
+          },
+        ],
+      });
+    }
+  }, [editWorkoutId]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     // TODO: Once DB is added we would use this function to update the DB
@@ -44,7 +77,6 @@ export default function WorkoutModal({
       {
         name: "",
         sets: [],
-        reps: "",
         notes: "",
       },
     ]);
@@ -65,6 +97,8 @@ export default function WorkoutModal({
   ) => {
     const exercises = [...exerciseFields];
     exercises[index].name = event.target.value;
+    // TODO: Might have to rework this to use just formdata for everything
+    // Which prob would be a cleaner implementation too
     setExerciseFields(exercises);
   };
 
@@ -107,7 +141,6 @@ export default function WorkoutModal({
       {
         name: "",
         sets: [],
-        reps: "",
         notes: "",
       },
     ]);
@@ -142,6 +175,7 @@ export default function WorkoutModal({
               type="text"
               id="name"
               name="name"
+              value={formData.name}
               onChange={handleChange}
             />
             <h1 className=" border-b-2 border-black">Exercises:</h1>
