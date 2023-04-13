@@ -2,18 +2,22 @@ import { useState } from "react";
 import Modal from "../Modal";
 import { Workout, Exercise } from "./page";
 
-export default function AddWorkoutModal({
+export default function WorkoutModal({
   currentWorkouts,
   setWorkouts,
   modalOpen,
   setModalOpen,
+  editWorkoutId,
 }: {
   currentWorkouts: Workout[];
   setWorkouts: React.Dispatch<React.SetStateAction<Workout[]>>;
   modalOpen: boolean;
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  editWorkoutId: number;
 }) {
+  // Gonna condiaitonally fill formData
   const [formData, setFormData] = useState({});
+  const [workoutId, setWorkoutId] = useState(0);
 
   const [exerciseFields, setExerciseFields] = useState<Exercise[]>([
     {
@@ -29,8 +33,10 @@ export default function AddWorkoutModal({
     // Or call an api route to do so
     event.preventDefault();
     const workout = formData as Workout;
+    workout.id = workoutId;
     workout.exercises = exerciseFields;
     setWorkouts([...currentWorkouts, workout]);
+    setWorkoutId(workoutId + 1);
     setModalOpen(false);
 
     // Reset Exercises
@@ -42,6 +48,8 @@ export default function AddWorkoutModal({
         notes: "",
       },
     ]);
+
+    console.log(currentWorkouts);
   };
 
   const handleChange = (event: any) => {

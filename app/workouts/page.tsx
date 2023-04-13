@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import AddWorkoutModal from "./AddWorkoutModal";
+import WorkoutModal from "./WorkoutModal";
 import Workouts from "./Workouts";
 
 export default function Home() {
@@ -8,8 +8,11 @@ export default function Home() {
 
   const [workouts, setWorkouts] = useState<Workout[]>([]);
 
+  const [editWorkoutId, setEditWorkoutId] = useState(-1);
+
   const addTestWorkout = () => {
     const workout = {
+      id: 99999,
       date: "2023-04-07",
       name: "Volume Lower",
       exercises: [
@@ -85,12 +88,25 @@ export default function Home() {
     setWorkouts([workout]);
   };
 
+  const addWorkout = () => {
+    // Prob gonna have some param that we set to empty
+    setEditWorkoutId(-1);
+    setAddWorkoutModalOpen(true);
+  };
+
+  const editWorkout = (id: number) => {
+    // Prob gonna have some param we fill with workout data
+    console.log(`Editing workout ${id}`);
+    setEditWorkoutId(id);
+    setAddWorkoutModalOpen(true);
+  };
+
   return (
     <div className="p-5 text-center">
       <h1 className="mb-5 text-3xl">Workouts</h1>
-      <Workouts workouts={workouts}></Workouts>
+      <Workouts workouts={workouts} editWorkout={editWorkout}></Workouts>
       <button
-        onClick={() => setAddWorkoutModalOpen(true)}
+        onClick={addWorkout}
         className="rounded-md bg-slate-700 p-2 text-white"
       >
         Add a Workout
@@ -103,17 +119,19 @@ export default function Home() {
       >
         Add Test Workout (for debugging)
       </button>
-      <AddWorkoutModal
+      <WorkoutModal
         currentWorkouts={workouts}
         setWorkouts={setWorkouts}
         modalOpen={addWorkoutModalOpen}
         setModalOpen={setAddWorkoutModalOpen}
-      ></AddWorkoutModal>
+        editWorkoutId={editWorkoutId}
+      ></WorkoutModal>
     </div>
   );
 }
 
 export interface Workout {
+  id: number;
   date: string;
   name: string;
   exercises: Exercise[];
