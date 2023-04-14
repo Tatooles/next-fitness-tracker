@@ -15,7 +15,6 @@ export default function WorkoutModal({
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   editWorkoutId: number;
 }) {
-  // Gonna condiaitonally fill formData
   const [formData, setFormData] = useState<Workout>({
     id: 0,
     date: "",
@@ -30,14 +29,10 @@ export default function WorkoutModal({
   });
   const [workoutId, setWorkoutId] = useState(0);
 
-  const [exerciseFields, setExerciseFields] = useState<Exercise[]>([
-    {
-      name: "",
-      sets: [],
-      notes: "",
-    },
-  ]);
-
+  /**
+   * Condiaitonally fill formData based on whether
+   * we are in add mode or edit mode
+   */
   useEffect(() => {
     if (editWorkoutId != -1) {
       // Pre fill
@@ -52,7 +47,7 @@ export default function WorkoutModal({
         name: "",
         exercises: [
           {
-            sets: [{ reps: "", weight: "" }],
+            sets: [],
             name: "",
             notes: "",
           },
@@ -65,23 +60,22 @@ export default function WorkoutModal({
     // TODO: Once DB is added we would use this function to update the DB
     // Or call an api route to do so
     event.preventDefault();
-    const workout = formData as Workout;
-    workout.id = workoutId;
-    workout.exercises = exerciseFields;
-    setWorkouts([...currentWorkouts, workout]);
-    setWorkoutId(workoutId + 1);
+
+    const workout = formData;
+
+    if (editWorkoutId === -1) {
+      // If adding, just add new workout on to the end
+      workout.id = workoutId;
+      setWorkouts([...currentWorkouts, workout]);
+      setWorkoutId(workoutId + 1);
+    } else {
+      // If editing, update workout at correct index
+      const workouts = [...currentWorkouts];
+      workouts[editWorkoutId] = workout;
+      setWorkouts(workouts);
+    }
+
     setModalOpen(false);
-
-    // Reset Exercises
-    setExerciseFields([
-      {
-        name: "",
-        sets: [],
-        notes: "",
-      },
-    ]);
-
-    console.log(currentWorkouts);
   };
 
   const handleChange = (event: any) => {
@@ -92,14 +86,25 @@ export default function WorkoutModal({
   };
 
   const handleExerciseNameChange = (
-    index: number,
+    exerciseIndex: number,
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const exercises = [...exerciseFields];
-    exercises[index].name = event.target.value;
-    // TODO: Might have to rework this to use just formdata for everything
-    // Which prob would be a cleaner implementation too
-    setExerciseFields(exercises);
+    const data = { ...formData };
+    const exercise = data.exercises[exerciseIndex];
+    exercise.name = event.target.value;
+    data.exercises[exerciseIndex] = exercise;
+    setFormData(data);
+  };
+
+  const handleExerciseNotesChange = (
+    exerciseIndex: number,
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    const data = { ...formData };
+    const exercise = data.exercises[exerciseIndex];
+    exercise.notes = event.target.value;
+    data.exercises[exerciseIndex] = exercise;
+    setFormData(data);
   };
 
   const handleRepsChange = (
@@ -107,11 +112,10 @@ export default function WorkoutModal({
     setIndex: number,
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const exercises = [...exerciseFields];
-    const sets = exercises[exerciseIndex].sets;
-    sets[setIndex].reps = event.target.value;
-    exercises[exerciseIndex].sets = sets;
-    setExerciseFields(exercises);
+    const data = { ...formData };
+    const set = data.exercises[exerciseIndex].sets[setIndex];
+    set.reps = event.target.value;
+    setFormData(data);
   };
 
   const handleWeightChange = (
@@ -119,41 +123,29 @@ export default function WorkoutModal({
     setIndex: number,
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const exercises = [...exerciseFields];
-    const sets = exercises[exerciseIndex].sets;
-    sets[setIndex].weight = event.target.value;
-    exercises[exerciseIndex].sets = sets;
-    setExerciseFields(exercises);
-  };
-
-  const handleNotesChange = (
-    exerciseIndex: number,
-    event: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    const exercises = [...exerciseFields];
-    exercises[exerciseIndex].notes = event.target.value;
-    setExerciseFields(exercises);
+    const data = { ...formData };
+    const set = data.exercises[exerciseIndex].sets[setIndex];
+    set.weight = event.target.value;
+    setFormData(data);
   };
 
   const handleAddExercise = () => {
-    setExerciseFields([
-      ...exerciseFields,
-      {
-        name: "",
-        sets: [],
-        notes: "",
-      },
-    ]);
+    const data = { ...formData };
+    data.exercises.push({
+      name: "",
+      sets: [],
+      notes: "",
+    });
+    setFormData(data);
   };
 
   const handleAddSet = (exerciseIndex: number) => {
-    // Need to update just this exercise to have an extra set
-    const exercises = [...exerciseFields];
-    exercises[exerciseIndex].sets.push({
+    const data = { ...formData };
+    data.exercises[exerciseIndex].sets.push({
       reps: "",
       weight: "",
     });
-    setExerciseFields(exercises);
+    setFormData(data);
   };
   return (
     <Modal isOpen={modalOpen} handleClose={() => setModalOpen(false)}>
@@ -167,6 +159,7 @@ export default function WorkoutModal({
               type="date"
               id="date"
               name="date"
+              value={formData.date}
               onChange={handleChange}
             />
             <label htmlFor="name">Workout Name:</label>
@@ -179,7 +172,7 @@ export default function WorkoutModal({
               onChange={handleChange}
             />
             <h1 className=" border-b-2 border-black">Exercises:</h1>
-            {exerciseFields.map((exercise, exerciseIndex) => (
+            {formData.exercises.map((exercise, exerciseIndex) => (
               <div
                 key={exerciseIndex}
                 className="mt-2 mb-5 flex flex-col gap-4"
@@ -230,7 +223,9 @@ export default function WorkoutModal({
                 <textarea
                   placeholder="Notes"
                   value={exercise.notes}
-                  onChange={(event) => handleNotesChange(exerciseIndex, event)}
+                  onChange={(event) =>
+                    handleExerciseNotesChange(exerciseIndex, event)
+                  }
                 />
               </div>
             ))}
