@@ -1,6 +1,12 @@
 import { Workout, Exercise, Set } from "./page";
 
-export default function Workouts({ workouts }: { workouts: Workout[] }) {
+export default function Workouts({
+  workouts,
+  editWorkout,
+}: {
+  workouts: Workout[];
+  editWorkout: (index: number) => void;
+}) {
   const getDate = (date: string) => {
     return new Date(date).toLocaleDateString();
   };
@@ -9,7 +15,11 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
     <ul>
       {workouts.map((workout: Workout, index) => (
         // TODO: This will be an accordion with only the name and date showing when closed
-        <li key={index} className="mb-2 border-2 border-black">
+        <li
+          onClick={() => editWorkout(index)}
+          key={index}
+          className="mb-2 border-2 border-black"
+        >
           <h2 className="p-2 text-left text-xl">{workout.name}</h2>
           <h3 className="text-md -mt-2 border-b-2 border-black p-2 text-left">
             {getDate(workout.date)}
