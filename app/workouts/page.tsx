@@ -8,7 +8,11 @@ export default function Home() {
 
   const [workouts, setWorkouts] = useState<Workout[]>([]);
 
+  // Id for the workout currently being edited in the edit modal
   const [editWorkoutId, setEditWorkoutId] = useState(-1);
+
+  // Id for the last added workouts, incremented every time a workout is added
+  const [currentWorkoutIndex, setCurrentWorkoutIndex] = useState(0);
 
   const addTestWorkout = () => {
     const workout = {
@@ -86,6 +90,7 @@ export default function Home() {
       ],
     };
     setWorkouts([workout]);
+    setCurrentWorkoutIndex(currentWorkoutIndex + 1);
   };
 
   const addWorkout = () => {
@@ -125,6 +130,8 @@ export default function Home() {
         modalOpen={addWorkoutModalOpen}
         setModalOpen={setAddWorkoutModalOpen}
         editWorkoutId={editWorkoutId}
+        currentWorkoutIndex={currentWorkoutIndex}
+        setCurrentWorkoutIndex={setCurrentWorkoutIndex}
       ></WorkoutModal>
     </div>
   );

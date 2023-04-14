@@ -8,12 +8,16 @@ export default function WorkoutModal({
   modalOpen,
   setModalOpen,
   editWorkoutId,
+  currentWorkoutIndex,
+  setCurrentWorkoutIndex,
 }: {
   currentWorkouts: Workout[];
   setWorkouts: React.Dispatch<React.SetStateAction<Workout[]>>;
   modalOpen: boolean;
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   editWorkoutId: number;
+  currentWorkoutIndex: number;
+  setCurrentWorkoutIndex: React.Dispatch<React.SetStateAction<number>>;
 }) {
   const [formData, setFormData] = useState<Workout>({
     id: 0,
@@ -27,7 +31,6 @@ export default function WorkoutModal({
       },
     ],
   });
-  const [workoutId, setWorkoutId] = useState(0);
 
   /**
    * Condiaitonally fill formData based on whether
@@ -65,9 +68,9 @@ export default function WorkoutModal({
 
     if (editWorkoutId === -1) {
       // If adding, just add new workout on to the end
-      workout.id = workoutId;
+      workout.id = currentWorkoutIndex;
       setWorkouts([...currentWorkouts, workout]);
-      setWorkoutId(workoutId + 1);
+      setCurrentWorkoutIndex(currentWorkoutIndex + 1);
     } else {
       // If editing, update workout at correct index
       const workouts = [...currentWorkouts];
