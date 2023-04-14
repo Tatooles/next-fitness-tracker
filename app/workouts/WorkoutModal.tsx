@@ -29,7 +29,7 @@ export default function WorkoutModal({
   });
 
   /**
-   * Condiaitonally fill formData based on whether
+   * Conditionally fill formData based on whether
    * we are in add mode or edit mode
    */
   useEffect(() => {
@@ -55,19 +55,17 @@ export default function WorkoutModal({
     // TODO: Once DB is added we would use this function to update the DB
     // Or call an api route to do so
     event.preventDefault();
+    const workouts = [...currentWorkouts];
 
-    const workout = formData;
-
-    if (editWorkoutIndex === -1) {
+    if (editWorkoutIndex < 0) {
       // If adding, just add new workout on to the end
-      setWorkouts([...currentWorkouts, workout]);
+      workouts.push(formData);
     } else {
       // If editing, update workout at correct index
-      const workouts = [...currentWorkouts];
-      workouts[editWorkoutIndex] = workout;
-      setWorkouts(workouts);
+      workouts[editWorkoutIndex] = formData;
     }
 
+    setWorkouts(workouts);
     setModalOpen(false);
   };
 

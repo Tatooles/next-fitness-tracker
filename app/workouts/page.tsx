@@ -91,9 +91,9 @@ export default function Home() {
     setAddWorkoutModalOpen(true);
   };
 
-  const editWorkout = (id: number) => {
+  const editWorkout = (index: number) => {
     // Set value for which workout to edit
-    setEditWorkoutIndex(id);
+    setEditWorkoutIndex(index);
     setAddWorkoutModalOpen(true);
   };
 

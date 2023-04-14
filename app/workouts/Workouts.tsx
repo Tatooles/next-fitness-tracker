@@ -5,7 +5,7 @@ export default function Workouts({
   editWorkout,
 }: {
   workouts: Workout[];
-  editWorkout: any;
+  editWorkout: (index: number) => void;
 }) {
   const getDate = (date: string) => {
     return new Date(date).toLocaleDateString();
