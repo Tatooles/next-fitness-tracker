@@ -16,7 +16,7 @@ export default function Workouts({
       {workouts.map((workout: Workout, index) => (
         // TODO: This will be an accordion with only the name and date showing when closed
         <li
-          onClick={() => editWorkout(workout.id)}
+          onClick={() => editWorkout(index)}
           key={index}
           className="mb-2 border-2 border-black"
         >

@@ -7,21 +7,16 @@ export default function WorkoutModal({
   setWorkouts,
   modalOpen,
   setModalOpen,
-  editWorkoutId,
-  currentWorkoutIndex,
-  setCurrentWorkoutIndex,
+  editWorkoutIndex,
 }: {
   currentWorkouts: Workout[];
   setWorkouts: React.Dispatch<React.SetStateAction<Workout[]>>;
   modalOpen: boolean;
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  editWorkoutId: number;
-  currentWorkoutIndex: number;
-  setCurrentWorkoutIndex: React.Dispatch<React.SetStateAction<number>>;
+  editWorkoutIndex: number;
 }) {
   // This state holds the current data in the form
   const [formData, setFormData] = useState<Workout>({
-    id: 0,
     date: "",
     name: "",
     exercises: [
@@ -38,12 +33,11 @@ export default function WorkoutModal({
    * we are in add mode or edit mode
    */
   useEffect(() => {
-    if (editWorkoutId != -1) {
+    if (editWorkoutIndex != -1) {
       // Pre fill
-      setFormData(currentWorkouts[editWorkoutId]);
+      setFormData(currentWorkouts[editWorkoutIndex]);
     } else {
       setFormData({
-        id: 0,
         date: "",
         name: "",
         exercises: [
@@ -55,7 +49,7 @@ export default function WorkoutModal({
         ],
       });
     }
-  }, [editWorkoutId]);
+  }, [editWorkoutIndex]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     // TODO: Once DB is added we would use this function to update the DB
@@ -64,15 +58,13 @@ export default function WorkoutModal({
 
     const workout = formData;
 
-    if (editWorkoutId === -1) {
+    if (editWorkoutIndex === -1) {
       // If adding, just add new workout on to the end
-      workout.id = currentWorkoutIndex;
       setWorkouts([...currentWorkouts, workout]);
-      setCurrentWorkoutIndex(currentWorkoutIndex + 1);
     } else {
       // If editing, update workout at correct index
       const workouts = [...currentWorkouts];
-      workouts[editWorkoutId] = workout;
+      workouts[editWorkoutIndex] = workout;
       setWorkouts(workouts);
     }
 
