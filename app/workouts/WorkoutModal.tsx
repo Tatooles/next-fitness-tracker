@@ -139,6 +139,12 @@ export default function WorkoutModal({
     setFormData(data);
   };
 
+  const handleRemoveSet = (exerciseIndex: number, setIndex: number) => {
+    console.log(`removing set ${setIndex} from exercise ${exerciseIndex}`);
+    // TODO: Copy the full object
+    // Remove the element from the array with slice or splice
+  };
+
   return (
     <Modal isOpen={modalOpen} handleClose={() => setModalOpen(false)}>
       <div className="fixed top-20 left-1/2 z-10 max-h-[80%] w-4/5 translate-x-[-50%] translate-y-[-10%] overflow-scroll rounded-lg bg-white p-5">
@@ -200,6 +206,12 @@ export default function WorkoutModal({
                       handleWeightChange(exerciseIndex, setIndex, event)
                     }
                   />
+                  <div
+                    onClick={() => handleRemoveSet(exerciseIndex, setIndex)}
+                    className="flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-white"
+                  >
+                    -
+                  </div>
                 </div>
               ))}
               <button
