@@ -140,9 +140,9 @@ export default function WorkoutModal({
   };
 
   const handleRemoveSet = (exerciseIndex: number, setIndex: number) => {
-    console.log(`removing set ${setIndex} from exercise ${exerciseIndex}`);
-    // TODO: Copy the full object
-    // Remove the element from the array with slice or splice
+    const data = { ...formData };
+    data.exercises[exerciseIndex].sets.splice(setIndex, 1);
+    setFormData(data);
   };
 
   return (
@@ -208,9 +208,9 @@ export default function WorkoutModal({
                   />
                   <div
                     onClick={() => handleRemoveSet(exerciseIndex, setIndex)}
-                    className="flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-white"
+                    className="h-4 w-4 rounded-full bg-red-600 text-center text-white"
                   >
-                    -
+                    <div className="-translate-y-[5px]">-</div>
                   </div>
                 </div>
               ))}
