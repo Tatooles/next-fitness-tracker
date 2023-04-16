@@ -175,6 +175,7 @@ export default function WorkoutModal({
                 placeholder="Exercise Name"
                 name="exerciseName"
                 value={exercise.name}
+                className="flex h-10 w-full rounded-md border border-slate-300 bg-transparent py-2 px-3 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
                 onChange={(event) =>
                   handleExerciseNameChange(exerciseIndex, event)
                 }
@@ -182,7 +183,10 @@ export default function WorkoutModal({
                 // Then another dropdown with modifications susch a incline, low bar, pause, pin, bands, chains, etc
               />
               {exercise.sets.map((set, setIndex) => (
-                <div key={setIndex} className="flex justify-between">
+                <div
+                  key={setIndex}
+                  className="flex items-center justify-between"
+                >
                   <h3>Set {setIndex + 1}:</h3>
                   <input
                     type="text"
@@ -190,7 +194,7 @@ export default function WorkoutModal({
                     placeholder="Reps"
                     name="reps"
                     value={set.reps}
-                    className="w-16"
+                    className="flex h-10 w-16 rounded-md border border-slate-300 bg-transparent py-2 px-3 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
                     onChange={(event) =>
                       handleRepsChange(exerciseIndex, setIndex, event)
                     }
@@ -201,14 +205,14 @@ export default function WorkoutModal({
                     placeholder="Weight"
                     name="weight"
                     value={set.weight}
-                    className=" w-16"
+                    className="flex h-10 w-20 rounded-md border border-slate-300 bg-transparent py-2 px-3 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
                     onChange={(event) =>
                       handleWeightChange(exerciseIndex, setIndex, event)
                     }
                   />
                   <div
                     onClick={() => handleRemoveSet(exerciseIndex, setIndex)}
-                    className="h-4 w-4 rounded-full bg-red-600 text-center text-white"
+                    className="h-4 w-4 cursor-pointer rounded-full bg-red-600 text-center text-white"
                   >
                     <div className="-translate-y-[5px]">-</div>
                   </div>
@@ -225,6 +229,7 @@ export default function WorkoutModal({
                 placeholder="Notes"
                 name="notes"
                 value={exercise.notes}
+                className="flex h-20 w-full rounded-md border border-slate-300 bg-transparent py-2 px-3 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 onChange={(event) =>
                   handleExerciseNotesChange(exerciseIndex, event)
                 }
