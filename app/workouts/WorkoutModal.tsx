@@ -145,6 +145,12 @@ export default function WorkoutModal({
     setFormData(data);
   };
 
+  const handleRemoveExercise = (exerciseIndex: number) => {
+    const data = { ...formData };
+    data.exercises.splice(exerciseIndex, 1);
+    setFormData(data);
+  };
+
   return (
     <Modal isOpen={modalOpen} handleClose={() => setModalOpen(false)}>
       <div className="fixed top-20 left-1/2 z-10 max-h-[80%] w-4/5 translate-x-[-50%] translate-y-[-10%] overflow-scroll rounded-lg bg-white p-5">
@@ -170,18 +176,26 @@ export default function WorkoutModal({
           {formData.exercises.map((exercise, exerciseIndex) => (
             <div key={exerciseIndex} className="mt-2 mb-5 flex flex-col gap-4">
               {/* TODO: This would be a search of a list of exercises */}
-              <input
-                type="text"
-                placeholder="Exercise Name"
-                name="exerciseName"
-                value={exercise.name}
-                className="flex h-10 w-full rounded-md border border-slate-300 bg-transparent py-2 px-3 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
-                onChange={(event) =>
-                  handleExerciseNameChange(exerciseIndex, event)
-                }
-                // TODO: Maybe have main exercise name (bench press, squat, deadlift) in one dropdown
-                // Then another dropdown with modifications susch a incline, low bar, pause, pin, bands, chains, etc
-              />
+              <div className="flex items-center">
+                <input
+                  type="text"
+                  placeholder="Exercise Name"
+                  name="exerciseName"
+                  value={exercise.name}
+                  className="flex h-10 w-3/4 rounded-md border border-slate-300 bg-transparent py-2 px-3 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
+                  onChange={(event) =>
+                    handleExerciseNameChange(exerciseIndex, event)
+                  }
+                  // TODO: Maybe have main exercise name (bench press, squat, deadlift) in one dropdown
+                  // Then another dropdown with modifications susch a incline, low bar, pause, pin, bands, chains, etc
+                />
+                <div
+                  onClick={() => handleRemoveExercise(exerciseIndex)}
+                  className=" ml-5 h-6 w-6 cursor-pointer rounded-full bg-red-600 text-center text-white"
+                >
+                  <div className="-translate-y-[1px]">-</div>
+                </div>
+              </div>
               {exercise.sets.map((set, setIndex) => (
                 <div
                   key={setIndex}
