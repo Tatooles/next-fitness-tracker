@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import "./globals.css";
-import Sidebar from "./Sidebar";
+import "../styles/globals.css";
+import Sidebar from "../components/Sidebar";
 
 export default function RootLayout({
   children,

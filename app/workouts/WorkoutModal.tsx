@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Modal from "../Modal";
+import Modal from "../../components/Modal";
 import { Workout } from "./page";
 
 export default function WorkoutModal({
@@ -162,6 +162,7 @@ export default function WorkoutModal({
             type="date"
             name="date"
             value={formData.date}
+            // TODO: Increase font size on input fields to 16px so mobile browsers don't auto zoom
             onChange={handleChange}
           />
           <label htmlFor="name">Workout Name:</label>
