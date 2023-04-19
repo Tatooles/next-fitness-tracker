@@ -25,9 +25,7 @@ export default function Workouts({
         <AccordionItem key={index} value={`item-${index}`}>
           <AccordionTrigger>{workout.name}</AccordionTrigger>
           <AccordionContent onClick={() => editWorkout(index)}>
-            <h3 className="text-md -mt-2 border-b-2 border-black p-2 text-left">
-              {getDate(workout.date)}
-            </h3>
+            <h3 className="text-md p-2 text-left">{getDate(workout.date)}</h3>
             <div className="divide-y-2 px-2">
               {workout.exercises.map((exercise: Exercise, index2) => (
                 <Exercise exercise={exercise} key={index2}></Exercise>
