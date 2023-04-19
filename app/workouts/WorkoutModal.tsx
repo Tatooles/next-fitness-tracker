@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import Modal from "../../components/Modal";
 import { Workout } from "./page";
 
@@ -157,39 +159,36 @@ export default function WorkoutModal({
         <h2 className="text-3xl">Add Workout</h2>
         <form onSubmit={handleSubmit} className="flex flex-col">
           <label htmlFor="date">Date:</label>
-          <input
-            className="mb-5 bg-gray-200"
+          <Input
             type="date"
             name="date"
-            value={formData.date}
-            // TODO: Increase font size on input fields to 16px so mobile browsers don't auto zoom
             onChange={handleChange}
-          />
+            value={formData.date}
+            className="w-36"
+          ></Input>
           <label htmlFor="name">Workout Name:</label>
-          <input
-            className="mb-5 bg-gray-200"
+          <Input
             type="text"
             name="name"
             value={formData.name}
             onChange={handleChange}
-          />
+          ></Input>
           <h1 className=" border-b-2 border-black">Exercises:</h1>
           {formData.exercises.map((exercise, exerciseIndex) => (
             <div key={exerciseIndex} className="mt-2 mb-5 flex flex-col gap-4">
               {/* TODO: This would be a search of a list of exercises */}
               <div className="flex items-center">
-                <input
+                <Input
                   type="text"
                   placeholder="Exercise Name"
                   name="exerciseName"
                   value={exercise.name}
-                  className="flex h-10 w-3/4 rounded-md border border-slate-300 bg-transparent py-2 px-3 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
                   onChange={(event) =>
                     handleExerciseNameChange(exerciseIndex, event)
                   }
                   // TODO: Maybe have main exercise name (bench press, squat, deadlift) in one dropdown
                   // Then another dropdown with modifications susch a incline, low bar, pause, pin, bands, chains, etc
-                />
+                ></Input>
                 <div
                   onClick={() => handleRemoveExercise(exerciseIndex)}
                   className=" ml-5 h-6 w-6 cursor-pointer rounded-full bg-red-600 text-center text-white"
@@ -203,28 +202,28 @@ export default function WorkoutModal({
                   className="flex items-center justify-between"
                 >
                   <h3>Set {setIndex + 1}:</h3>
-                  <input
+                  <Input
                     type="text"
                     inputMode="numeric"
                     placeholder="Reps"
                     name="reps"
                     value={set.reps}
-                    className="flex h-10 w-16 rounded-md border border-slate-300 bg-transparent py-2 px-3 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
+                    className="w-16"
                     onChange={(event) =>
                       handleRepsChange(exerciseIndex, setIndex, event)
                     }
-                  />
-                  <input
+                  ></Input>
+                  <Input
                     type="text"
                     inputMode="decimal"
                     placeholder="Weight"
                     name="weight"
                     value={set.weight}
-                    className="flex h-10 w-20 rounded-md border border-slate-300 bg-transparent py-2 px-3 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
+                    className="w-20"
                     onChange={(event) =>
                       handleWeightChange(exerciseIndex, setIndex, event)
                     }
-                  />
+                  ></Input>
                   <div
                     onClick={() => handleRemoveSet(exerciseIndex, setIndex)}
                     className="h-4 w-4 cursor-pointer rounded-full bg-red-600 text-center text-white"
@@ -240,15 +239,14 @@ export default function WorkoutModal({
               >
                 Add Set
               </button>
-              <textarea
+              <Textarea
                 placeholder="Notes"
                 name="notes"
                 value={exercise.notes}
-                className="flex h-20 w-full rounded-md border border-slate-300 bg-transparent py-2 px-3 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 onChange={(event) =>
                   handleExerciseNotesChange(exerciseIndex, event)
                 }
-              />
+              ></Textarea>
             </div>
           ))}
           <button

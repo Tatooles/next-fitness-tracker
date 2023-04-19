@@ -19,7 +19,7 @@ export default function Workouts({
   };
 
   return (
-    <Accordion type="single" collapsible>
+    <Accordion type="single" collapsible className="mb-5">
       {workouts.map((workout: Workout, index) => (
         // TODO: This will be an accordion with only the name and date showing when closed
         <AccordionItem key={index} value={`item-${index}`}>

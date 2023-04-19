@@ -14,10 +14,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <div id="modal"></div>
-        <div
-          id="root"
-          className="container mx-auto flex h-screen flex-col bg-white"
-        >
+        <div id="root" className="flex h-screen flex-col bg-white">
           <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
           <div
             onClick={() => setSidebarOpen(false)}
