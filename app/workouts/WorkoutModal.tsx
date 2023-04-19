@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import Modal from "../../components/Modal";
 import { Workout } from "./page";
 
@@ -156,21 +158,24 @@ export default function WorkoutModal({
   return (
     <Modal isOpen={modalOpen} handleClose={() => setModalOpen(false)}>
       <div className="fixed top-20 left-1/2 z-10 max-h-[80%] w-4/5 translate-x-[-50%] translate-y-[-10%] overflow-scroll rounded-lg bg-white p-5">
-        <h2 className="text-3xl">Add Workout</h2>
+        <h2 className="mb-3 text-center text-3xl font-medium leading-none">
+          Add Workout
+        </h2>
         <form onSubmit={handleSubmit} className="flex flex-col">
-          <label htmlFor="date">Date:</label>
+          <Label htmlFor="date">Date:</Label>
           <Input
             type="date"
             name="date"
             onChange={handleChange}
             value={formData.date}
-            className="w-36"
+            className="mt-2 mb-4 w-36"
           ></Input>
-          <label htmlFor="name">Workout Name:</label>
+          <Label htmlFor="name">Workout Name:</Label>
           <Input
             type="text"
             name="name"
             value={formData.name}
+            className="my-2"
             onChange={handleChange}
           ></Input>
           <h1 className=" border-b-2 border-black">Exercises:</h1>
@@ -183,6 +188,7 @@ export default function WorkoutModal({
                   placeholder="Exercise Name"
                   name="exerciseName"
                   value={exercise.name}
+                  className="w-48"
                   onChange={(event) =>
                     handleExerciseNameChange(exerciseIndex, event)
                   }
@@ -191,7 +197,7 @@ export default function WorkoutModal({
                 ></Input>
                 <div
                   onClick={() => handleRemoveExercise(exerciseIndex)}
-                  className=" ml-5 h-6 w-6 cursor-pointer rounded-full bg-red-600 text-center text-white"
+                  className="ml-5 h-6 w-6 cursor-pointer rounded-full bg-red-600 text-center text-white"
                 >
                   <div className="-translate-y-[1px]">-</div>
                 </div>
@@ -249,16 +255,12 @@ export default function WorkoutModal({
               ></Textarea>
             </div>
           ))}
-          <button
-            type="button"
-            className="my-4 rounded-md border-2 border-black"
-            onClick={handleAddExercise}
-          >
+          <Button variant="secondary" onClick={handleAddExercise}>
             Add Exercise
-          </button>
+          </Button>
           <button
             type="submit"
-            className="self-center rounded-md bg-blue-400 p-2 text-white"
+            className="mt-4 self-center rounded-md bg-blue-400 p-2 text-white"
           >
             Submit
           </button>
