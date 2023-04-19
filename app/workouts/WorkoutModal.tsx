@@ -175,12 +175,16 @@ export default function WorkoutModal({
             type="text"
             name="name"
             value={formData.name}
-            className="my-2"
+            className="mt-2 mb-4"
             onChange={handleChange}
           ></Input>
-          <h1 className=" border-b-2 border-black">Exercises:</h1>
+          <Label>Exercises:</Label>
           {formData.exercises.map((exercise, exerciseIndex) => (
-            <div key={exerciseIndex} className="mt-2 mb-5 flex flex-col gap-4">
+            <div
+              key={exerciseIndex}
+              // TODO: Need to find a better way to separate the exercises within a workout
+              className="mt-2 mb-5 flex flex-col gap-4 p-2"
+            >
               {/* TODO: This would be a search of a list of exercises */}
               <div className="flex items-center">
                 <Input
@@ -255,7 +259,7 @@ export default function WorkoutModal({
               ></Textarea>
             </div>
           ))}
-          <Button variant="secondary" onClick={handleAddExercise}>
+          <Button variant="secondary" type="button" onClick={handleAddExercise}>
             Add Exercise
           </Button>
           <button
