@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import "../styles/globals.css";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Sidebar from "../components/Sidebar";
 
 export default function RootLayout({
@@ -14,7 +15,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <div id="modal"></div>
-        <div id="root" className="flex h-screen flex-col bg-white">
+        <div id="root" className="flex h-screen flex-col">
           <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
           <div
             onClick={() => setSidebarOpen(false)}
@@ -35,20 +36,10 @@ export default function RootLayout({
                 <div className="flex items-center p-5 text-slate-700">Logo</div>
               </Link>
               <Link className="p-5" href="/profile">
-                <div className="relative h-10 w-10 overflow-hidden rounded-full bg-slate-700">
-                  <svg
-                    className="absolute -left-1 h-12 w-12 text-slate-300"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                      clipRule="evenodd"
-                    ></path>
-                  </svg>
-                </div>
+                <Avatar>
+                  <AvatarImage src="https://github.com/tatooles.png" />
+                  <AvatarFallback>KT</AvatarFallback>
+                </Avatar>
               </Link>
             </nav>
           </header>
