@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import WorkoutModal from "./WorkoutModal";
 import Workouts from "./Workouts";
 
@@ -101,12 +102,7 @@ export default function Home() {
     <div className="p-5 text-center">
       <h1 className="mb-5 text-3xl">Workouts</h1>
       <Workouts workouts={workouts} editWorkout={editWorkout}></Workouts>
-      <button
-        onClick={addWorkout}
-        className="rounded-md bg-slate-700 p-2 text-white"
-      >
-        Add a Workout
-      </button>
+      <Button onClick={addWorkout}>Add a Workout</Button>
       <button
         onClick={addTestWorkout}
         className={`mt-10 rounded-md bg-yellow-300 p-1 ${
