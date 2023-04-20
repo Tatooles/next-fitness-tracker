@@ -10,7 +10,7 @@ export default function Profile() {
         <AvatarFallback>KT</AvatarFallback>
       </Avatar>
       <div className="my-5 text-lg">Welcome to the profile page</div>
-      <div className="flex w-full flex-col gap-2 border-2 border-slate-700 p-5">
+      <div className="flex w-full flex-col gap-2 border-2 p-5">
         <Label className="text-md">Name:</Label>
         <Label className="text-md">Username:</Label>
         <Button>Update Profile Picture</Button>

@@ -39,7 +39,7 @@ export default function Workouts({
 
 function Exercise({ exercise }: { exercise: Exercise }) {
   return (
-    <div className="border-black p-2 text-left">
+    <div className="p-2 text-left">
       <h3 className="self-center text-center text-lg font-bold">
         {exercise.name}
       </h3>
