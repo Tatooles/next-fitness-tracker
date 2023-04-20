@@ -37,10 +37,8 @@ export default function WorkoutModal({
    * we are in add mode or edit mode
    */
   useEffect(() => {
-    if (editWorkoutIndex != -1) {
-      // Pre fill
-      setFormData(currentWorkouts[editWorkoutIndex]);
-    } else {
+    if (!modalOpen) {
+      // Clear modal on close
       setFormData({
         date: "",
         name: "",
@@ -52,8 +50,11 @@ export default function WorkoutModal({
           },
         ],
       });
+    } else if (editWorkoutIndex != -1) {
+      // Pre fill if editing
+      setFormData(currentWorkouts[editWorkoutIndex]);
     }
-  }, [editWorkoutIndex]);
+  }, [modalOpen]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     // TODO: Once DB is added we would use this function to update the DB
@@ -64,19 +65,6 @@ export default function WorkoutModal({
     if (editWorkoutIndex < 0) {
       // If adding, just add new workout on to the end
       workouts.push(formData);
-
-      // Clear the data for next time modal is opened if editWorkoutIndex unchanged
-      setFormData({
-        date: "",
-        name: "",
-        exercises: [
-          {
-            sets: [{ reps: "", weight: "" }],
-            name: "",
-            notes: "",
-          },
-        ],
-      });
     } else {
       // If editing, update workout at correct index
       workouts[editWorkoutIndex] = formData;
