@@ -21,7 +21,6 @@ export default function Workouts({
   return (
     <Accordion type="single" collapsible className="mb-5">
       {workouts.map((workout: Workout, index) => (
-        // TODO: This will be an accordion with only the name and date showing when closed
         <AccordionItem key={index} value={`item-${index}`}>
           <AccordionTrigger>{workout.name}</AccordionTrigger>
           <AccordionContent onClick={() => editWorkout(index)}>
@@ -55,7 +54,6 @@ function Exercise({ exercise }: { exercise: Exercise }) {
       )}
       {exercise.sets.map(
         (set: Set, index3) =>
-          // TODO: Need to add some color
           (set.reps || set.weight) && (
             <div key={index3} className="flex justify-around">
               <div>{set.reps}</div>
@@ -64,10 +62,8 @@ function Exercise({ exercise }: { exercise: Exercise }) {
           )
       )}
       {exercise.notes && (
-        // TODO: Notes take up a lot of space so they should default to collapsed and be openable
-        <p>Notes:</p>
+        <p className="mt-2 rounded-md bg-slate-300 p-2">{exercise.notes}</p>
       )}
-      <p className="rounded-md bg-slate-300 p-2">{exercise.notes}</p>
     </div>
   );
 }
