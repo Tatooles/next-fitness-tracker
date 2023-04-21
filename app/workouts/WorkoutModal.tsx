@@ -156,6 +156,16 @@ export default function WorkoutModal({
     setFormData(data);
   };
 
+  /**
+   * Duplicate the last set of the given exercise
+   */
+  const duplicateSet = (exerciseIndex: number) => {
+    const data = { ...formData };
+    const sets = data.exercises[exerciseIndex].sets;
+    sets.push({ ...sets[sets.length - 1] });
+    setFormData(data);
+  };
+
   return (
     <Modal isOpen={modalOpen} handleClose={() => setModalOpen(false)}>
       <div className="fixed top-20 left-1/2 z-10 max-h-[80%] w-4/5 translate-x-[-50%] translate-y-[-10%] overflow-scroll rounded-lg bg-white p-5">
@@ -242,10 +252,19 @@ export default function WorkoutModal({
                   </div>
                 </div>
               ))}
+              {exercise.sets.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => duplicateSet(exerciseIndex)}
+                  className="w-36 rounded-md bg-blue-600 py-1 text-sm text-white"
+                >
+                  Duplicate previous
+                </button>
+              )}
               <button
                 type="button"
                 onClick={() => handleAddSet(exerciseIndex)}
-                className="w-20 rounded-md bg-green-500 py-1 px-2 text-sm text-white"
+                className="w-20 rounded-md bg-green-500 py-1 text-sm text-white"
               >
                 Add Set
               </button>
