@@ -6,7 +6,8 @@ import {
 } from "@/components/ui/accordion";
 
 import { Workout, Exercise, Set } from "./page";
-
+// TODO: This is currently a client component, we will want it to be a server component
+// Need to do this: https://beta.nextjs.org/docs/rendering/server-and-client-components#importing-server-components-into-client-components
 export default function Workouts({
   workouts,
   editWorkout,

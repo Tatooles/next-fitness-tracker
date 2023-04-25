@@ -9,12 +9,14 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // const [sidebarOpen, setSidebarOpen] = useState(false); // This can't be a client component with clerk...
+  // This should've been a client component in the first place, wrap this whole thing with some sort of provider
+  // const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
     <html lang="en">
       <ClerkProvider>
         <body>
           <div id="modal"></div>
+          {/* TODO: Prob wrap this whole rood div in an client component so we can have the navbar and providers */}
           <div id="root" className="flex h-screen flex-col">
             {/* <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
             <div
