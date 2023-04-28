@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   // TODO: This page should probably be the login page
@@ -7,11 +8,11 @@ export default function Home() {
   return (
     <div className="flex h-full flex-col items-center justify-center">
       <div className="mb-10 text-3xl">Welcome</div>
-      <Link href="/home" className="mb-5 rounded-md bg-gray-600 p-2 text-white">
-        Login
+      <Link href="/home" className="mb-5">
+        <Button>Log In</Button>
       </Link>
-      <Link href="/home" className="rounded-md bg-gray-600 p-2 text-white">
-        Sign Up
+      <Link href="/home">
+        <Button>Sign Up</Button>
       </Link>
     </div>
   );
