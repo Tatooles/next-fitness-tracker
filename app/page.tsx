@@ -2,9 +2,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export default function Home() {
-  // TODO: This page should probably be the login page
-  // will redirect to the home page after login
-  // or auto redirect if the user is already logged in
   return (
     <div className="flex h-full flex-col items-center justify-center">
       <div className="mb-10 text-3xl">Welcome</div>
