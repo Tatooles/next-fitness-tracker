@@ -21,8 +21,7 @@ export default function Home() {
         {
           name: "Sled Drag",
           sets: [],
-          notes:
-            "Gym too packed for this shit smh, should prob use the machine.",
+          notes: "Gym is too busy for these, should prob use the machine.",
         },
         {
           name: "Hack Squat",
@@ -60,7 +59,7 @@ export default function Home() {
             },
           ],
           notes:
-            "Going low bar beltless with normal foot width. feel pretty confident about 135 . 135 very solid. Lower back a bit sore after first set. Not sure about effect of elevated heel shoes on these. Maybe more lower back? Second set kinda the same but thinking maybe I have more hamstring rom and lower back is the limiter, which honestly is probably better. Gonna send 155",
+            "Going low bar beltless with normal foot width. feel pretty confident about 135. Lower back a bit sore after first set. Not sure about effect of elevated heel shoes on these. Maybe more lower back? Second set kinda the same but thinking maybe I have more hamstring rom and lower back is the limiter, which honestly is probably better.",
         },
         {
           name: "Standing Calf Raise",
@@ -79,7 +78,7 @@ export default function Home() {
             },
           ],
           notes:
-            "Gonna try 35. 4s up and down for 15 first set but needed a regrip with feet, cadence pretty good. Sale pause second set, later reps also definitely slower. Got 15 last set too but same thing as the ones before. Also note that shoulder placement on the pad matters",
+            "Gonna try 35. 4 seconds up and down for 15 first set but needed a regrip with feet, cadence pretty good. Got 15 last set too but later reps tough. Also note that shoulder placement on the pad matters",
         },
       ],
     };
