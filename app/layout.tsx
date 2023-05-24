@@ -2,6 +2,11 @@ import { ClerkProvider } from "@clerk/nextjs/app-beta";
 import "../styles/globals.css";
 import Navbar from "@/components/Navbar";
 
+export const metadata = {
+  title: "Lifting Log",
+  description: "Log and track your workouts",
+};
+
 export default function RootLayout({
   children,
 }: {
