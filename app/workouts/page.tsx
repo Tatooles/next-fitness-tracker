@@ -102,6 +102,7 @@ export default function Home() {
       <h1 className="mb-5 text-3xl">Workouts</h1>
       <Workouts workouts={workouts} editWorkout={editWorkout}></Workouts>
       <Button onClick={addWorkout}>Add a Workout</Button>
+      {/* Would like to give the user the ability to enter a template, could add another button here */}
       <button
         onClick={addTestWorkout}
         className={`mt-10 rounded-md bg-yellow-300 p-1 ${

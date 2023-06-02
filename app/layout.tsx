@@ -19,6 +19,7 @@ export default function RootLayout({
           <div id="modal"></div>
           <Navbar></Navbar>
           <div id="root" className="flex h-screen flex-col">
+            {/* TODO: Put main in a container so it doesn't span the whole screen on desktop */}
             <main className="grow">{children}</main>
             <footer className="py-2 text-center text-slate-700">
               Created by Kevin Tatooles
