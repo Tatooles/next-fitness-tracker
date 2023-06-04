@@ -4,7 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Modal from "../../components/Modal";
-import { Workout } from "./page";
+import { Workout } from "@/lib/types";
 
 export default function WorkoutModal({
   currentWorkouts,
