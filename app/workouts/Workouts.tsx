@@ -5,7 +5,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-import { Workout, Exercise, Set } from "./page";
+import { Workout, Exercise, Set } from "@/lib/types";
 // TODO: This is currently a client component, we will want it to be a server component
 // Need to do this: https://beta.nextjs.org/docs/rendering/server-and-client-components#importing-server-components-into-client-components
 export default function Workouts({
