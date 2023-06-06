@@ -56,7 +56,7 @@ export default function WorkoutModal({
     }
   }, [modalOpen]);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     // TODO: Once DB is added we would use this function to update the DB
     // Or call an api route to do so
     event.preventDefault();
@@ -65,6 +65,21 @@ export default function WorkoutModal({
     if (editWorkoutIndex < 0) {
       // If adding, just add new workout on to the end
       workouts.push(formData);
+
+      console.log(formData.name);
+      console.log(formData.date);
+
+      // Make test call to the api, this is where we would make it normally
+      const response = await fetch("/api/workouts", {
+        method: "POST",
+        body: JSON.stringify({
+          name: formData.name,
+          date: formData.date,
+        }),
+      });
+      // TODO: Need to fix the client errors
+
+      const data = await response.json();
     } else {
       // If editing, update workout at correct index
       workouts[editWorkoutIndex] = formData;
