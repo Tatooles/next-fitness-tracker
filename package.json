@@ -22,6 +22,7 @@
     "@types/react-dom": "18.0.11",
     "class-variance-authority": "^0.5.2",
     "clsx": "^1.2.1",
+    "dotenv": "^16.1.4",
     "drizzle-orm": "^0.26.5",
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",

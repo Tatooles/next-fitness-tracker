@@ -14,7 +14,7 @@ const runMigrate = async () => {
   }
 
   const connection = connect({
-    url: process.env.DATABASE_URL,
+    url: process.env["DATABASE_URL"],
     fetch,
   });
 
@@ -24,7 +24,7 @@ const runMigrate = async () => {
 
   const start = Date.now();
 
-  await migrate(db, { migrationsFolder: "src/lib/db/migrations" });
+  await migrate(db, { migrationsFolder: "db/migrations" });
 
   const end = Date.now();
 
