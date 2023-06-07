@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import WorkoutModal from "./WorkoutModal";
 import Workouts from "./Workouts";
@@ -13,6 +13,23 @@ export default function Home() {
   // Index for the workout currently being edited in the edit modal
   // Currently tracking workout to edit based on index, in the future may want to go back and use an id for more precision
   const [editWorkoutIndex, setEditWorkoutIndex] = useState(-1);
+
+  const [data, setData] = useState<any[]>([]);
+
+  useEffect(() => {
+    // fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch("/api/workouts");
+      const jsonData = await response.json();
+      console.log(jsonData.workouts);
+      setData(jsonData.workouts);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   const addTestWorkout = () => {
     const workout: Workout = {
@@ -119,6 +136,9 @@ export default function Home() {
         setModalOpen={setAddWorkoutModalOpen}
         editWorkoutIndex={editWorkoutIndex}
       ></WorkoutModal>
+      {data?.map((workout, index) => (
+        <div key={index}>{workout.name}</div>
+      ))}
     </div>
   );
 }
