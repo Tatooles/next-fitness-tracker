@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import WorkoutModal from "./WorkoutModal";
 import Workouts from "./Workouts";
 import { Workout } from "@/lib/types";
+import { workouts } from "@/db/schema";
 
 export default function Home() {
   const [addWorkoutModalOpen, setAddWorkoutModalOpen] = useState(false);
@@ -14,7 +15,7 @@ export default function Home() {
   // Currently tracking workout to edit based on index, in the future may want to go back and use an id for more precision
   const [editWorkoutIndex, setEditWorkoutIndex] = useState(-1);
 
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<typeof workouts>([]);
 
   useEffect(() => {
     // fetchData();

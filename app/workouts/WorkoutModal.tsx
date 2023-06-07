@@ -59,7 +59,7 @@ export default function WorkoutModal({
     }
   }, [modalOpen]);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     // TODO: Replace this with a server action
     event.preventDefault();
     const workouts = [...currentWorkouts];
