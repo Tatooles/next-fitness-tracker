@@ -14,6 +14,25 @@ export default function Home() {
   // Currently tracking workout to edit based on index, in the future may want to go back and use an id for more precision
   const [editWorkoutIndex, setEditWorkoutIndex] = useState(-1);
 
+  const [data, setData] = useState<typeof workouts>([]);
+
+  useEffect(() => {
+    // fetchData();
+    // TODO: Create a server component to wrap this component that fetches the data and passes it down to the child
+    // This page.tsx should be a server component, create a new component that has the accordion and modal state
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch("/api/workouts");
+      const jsonData = await response.json();
+      console.log(jsonData.workouts);
+      setData(jsonData.workouts);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   const addTestWorkout = () => {
     const workout: Workout = {
       date: "2023-04-07",
