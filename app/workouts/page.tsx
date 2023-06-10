@@ -1,9 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import WorkoutModal from "./WorkoutModal";
 import Workouts from "./Workouts";
 import { Workout } from "@/lib/types";
+import { workouts } from "@/db/schema";
 
 export default function Home() {
   const [addWorkoutModalOpen, setAddWorkoutModalOpen] = useState(false);
@@ -138,6 +139,9 @@ export default function Home() {
         setModalOpen={setAddWorkoutModalOpen}
         editWorkoutIndex={editWorkoutIndex}
       ></WorkoutModal>
+      {data?.map((workout, index) => (
+        <div key={index}>{workout.name}</div>
+      ))}
     </div>
   );
 }
