@@ -67,7 +67,7 @@ export default function WorkoutModal({
     if (editWorkoutIndex < 0) {
       // If adding, just add new workout on to the end
       workouts.push(formData);
-      // addToDB();
+      addToDB();
     } else {
       // If editing, update workout at correct index
       workouts[editWorkoutIndex] = formData;
@@ -81,9 +81,8 @@ export default function WorkoutModal({
     const response = await fetch("/api/workouts", {
       method: "POST",
       body: JSON.stringify({
-        name: formData.name,
-        date: formData.date,
-        user: userId,
+        workout: formData,
+        userId: userId,
       }),
     });
     // TODO: Need to fix the client errors
