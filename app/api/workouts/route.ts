@@ -10,7 +10,6 @@ export async function POST(request: Request) {
     const result = await db
       .insert(workouts)
       .values({ name: body.name, date: body.date, userId: body.userId });
-    console.log("result", result); // TODO: Remove this for a free commit lol
     return new Response("Hello from api/workouts");
   } catch (error) {
     console.log("An error ocurred!");
