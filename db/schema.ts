@@ -10,7 +10,7 @@ import { relations } from "drizzle-orm";
 
 export const workouts = mysqlTable("workouts", {
   id: serial("id").primaryKey(),
-  userId: int("userId"),
+  userId: varchar("userId", { length: 256 }), // Length probably too long, could be changed
   name: varchar("name", { length: 256 }),
   date: datetime("date"),
 });
