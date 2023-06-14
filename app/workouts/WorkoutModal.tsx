@@ -81,9 +81,8 @@ export default function WorkoutModal({
     const response = await fetch("/api/workouts", {
       method: "POST",
       body: JSON.stringify({
-        name: formData.name,
-        date: formData.date,
-        user: userId,
+        workout: formData,
+        userId: userId,
       }),
     });
     // TODO: Need to fix the client errors
