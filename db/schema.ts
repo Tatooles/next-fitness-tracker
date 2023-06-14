@@ -24,6 +24,7 @@ export const exercises = mysqlTable("exercises", {
   name: varchar("name", { length: 256 }),
   notes: text("notes"),
   workoutId: int("workout_id").notNull(),
+  // TODO: Probably add userId here too for future data/trend queries
 });
 
 export const exercisesRelations = relations(exercises, ({ one, many }) => ({
