@@ -1,10 +1,7 @@
-import { getAuth } from "@clerk/nextjs/server";
 import { db } from "@/db/drizzle";
 import { workouts } from "@/db/schema";
 import { exercises } from "@/db/schema";
 import { sets } from "@/db/schema";
-import { Workout } from "@/lib/types";
-import { drizzle } from "drizzle-orm/planetscale-serverless";
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -12,9 +9,14 @@ export async function POST(request: Request) {
   try {
     // Use a transaction to put the entire large query in one place
     await db.transaction(async (tx) => {
+      console.log(workout);
+      let date = workout.date;
+      if (!date) {
+        date = new Date();
+      }
       const workoutResult = await db.insert(workouts).values({
         name: workout.name,
-        date: workout.date,
+        date: date,
         userId: body.userId,
       });
       let workout_id = parseInt(workoutResult.insertId);
@@ -36,24 +38,6 @@ export async function POST(request: Request) {
       }
     });
     return new Response("Hello from api/workouts");
-  } catch (error) {
-    console.log("An error ocurred!");
-    if (error instanceof Error) console.log(error.message);
-  }
-}
-
-export async function GET(request: Request) {
-  try {
-    const result = await db.query.workouts.findMany({
-      with: {
-        exercises: {
-          with: {
-            sets: true,
-          },
-        },
-      },
-    });
-    return new Response(JSON.stringify({ workouts: result }));
   } catch (error) {
     console.log("An error ocurred!");
     if (error instanceof Error) console.log(error.message);

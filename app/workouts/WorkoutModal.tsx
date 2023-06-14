@@ -9,13 +9,11 @@ import { Workout } from "@/lib/types";
 
 export default function WorkoutModal({
   currentWorkouts,
-  setWorkouts,
   modalOpen,
   setModalOpen,
   editWorkoutIndex,
 }: {
   currentWorkouts: Workout[];
-  setWorkouts: React.Dispatch<React.SetStateAction<Workout[]>>;
   modalOpen: boolean;
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   editWorkoutIndex: number;
@@ -62,18 +60,14 @@ export default function WorkoutModal({
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     // TODO: Replace this with a server action
     event.preventDefault();
-    const workouts = [...currentWorkouts];
 
     if (editWorkoutIndex < 0) {
       // If adding, just add new workout on to the end
-      workouts.push(formData);
-      // addToDB();
+      addToDB();
     } else {
-      // If editing, update workout at correct index
-      workouts[editWorkoutIndex] = formData;
+      // TODO: Implement update workout logic
+      // We should be able to just use the id of the workout for that
     }
-
-    setWorkouts(workouts);
     setModalOpen(false);
   };
 
@@ -191,6 +185,7 @@ export default function WorkoutModal({
         </h2>
         <form onSubmit={handleSubmit} className="flex flex-col">
           <Label htmlFor="date">Date:</Label>
+          {/* TODO: Make date a required field in the form */}
           <Input
             type="date"
             name="date"
