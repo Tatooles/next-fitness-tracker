@@ -27,8 +27,7 @@ export default function Home() {
     try {
       const response = await fetch("/api/workouts");
       const jsonData = await response.json();
-      console.log(jsonData.workouts);
-      setData(jsonData.workouts);
+      // setWorkouts(jsonData.workouts);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -139,9 +138,6 @@ export default function Home() {
         setModalOpen={setAddWorkoutModalOpen}
         editWorkoutIndex={editWorkoutIndex}
       ></WorkoutModal>
-      {data?.map((workout, index) => (
-        <div key={index}>{workout.name}</div>
-      ))}
     </div>
   );
 }
