@@ -10,7 +10,7 @@ import { relations } from "drizzle-orm";
 
 export const workouts = mysqlTable("workouts", {
   id: serial("id").primaryKey(),
-  userId: varchar("userId", { length: 256 }), // Length probably too long, could be changed
+  userId: varchar("userId", { length: 64 }),
   name: varchar("name", { length: 256 }),
   date: datetime("date"),
 });
@@ -21,10 +21,10 @@ export const workoutsRelations = relations(workouts, ({ many }) => ({
 
 export const exercises = mysqlTable("exercises", {
   id: serial("id").primaryKey(),
+  userId: varchar("userId", { length: 64 }),
   name: varchar("name", { length: 256 }),
   notes: text("notes"),
   workoutId: int("workout_id").notNull(),
-  // TODO: Probably add userId here too for future data/trend queries
 });
 
 export const exercisesRelations = relations(exercises, ({ one, many }) => ({
