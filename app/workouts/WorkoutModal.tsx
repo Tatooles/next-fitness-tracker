@@ -201,7 +201,7 @@ export default function WorkoutModal({
             className="mt-2 mb-4"
             onChange={handleChange}
           ></Input>
-          {/* At this point would like to give the user the ability to use a template rather than filling in the whole thing manually */}
+          {/* TODO: At this point would like to give the user the ability to use a template rather than filling in the whole thing manually */}
           <Label>Exercises:</Label>
           {formData.exercises.map((exercise, exerciseIndex) => (
             <div
