@@ -1,3 +1,4 @@
+import { auth } from "@clerk/nextjs/app-beta";
 import { db } from "@/db/drizzle";
 import { workouts } from "@/db/schema";
 import { exercises } from "@/db/schema";
@@ -6,10 +7,9 @@ import { sets } from "@/db/schema";
 export async function POST(request: Request) {
   const body = await request.json();
   const workout = body.workout;
+  const id = auth().userId;
   try {
-    // Use a transaction to put the entire large query in one place
     await db.transaction(async (tx) => {
-      console.log(workout);
       let date = workout.date;
       if (!date) {
         date = new Date();
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
       const workoutResult = await db.insert(workouts).values({
         name: workout.name,
         date: date,
-        userId: body.userId,
+        userId: id,
       });
       let workout_id = parseInt(workoutResult.insertId);
       // TODO: Is there a cleaner way aside from these loops?
@@ -26,6 +26,7 @@ export async function POST(request: Request) {
           workoutId: workout_id,
           name: exercise.name,
           notes: exercise.notes,
+          userId: id,
         });
         let exercise_id = parseInt(exerciseResult.insertId);
         for (const set of exercise.sets) {

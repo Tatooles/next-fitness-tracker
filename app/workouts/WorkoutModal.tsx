@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "@clerk/nextjs";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -18,8 +17,6 @@ export default function WorkoutModal({
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   editWorkoutIndex: number;
 }) {
-  const { isLoaded, userId, sessionId, getToken } = useAuth();
-
   // This state holds the current data in the form
   const [formData, setFormData] = useState<Workout>({
     date: "",
@@ -76,7 +73,6 @@ export default function WorkoutModal({
       method: "POST",
       body: JSON.stringify({
         workout: formData,
-        userId: userId,
       }),
     });
     // TODO: Need to fix the client errors
