@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "@clerk/nextjs";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -9,19 +8,15 @@ import { Workout } from "@/lib/types";
 
 export default function WorkoutModal({
   currentWorkouts,
-  setWorkouts,
   modalOpen,
   setModalOpen,
   editWorkoutIndex,
 }: {
   currentWorkouts: Workout[];
-  setWorkouts: React.Dispatch<React.SetStateAction<Workout[]>>;
   modalOpen: boolean;
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   editWorkoutIndex: number;
 }) {
-  const { isLoaded, userId, sessionId, getToken } = useAuth();
-
   // This state holds the current data in the form
   const [formData, setFormData] = useState<Workout>({
     date: "",
@@ -62,18 +57,14 @@ export default function WorkoutModal({
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     // TODO: Replace this with a server action
     event.preventDefault();
-    const workouts = [...currentWorkouts];
 
     if (editWorkoutIndex < 0) {
       // If adding, just add new workout on to the end
-      workouts.push(formData);
-      // addToDB();
+      addToDB();
     } else {
-      // If editing, update workout at correct index
-      workouts[editWorkoutIndex] = formData;
+      // TODO: Implement update workout logic
+      // We should be able to just use the id of the workout for that
     }
-
-    setWorkouts(workouts);
     setModalOpen(false);
   };
 
@@ -82,7 +73,6 @@ export default function WorkoutModal({
       method: "POST",
       body: JSON.stringify({
         workout: formData,
-        userId: userId,
       }),
     });
     // TODO: Need to fix the client errors
@@ -191,6 +181,7 @@ export default function WorkoutModal({
         </h2>
         <form onSubmit={handleSubmit} className="flex flex-col">
           <Label htmlFor="date">Date:</Label>
+          {/* TODO: Make date a required field in the form */}
           <Input
             type="date"
             name="date"
@@ -206,7 +197,7 @@ export default function WorkoutModal({
             className="mt-2 mb-4"
             onChange={handleChange}
           ></Input>
-          {/* At this point would like to give the user the ability to use a template rather than filling in the whole thing manually */}
+          {/* TODO: At this point would like to give the user the ability to use a template rather than filling in the whole thing manually */}
           <Label>Exercises:</Label>
           {formData.exercises.map((exercise, exerciseIndex) => (
             <div
