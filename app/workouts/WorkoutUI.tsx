@@ -1,10 +1,8 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import WorkoutModal from "./WorkoutModal";
 import Workouts from "./Workouts";
-import { Workout } from "@/lib/types";
-import { workouts } from "@/db/schema";
 
 export default function WorkoutUI({ workouts }: { workouts: any }) {
   const [addWorkoutModalOpen, setAddWorkoutModalOpen] = useState(false);
@@ -34,7 +32,7 @@ export default function WorkoutUI({ workouts }: { workouts: any }) {
         currentWorkouts={workouts}
         modalOpen={addWorkoutModalOpen}
         setModalOpen={setAddWorkoutModalOpen}
-        editWorkoutIndex={editWorkoutIndex}
+        editWorkoutIndex={editWorkoutIndex} // TODO: Disable editing for initial release
       ></WorkoutModal>
     </div>
   );
