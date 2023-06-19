@@ -16,7 +16,7 @@ export default function Sidebar({
     >
       <ul className="p-5">
         <li onClick={() => setIsOpen(false)} className="mb-5 text-xl">
-          <Link href="/home">Home</Link>
+          <Link href="/">Home</Link>
         </li>
         <li onClick={() => setIsOpen(false)} className="mb-5 text-xl">
           <Link href="/workouts">Workouts</Link>
