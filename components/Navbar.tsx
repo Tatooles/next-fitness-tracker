@@ -1,8 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { UserButton } from "@clerk/nextjs/app-beta";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserButton } from "@clerk/nextjs";
 import Sidebar from "./Sidebar";
 
 export default function Navbar() {

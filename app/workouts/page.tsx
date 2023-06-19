@@ -13,6 +13,7 @@ async function getWorkouts() {
       },
     },
   });
+  // Might have to stringify and parse so we don't get that date error
   return data;
 }
 
