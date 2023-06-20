@@ -27,9 +27,9 @@ export default function Navbar() {
           <Link href="/">
             <div className="flex items-center p-5 text-slate-700">Logo</div>
           </Link>
-          <Link className="p-5" href="/profile">
+          <div className="p-5">
             <UserButton></UserButton>
-          </Link>
+          </div>
         </nav>
       </header>
     </>
