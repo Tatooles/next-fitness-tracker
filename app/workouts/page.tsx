@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/app-beta";
+import { auth } from "@clerk/nextjs";
 import { db } from "@/db/drizzle";
 import WorkoutUI from "./WorkoutUI";
 async function getWorkouts() {

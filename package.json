@@ -12,7 +12,7 @@
     "migrations:drop": "drizzle-kit drop --config=drizzle.config.ts"
   },
   "dependencies": {
-    "@clerk/nextjs": "^4.16.4",
+    "@clerk/nextjs": "^4.21.3",
     "@planetscale/database": "^1.7.0",
     "@radix-ui/react-accordion": "^1.1.1",
     "@radix-ui/react-avatar": "^1.0.2",
