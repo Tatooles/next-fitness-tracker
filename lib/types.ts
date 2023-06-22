@@ -1,17 +1,24 @@
 export interface Workout {
-  date: string;
+  id: number;
   name: string;
+  userId: string | null;
+  date: Date;
   exercises: Exercise[];
 }
 
 // Reps and sets are strings because they can be a range
 export interface Exercise {
-  sets: Set[];
+  id: number;
   name: string;
+  userId: string | null;
   notes: string;
+  workoutId: number;
+  sets: Set[];
 }
 
 export interface Set {
+  id: number;
   reps: string;
   weight: string;
+  exerciseId: number;
 }

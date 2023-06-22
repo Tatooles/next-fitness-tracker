@@ -14,8 +14,10 @@ export default function Workouts({
   workouts: Workout[];
   editWorkout: (index: number) => void;
 }) {
-  const getDate = (date: string) => {
-    return new Date(date).toLocaleDateString();
+  const getDate = (date: Date | null) => {
+    if (date) {
+      return new Date(date).toLocaleDateString();
+    }
   };
 
   const deleteWorkout = (workout: Workout) => {

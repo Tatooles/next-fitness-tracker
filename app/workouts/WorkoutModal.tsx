@@ -19,11 +19,16 @@ export default function WorkoutModal({
 }) {
   // This state holds the current data in the form
   const [formData, setFormData] = useState<Workout>({
-    date: "",
+    id: 0,
+    userId: "",
+    date: new Date(),
     name: "",
     exercises: [
       {
-        sets: [{ reps: "", weight: "" }],
+        id: 0,
+        userId: "",
+        workoutId: 0,
+        sets: [{ id: 0, exerciseId: 0, reps: "", weight: "" }],
         name: "",
         notes: "",
       },
@@ -38,10 +43,15 @@ export default function WorkoutModal({
     if (!modalOpen) {
       // Clear modal on close
       setFormData({
-        date: "",
+        id: 0,
+        userId: "",
+        date: new Date(),
         name: "",
         exercises: [
           {
+            id: 0,
+            userId: "",
+            workoutId: 0,
             sets: [],
             name: "",
             notes: "",
@@ -69,15 +79,13 @@ export default function WorkoutModal({
   };
 
   const addToDB = async () => {
+    console.log(formData);
     const response = await fetch("/api/workouts", {
       method: "POST",
       body: JSON.stringify({
         workout: formData,
       }),
     });
-    // TODO: Need to fix the client errors
-
-    const data = await response.json();
     // TODO: Add error handling
   };
 
@@ -86,6 +94,12 @@ export default function WorkoutModal({
       ...formData,
       [event.target.name]: event.target.value,
     });
+  };
+
+  const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedDate = new Date(event.target.value);
+    console.log(selectedDate);
+    setFormData({ ...formData, date: selectedDate });
   };
 
   const handleExerciseNameChange = (
@@ -135,6 +149,9 @@ export default function WorkoutModal({
   const handleAddExercise = () => {
     const data = { ...formData };
     data.exercises.push({
+      id: 0,
+      userId: "",
+      workoutId: 0,
       name: "",
       sets: [],
       notes: "",
@@ -145,6 +162,8 @@ export default function WorkoutModal({
   const handleAddSet = (exerciseIndex: number) => {
     const data = { ...formData };
     data.exercises[exerciseIndex].sets.push({
+      id: 0,
+      exerciseId: 0,
       reps: "",
       weight: "",
     });
@@ -185,8 +204,8 @@ export default function WorkoutModal({
           <Input
             type="date"
             name="date"
-            onChange={handleChange}
-            value={formData.date}
+            onChange={handleDateChange}
+            value={formData.date.toISOString().split("T")[0]}
             className="mt-2 mb-4 w-36"
           ></Input>
           <Label htmlFor="name">Workout Name:</Label>

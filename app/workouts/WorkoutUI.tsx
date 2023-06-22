@@ -3,8 +3,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import WorkoutModal from "./WorkoutModal";
 import Workouts from "./Workouts";
+import { Workout } from "@/lib/types";
 
-export default function WorkoutUI({ workouts }: { workouts: any }) {
+export default function WorkoutUI({ workouts }: { workouts: Workout[] }) {
   const [addWorkoutModalOpen, setAddWorkoutModalOpen] = useState(false);
 
   // Index for the workout currently being edited in the edit modal
