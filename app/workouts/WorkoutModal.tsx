@@ -79,7 +79,6 @@ export default function WorkoutModal({
   };
 
   const addToDB = async () => {
-    console.log(formData);
     const response = await fetch("/api/workouts", {
       method: "POST",
       body: JSON.stringify({
@@ -98,7 +97,6 @@ export default function WorkoutModal({
 
   const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedDate = new Date(event.target.value);
-    console.log(selectedDate);
     setFormData({ ...formData, date: selectedDate });
   };
 

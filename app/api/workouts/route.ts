@@ -11,14 +11,9 @@ export async function POST(request: Request) {
   const id = auth().userId;
   try {
     await db.transaction(async (tx) => {
-      let date = workout.date;
-      console.log(date, typeof date);
-      if (!date) {
-        date = new Date();
-      }
       const workoutResult = await db.insert(workouts).values({
         name: workout.name,
-        date: date,
+        date: new Date(workout.date),
         userId: id,
       });
       let workout_id = parseInt(workoutResult.insertId);
