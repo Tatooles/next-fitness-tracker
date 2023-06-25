@@ -20,10 +20,10 @@ export default function Workouts({
     }
   };
 
-  const deleteWorkout = (workout: Workout) => {
-    console.log("Deleting workout", workout.name);
-    // TODO: use db workout object or add id to the current workout object
-    // Should probably try to use the db object
+  const deleteWorkout = async (id: number) => {
+    await fetch(`/api/workouts/${id}`, {
+      method: "DELETE",
+    });
   };
 
   return (
@@ -37,7 +37,7 @@ export default function Workouts({
             <div className="flex justify-between">
               <div className="p-2">{getDate(workout.date)}</div>
               <Button
-                onClick={() => deleteWorkout(workout)}
+                onClick={() => deleteWorkout(workout.id)}
                 className="py-1 px-2"
                 variant="destructive"
               >
