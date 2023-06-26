@@ -1,3 +1,4 @@
+import { useRouter } from "next/navigation";
 import {
   Accordion,
   AccordionContent,
@@ -14,6 +15,7 @@ export default function Workouts({
   workouts: Workout[];
   editWorkout: (index: number) => void;
 }) {
+  const router = useRouter();
   const getDate = (date: Date | null) => {
     if (date) {
       return new Date(date).toLocaleDateString();
@@ -24,6 +26,7 @@ export default function Workouts({
     await fetch(`/api/workouts/${id}`, {
       method: "DELETE",
     });
+    router.refresh();
   };
 
   return (

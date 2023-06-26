@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -17,6 +18,7 @@ export default function WorkoutModal({
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   editWorkoutIndex: number;
 }) {
+  const router = useRouter();
   // This state holds the current data in the form
   const [formData, setFormData] = useState<Workout>({
     id: 0,
@@ -85,6 +87,7 @@ export default function WorkoutModal({
         workout: formData,
       }),
     });
+    router.refresh();
     // TODO: Add error handling
   };
 
