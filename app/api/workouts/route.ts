@@ -3,20 +3,17 @@ import { db } from "@/db/drizzle";
 import { workouts } from "@/db/schema";
 import { exercises } from "@/db/schema";
 import { sets } from "@/db/schema";
+import { Workout } from "@/lib/types";
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const workout = body.workout;
+  const workout = body.workout as Workout;
   const id = auth().userId;
   try {
     await db.transaction(async (tx) => {
-      let date = workout.date;
-      if (!date) {
-        date = new Date();
-      }
       const workoutResult = await db.insert(workouts).values({
         name: workout.name,
-        date: date,
+        date: new Date(workout.date),
         userId: id,
       });
       let workout_id = parseInt(workoutResult.insertId);

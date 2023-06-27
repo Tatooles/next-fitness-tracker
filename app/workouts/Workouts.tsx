@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Accordion,
   AccordionContent,
@@ -5,6 +7,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import Modal from "@/components/Modal";
 import { Workout, Exercise, Set } from "@/lib/types";
 
 export default function Workouts({
@@ -14,14 +17,24 @@ export default function Workouts({
   workouts: Workout[];
   editWorkout: (index: number) => void;
 }) {
-  const getDate = (date: string) => {
-    return new Date(date).toLocaleDateString();
+  const router = useRouter();
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [workoutToDelete, setWorkoutToDelete] = useState(-1);
+
+  const getDate = (date: Date | null) => {
+    if (date) {
+      return new Date(date).toLocaleDateString();
+    }
   };
 
-  const deleteWorkout = (workout: Workout) => {
-    console.log("Deleting workout", workout.name);
-    // TODO: use db workout object or add id to the current workout object
-    // Should probably try to use the db object
+  const deleteWorkout = async () => {
+    await fetch(`/api/workouts/${workoutToDelete}`, {
+      method: "DELETE",
+    });
+    setWorkoutToDelete(-1);
+    setModalOpen(false);
+    router.refresh();
   };
 
   return (
@@ -31,11 +44,13 @@ export default function Workouts({
           <AccordionTrigger>{workout.name}</AccordionTrigger>
           <AccordionContent>
             {/* <AccordionContent onClick={() => editWorkout(index)}> */}
-            {/* <h3 className="text-md p-2 text-left">{getDate(workout.date)}</h3> */}
             <div className="flex justify-between">
               <div className="p-2">{getDate(workout.date)}</div>
               <Button
-                onClick={() => deleteWorkout(workout)}
+                onClick={() => {
+                  setModalOpen(true);
+                  setWorkoutToDelete(workout.id);
+                }}
                 className="py-1 px-2"
                 variant="destructive"
               >
@@ -50,6 +65,19 @@ export default function Workouts({
           </AccordionContent>
         </AccordionItem>
       ))}
+      <Modal isOpen={modalOpen} handleClose={() => setModalOpen(false)}>
+        <div className="fixed top-1/3 left-1/2 z-10 max-h-[80%] w-56 translate-x-[-50%] overflow-scroll rounded-lg bg-white p-5 text-center">
+          Delete workout?
+          <div className="mt-4 flex justify-around">
+            <Button variant="outline" onClick={() => setModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={deleteWorkout}>
+              Delete
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </Accordion>
   );
 }
