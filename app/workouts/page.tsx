@@ -20,7 +20,6 @@ async function getWorkouts() {
   } else {
     return [];
   }
-  // Might have to stringify and parse so we don't get that date error
 }
 
 export default async function WorkoutsPage() {

@@ -74,8 +74,11 @@ export default function WorkoutModal({
       // If adding, just add new workout on to the end
       addToDB();
     } else {
-      // TODO: Implement update workout logic
-      // We should be able to just use the id of the workout for that
+      /**
+       * TODO: Implement update workout logic
+       * We have the id of the workout
+       * Need some sort of algorithm to properly update the DB
+       */
     }
     setModalOpen(false);
   };
