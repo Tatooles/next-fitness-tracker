@@ -28,7 +28,6 @@ export default function WorkoutModal({
     exercises: [
       {
         id: 0,
-        userId: "",
         workoutId: 0,
         sets: [{ id: 0, exerciseId: 0, reps: "", weight: "" }],
         name: "",
@@ -52,7 +51,6 @@ export default function WorkoutModal({
         exercises: [
           {
             id: 0,
-            userId: "",
             workoutId: 0,
             sets: [],
             name: "",
@@ -154,7 +152,6 @@ export default function WorkoutModal({
     const data = { ...formData };
     data.exercises.push({
       id: 0,
-      userId: "",
       workoutId: 0,
       name: "",
       sets: [],

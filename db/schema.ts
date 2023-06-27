@@ -21,7 +21,6 @@ export const workoutsRelations = relations(workouts, ({ many }) => ({
 
 export const exercises = mysqlTable("exercises", {
   id: serial("id").primaryKey(),
-  userId: varchar("userId", { length: 64 }),
   name: varchar("name", { length: 256 }).notNull(),
   notes: text("notes").notNull(),
   workoutId: int("workout_id").notNull(),

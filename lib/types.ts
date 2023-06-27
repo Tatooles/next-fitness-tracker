@@ -10,7 +10,6 @@ export interface Workout {
 export interface Exercise {
   id: number;
   name: string;
-  userId: string | null;
   notes: string;
   workoutId: number;
   sets: Set[];
