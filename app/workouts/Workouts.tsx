@@ -52,24 +52,23 @@ export default function Workouts({
         <AccordionItem key={index} value={`item-${index}`}>
           <AccordionTrigger>{workout.name}</AccordionTrigger>
           <AccordionContent>
-            {/* <AccordionContent onClick={() => editWorkout(index)}> */}
-            <div className="flex justify-between">
-              <div className="p-2">{getDate(workout.date)}</div>
-              <Button
-                onClick={() => {
-                  setModalOpen(true);
-                  setWorkoutToDelete(workout.id);
-                }}
-                className="py-1 px-2"
-                variant="destructive"
-              >
-                Delete
-              </Button>
-            </div>
-            <div className="divide-y-2 px-2">
-              {workout.exercises.map((exercise: Exercise, index2) => (
-                <Exercise exercise={exercise} key={index2}></Exercise>
-              ))}
+            <Button
+              onClick={() => {
+                setModalOpen(true);
+                setWorkoutToDelete(workout.id);
+              }}
+              className="absolute right-5 py-1 px-2"
+              variant="destructive"
+            >
+              Delete
+            </Button>
+            <div onClick={() => editWorkout(index)}>
+              <div className="p-2 text-left">{getDate(workout.date)}</div>
+              <div className="divide-y-2 px-2">
+                {workout.exercises.map((exercise: Exercise, index2) => (
+                  <Exercise exercise={exercise} key={index2}></Exercise>
+                ))}
+              </div>
             </div>
           </AccordionContent>
         </AccordionItem>
