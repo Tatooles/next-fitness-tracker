@@ -82,14 +82,22 @@ export default function WorkoutModal({
   };
 
   const addToDB = async () => {
-    const response = await fetch("/api/workouts", {
+    await fetch("/api/workouts", {
       method: "POST",
       body: JSON.stringify({
         workout: formData,
       }),
-    });
-    router.refresh();
-    // TODO: Add error handling
+    })
+      .then((response) => {
+        if (response.ok) {
+          router.refresh();
+        } else {
+          console.log("Failed to add exercise.");
+        }
+      })
+      .catch((error) => {
+        console.error("An error occurred while adding exercise:", error);
+      });
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

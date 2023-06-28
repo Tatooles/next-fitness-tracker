@@ -31,10 +31,19 @@ export default function Workouts({
   const deleteWorkout = async () => {
     await fetch(`/api/workouts/${workoutToDelete}`, {
       method: "DELETE",
-    });
-    setWorkoutToDelete(-1);
-    setModalOpen(false);
-    router.refresh();
+    })
+      .then((response) => {
+        if (response.ok) {
+          setWorkoutToDelete(-1);
+          setModalOpen(false);
+          router.refresh();
+        } else {
+          console.log("Failed to delete exercise.");
+        }
+      })
+      .catch((error) => {
+        console.error("An error occurred while deleting exercise:", error);
+      });
   };
 
   return (
