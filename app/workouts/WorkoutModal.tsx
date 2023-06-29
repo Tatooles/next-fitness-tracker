@@ -8,15 +8,13 @@ import Modal from "../../components/Modal";
 import { Workout } from "@/lib/types";
 
 export default function WorkoutModal({
-  currentWorkouts,
   modalOpen,
   setModalOpen,
-  editWorkoutIndex,
+  editWorkoutValue,
 }: {
-  currentWorkouts: Workout[];
   modalOpen: boolean;
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  editWorkoutIndex: number;
+  editWorkoutValue: Workout | undefined;
 }) {
   const router = useRouter();
   // This state holds the current data in the form
@@ -58,9 +56,9 @@ export default function WorkoutModal({
           },
         ],
       });
-    } else if (editWorkoutIndex != -1) {
+    } else if (editWorkoutValue) {
       // Pre fill if editing
-      setFormData(currentWorkouts[editWorkoutIndex]);
+      setFormData(editWorkoutValue);
     }
   }, [modalOpen]);
 
@@ -68,15 +66,23 @@ export default function WorkoutModal({
     // TODO: Replace this with a server action
     event.preventDefault();
 
-    if (editWorkoutIndex < 0) {
+    if (!editWorkoutValue) {
       // If adding, just add new workout on to the end
+      console.log("adding new workout");
       addToDB();
     } else {
+      console.log("editing exising workout");
       /**
        * TODO: Implement update workout logic
        * We have the id of the workout
        * Need some sort of algorithm to properly update the DB
        */
+      // Get the id
+      // Compare formdata to the workout that was passed in via props
+      // If different
+      // Call delete to delete the workout with that id
+      // call addToDB to add the new workout
+      // Else just do nothing
     }
     setModalOpen(false);
   };

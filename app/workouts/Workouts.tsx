@@ -15,7 +15,7 @@ export default function Workouts({
   editWorkout,
 }: {
   workouts: Workout[];
-  editWorkout: (index: number) => void;
+  editWorkout: (workout: Workout) => void;
 }) {
   const router = useRouter();
 
@@ -62,7 +62,7 @@ export default function Workouts({
             >
               Delete
             </Button>
-            <div onClick={() => editWorkout(index)}>
+            <div onClick={() => editWorkout(workout)}>
               <div className="p-2 text-left">{getDate(workout.date)}</div>
               <div className="divide-y-2 px-2">
                 {workout.exercises.map((exercise: Exercise, index2) => (
@@ -77,7 +77,13 @@ export default function Workouts({
         <div className="fixed top-1/3 left-1/2 z-10 max-h-[80%] w-56 translate-x-[-50%] overflow-scroll rounded-lg bg-white p-5 text-center">
           Delete workout?
           <div className="mt-4 flex justify-around">
-            <Button variant="outline" onClick={() => setModalOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setModalOpen(false);
+                setWorkoutToDelete(-1);
+              }}
+            >
               Cancel
             </Button>
             <Button variant="destructive" onClick={deleteWorkout}>
