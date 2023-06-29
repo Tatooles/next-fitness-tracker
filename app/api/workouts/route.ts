@@ -23,7 +23,6 @@ export async function POST(request: Request) {
           workoutId: workout_id,
           name: exercise.name,
           notes: exercise.notes,
-          userId: id,
         });
         let exercise_id = parseInt(exerciseResult.insertId);
         for (const set of exercise.sets) {

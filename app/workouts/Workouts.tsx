@@ -15,7 +15,7 @@ export default function Workouts({
   editWorkout,
 }: {
   workouts: Workout[];
-  editWorkout: (index: number) => void;
+  editWorkout: (workout: Workout) => void;
 }) {
   const router = useRouter();
 
@@ -31,11 +31,23 @@ export default function Workouts({
   const deleteWorkout = async () => {
     await fetch(`/api/workouts/${workoutToDelete}`, {
       method: "DELETE",
-    });
-    setWorkoutToDelete(-1);
-    setModalOpen(false);
-    router.refresh();
+    })
+      .then((response) => {
+        if (response.ok) {
+          setWorkoutToDelete(-1);
+          setModalOpen(false);
+          router.refresh();
+        } else {
+          console.log("Failed to delete exercise.");
+        }
+      })
+      .catch((error) => {
+        console.error("An error occurred while deleting exercise:", error);
+      });
   };
+
+  // TODO: Probably want to reorder the page so the add button and most recent workout is at the top
+  workouts.sort((a, b) => a.date.getTime() - b.date.getTime());
 
   return (
     <Accordion type="single" collapsible className="mb-5">
@@ -43,24 +55,23 @@ export default function Workouts({
         <AccordionItem key={index} value={`item-${index}`}>
           <AccordionTrigger>{workout.name}</AccordionTrigger>
           <AccordionContent>
-            {/* <AccordionContent onClick={() => editWorkout(index)}> */}
-            <div className="flex justify-between">
-              <div className="p-2">{getDate(workout.date)}</div>
-              <Button
-                onClick={() => {
-                  setModalOpen(true);
-                  setWorkoutToDelete(workout.id);
-                }}
-                className="py-1 px-2"
-                variant="destructive"
-              >
-                Delete
-              </Button>
-            </div>
-            <div className="divide-y-2 px-2">
-              {workout.exercises.map((exercise: Exercise, index2) => (
-                <Exercise exercise={exercise} key={index2}></Exercise>
-              ))}
+            <Button
+              onClick={() => {
+                setModalOpen(true);
+                setWorkoutToDelete(workout.id);
+              }}
+              className="absolute right-5 py-1 px-2"
+              variant="destructive"
+            >
+              Delete
+            </Button>
+            <div onClick={() => editWorkout(workout)}>
+              <div className="p-2 text-left">{getDate(workout.date)}</div>
+              <div className="divide-y-2 px-2">
+                {workout.exercises.map((exercise: Exercise, index2) => (
+                  <Exercise exercise={exercise} key={index2}></Exercise>
+                ))}
+              </div>
             </div>
           </AccordionContent>
         </AccordionItem>
@@ -69,7 +80,13 @@ export default function Workouts({
         <div className="fixed top-1/3 left-1/2 z-10 max-h-[80%] w-56 translate-x-[-50%] overflow-scroll rounded-lg bg-white p-5 text-center">
           Delete workout?
           <div className="mt-4 flex justify-around">
-            <Button variant="outline" onClick={() => setModalOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setModalOpen(false);
+                setWorkoutToDelete(-1);
+              }}
+            >
               Cancel
             </Button>
             <Button variant="destructive" onClick={deleteWorkout}>

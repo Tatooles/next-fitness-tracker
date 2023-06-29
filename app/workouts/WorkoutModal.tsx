@@ -8,15 +8,13 @@ import Modal from "../../components/Modal";
 import { Workout } from "@/lib/types";
 
 export default function WorkoutModal({
-  currentWorkouts,
   modalOpen,
   setModalOpen,
-  editWorkoutIndex,
+  editWorkoutValue,
 }: {
-  currentWorkouts: Workout[];
   modalOpen: boolean;
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  editWorkoutIndex: number;
+  editWorkoutValue: Workout | undefined;
 }) {
   const router = useRouter();
   // This state holds the current data in the form
@@ -28,7 +26,6 @@ export default function WorkoutModal({
     exercises: [
       {
         id: 0,
-        userId: "",
         workoutId: 0,
         sets: [{ id: 0, exerciseId: 0, reps: "", weight: "" }],
         name: "",
@@ -52,7 +49,6 @@ export default function WorkoutModal({
         exercises: [
           {
             id: 0,
-            userId: "",
             workoutId: 0,
             sets: [],
             name: "",
@@ -60,38 +56,63 @@ export default function WorkoutModal({
           },
         ],
       });
-    } else if (editWorkoutIndex != -1) {
-      // Pre fill if editing
-      setFormData(currentWorkouts[editWorkoutIndex]);
+    } else if (editWorkoutValue) {
+      // Pre fill with a copy if editing
+      setFormData(structuredClone(editWorkoutValue));
     }
   }, [modalOpen]);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     // TODO: Replace this with a server action
     event.preventDefault();
 
-    if (editWorkoutIndex < 0) {
+    if (!editWorkoutValue) {
       // If adding, just add new workout on to the end
-      addToDB();
+      await addToDB();
+      router.refresh();
     } else {
-      /**
-       * TODO: Implement update workout logic
-       * We have the id of the workout
-       * Need some sort of algorithm to properly update the DB
-       */
+      // This is not ideal, user could delete and add back, updating the id, which would make the object unequal
+      // But it should be good enough for these purposes
+      if (JSON.stringify(editWorkoutValue) !== JSON.stringify(formData)) {
+        console.log("workouts are NOT the same!!");
+        // Call delete to delete the existing workout, then addToDB to add the new one
+        await Promise.all([deleteWorkout(editWorkoutValue.id), addToDB()]);
+        // TODO: Would be nice to have some sort of loading indicator because this can take a bit
+        router.refresh();
+      }
     }
     setModalOpen(false);
   };
 
   const addToDB = async () => {
-    const response = await fetch("/api/workouts", {
+    await fetch("/api/workouts", {
       method: "POST",
       body: JSON.stringify({
         workout: formData,
       }),
-    });
-    router.refresh();
-    // TODO: Add error handling
+    })
+      .then((response) => {
+        if (!response.ok) {
+          console.log("Failed to add exercise.");
+        }
+      })
+      .catch((error) => {
+        console.error("An error occurred while adding exercise:", error);
+      });
+  };
+
+  const deleteWorkout = async (id: number) => {
+    await fetch(`/api/workouts/${id}`, {
+      method: "DELETE",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          console.log("Failed to delete exercise.");
+        }
+      })
+      .catch((error) => {
+        console.error("An error occurred while deleting exercise:", error);
+      });
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -154,7 +175,6 @@ export default function WorkoutModal({
     const data = { ...formData };
     data.exercises.push({
       id: 0,
-      userId: "",
       workoutId: 0,
       name: "",
       sets: [],
