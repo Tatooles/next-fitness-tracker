@@ -57,32 +57,28 @@ export default function WorkoutModal({
         ],
       });
     } else if (editWorkoutValue) {
-      // Pre fill if editing
-      setFormData(editWorkoutValue);
+      // Pre fill with a copy if editing
+      setFormData(structuredClone(editWorkoutValue));
     }
   }, [modalOpen]);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     // TODO: Replace this with a server action
     event.preventDefault();
 
     if (!editWorkoutValue) {
       // If adding, just add new workout on to the end
-      console.log("adding new workout");
-      addToDB();
+      await addToDB();
+      router.refresh();
     } else {
-      console.log("editing exising workout");
-      /**
-       * TODO: Implement update workout logic
-       * We have the id of the workout
-       * Need some sort of algorithm to properly update the DB
-       */
-      // Get the id
-      // Compare formdata to the workout that was passed in via props
-      // If different
-      // Call delete to delete the workout with that id
-      // call addToDB to add the new workout
-      // Else just do nothing
+      // This is not ideal, user could delete and add back, updating the id, which would make the object unequal
+      // But it should be good enough for these purposes
+      if (JSON.stringify(editWorkoutValue) !== JSON.stringify(formData)) {
+        console.log("workouts are NOT the same!!");
+        // Call delete to delete the existing workout, then addToDB to add the new one
+        await Promise.all([deleteWorkout(editWorkoutValue.id), addToDB()]);
+        router.refresh();
+      }
     }
     setModalOpen(false);
   };
@@ -95,14 +91,26 @@ export default function WorkoutModal({
       }),
     })
       .then((response) => {
-        if (response.ok) {
-          router.refresh();
-        } else {
+        if (!response.ok) {
           console.log("Failed to add exercise.");
         }
       })
       .catch((error) => {
         console.error("An error occurred while adding exercise:", error);
+      });
+  };
+
+  const deleteWorkout = async (id: number) => {
+    await fetch(`/api/workouts/${id}`, {
+      method: "DELETE",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          console.log("Failed to delete exercise.");
+        }
+      })
+      .catch((error) => {
+        console.error("An error occurred while deleting exercise:", error);
       });
   };
 
