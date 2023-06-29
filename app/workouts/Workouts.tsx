@@ -46,6 +46,9 @@ export default function Workouts({
       });
   };
 
+  // TODO: Probably want to reorder the page so the add button and most recent workout is at the top
+  workouts.sort((a, b) => a.date.getTime() - b.date.getTime());
+
   return (
     <Accordion type="single" collapsible className="mb-5">
       {workouts.map((workout: Workout, index) => (

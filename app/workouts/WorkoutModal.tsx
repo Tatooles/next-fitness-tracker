@@ -77,6 +77,7 @@ export default function WorkoutModal({
         console.log("workouts are NOT the same!!");
         // Call delete to delete the existing workout, then addToDB to add the new one
         await Promise.all([deleteWorkout(editWorkoutValue.id), addToDB()]);
+        // TODO: Would be nice to have some sort of loading indicator because this can take a bit
         router.refresh();
       }
     }
