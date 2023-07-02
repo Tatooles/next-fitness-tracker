@@ -25,8 +25,8 @@ export default function WorkoutUI({ workouts }: { workouts: Workout[] }) {
   return (
     <div className="p-5 text-center">
       <h1 className="mb-5 text-3xl">Workouts</h1>
-      <Workouts workouts={workouts} editWorkout={editWorkout}></Workouts>
       <Button onClick={addWorkout}>Add a Workout</Button>
+      <Workouts workouts={workouts} editWorkout={editWorkout}></Workouts>
       <WorkoutModal
         modalOpen={addWorkoutModalOpen}
         setModalOpen={setAddWorkoutModalOpen}
