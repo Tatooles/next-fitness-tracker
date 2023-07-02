@@ -11,7 +11,9 @@ async function getWorkouts() {
       with: {
         exercises: {
           with: {
-            sets: true,
+            sets: {
+              orderBy: (sets, { asc }) => [asc(sets.id)],
+            },
           },
         },
       },
