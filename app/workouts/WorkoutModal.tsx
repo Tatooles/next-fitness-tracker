@@ -63,7 +63,7 @@ export default function WorkoutModal({
   }, [modalOpen]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    // TODO: Replace this with a server action
+    // TODO: Replace this function with a server action
     event.preventDefault();
 
     if (!editWorkoutValue) {
@@ -71,10 +71,7 @@ export default function WorkoutModal({
       await addToDB();
       router.refresh();
     } else {
-      // This is not ideal, user could delete and add back, updating the id, which would make the object unequal
-      // But it should be good enough for these purposes
       if (JSON.stringify(editWorkoutValue) !== JSON.stringify(formData)) {
-        console.log("workouts are NOT the same!!");
         // Call delete to delete the existing workout, then addToDB to add the new one
         await Promise.all([deleteWorkout(editWorkoutValue.id), addToDB()]);
         // TODO: Would be nice to have some sort of loading indicator because this can take a bit
