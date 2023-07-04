@@ -69,7 +69,7 @@ export default function Workouts({
               <div className="p-2 text-left">{getDate(workout.date)}</div>
               <div className="divide-y-2 px-2">
                 {workout.exercises.map((exercise: Exercise) => (
-                  <div className="p-2">
+                  <div className="p-2" key={exercise.id}>
                     <h3 className="text-lg font-bold">{exercise.name}</h3>
                     <ExerciseUI exercise={exercise}></ExerciseUI>
                   </div>

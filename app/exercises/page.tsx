@@ -44,6 +44,7 @@ export default async function ExercisesPage() {
           <div key={index}>
             {workout.exercises.map((exercise) => (
               <ExerciseItem
+                key={exercise.id}
                 date={workout.date}
                 exercise={exercise}
               ></ExerciseItem>
