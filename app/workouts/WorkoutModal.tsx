@@ -227,14 +227,14 @@ export default function WorkoutModal({
             name="date"
             onChange={handleDateChange}
             value={formData.date.toISOString().split("T")[0]}
-            className="mt-2 mb-4 w-36"
+            className="mt-2 mb-4 w-36 text-[16px]"
           ></Input>
           <Label htmlFor="name">Workout Name:</Label>
           <Input
             type="text"
             name="name"
             value={formData.name}
-            className="mt-2 mb-4"
+            className="mt-2 mb-4 text-[16px]"
             onChange={handleChange}
           ></Input>
           {/* TODO: At this point would like to give the user the ability to use a template rather than filling in the whole thing manually */}
@@ -251,7 +251,7 @@ export default function WorkoutModal({
                   placeholder="Exercise Name"
                   name="exerciseName"
                   value={exercise.name}
-                  className="w-48"
+                  className="w-48 text-[16px]"
                   onChange={(event) =>
                     handleExerciseNameChange(exerciseIndex, event)
                   }
@@ -277,7 +277,7 @@ export default function WorkoutModal({
                     placeholder="Reps"
                     name="reps"
                     value={set.reps}
-                    className="w-16"
+                    className="w-16 text-[16px]"
                     onChange={(event) =>
                       handleRepsChange(exerciseIndex, setIndex, event)
                     }
@@ -288,7 +288,7 @@ export default function WorkoutModal({
                     placeholder="Weight"
                     name="weight"
                     value={set.weight}
-                    className="w-20"
+                    className="w-20 text-[16px]"
                     onChange={(event) =>
                       handleWeightChange(exerciseIndex, setIndex, event)
                     }
@@ -321,6 +321,7 @@ export default function WorkoutModal({
                 placeholder="Notes"
                 name="notes"
                 value={exercise.notes}
+                className="text-[16px]"
                 onChange={(event) =>
                   handleExerciseNotesChange(exerciseIndex, event)
                 }
