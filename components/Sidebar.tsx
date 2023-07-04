@@ -22,6 +22,9 @@ export default function Sidebar({
           <Link href="/workouts">Workouts</Link>
         </li>
         <li onClick={() => setIsOpen(false)} className="mb-5 text-xl">
+          <Link href="/exercises">Exercises</Link>
+        </li>
+        <li onClick={() => setIsOpen(false)} className="mb-5 text-xl">
           <Link href="/records">Records</Link>
         </li>
         <li onClick={() => setIsOpen(false)} className="mb-5 text-xl">
