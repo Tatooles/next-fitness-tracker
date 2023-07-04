@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import Modal from "@/components/Modal";
+import ExerciseUI from "@/components/ExerciseUI";
 import { Workout, Exercise, Set } from "@/lib/types";
 
 export default function Workouts({
@@ -67,8 +68,11 @@ export default function Workouts({
             <div onClick={() => editWorkout(workout)}>
               <div className="p-2 text-left">{getDate(workout.date)}</div>
               <div className="divide-y-2 px-2">
-                {workout.exercises.map((exercise: Exercise, index2) => (
-                  <Exercise exercise={exercise} key={index2}></Exercise>
+                {workout.exercises.map((exercise: Exercise) => (
+                  <div className="p-2">
+                    <h3 className="text-lg font-bold">{exercise.name}</h3>
+                    <ExerciseUI exercise={exercise}></ExerciseUI>
+                  </div>
                 ))}
               </div>
             </div>
@@ -95,36 +99,5 @@ export default function Workouts({
         </div>
       </Modal>
     </Accordion>
-  );
-}
-
-function Exercise({ exercise }: { exercise: Exercise }) {
-  return (
-    <div className="p-2 text-left">
-      <h3 className="self-center text-center text-lg font-bold">
-        {exercise.name}
-      </h3>
-
-      {exercise.sets.length > 0 && (
-        // Could have global state (set in settings) to determine if this
-        // has other columns like RPE, would need changes in the input modal too
-        <div className="flex justify-around">
-          <div>Reps</div>
-          <div>Weight</div>
-        </div>
-      )}
-      {exercise.sets.map(
-        (set: Set, index3) =>
-          (set.reps || set.weight) && (
-            <div key={index3} className="flex justify-around">
-              <div>{set.reps}</div>
-              <div>{set.weight}</div>
-            </div>
-          )
-      )}
-      {exercise.notes && (
-        <p className="mt-2 rounded-md bg-slate-300 p-2">{exercise.notes}</p>
-      )}
-    </div>
   );
 }

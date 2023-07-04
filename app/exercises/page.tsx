@@ -1,16 +1,13 @@
 import { auth } from "@clerk/nextjs";
 import { db } from "@/db/drizzle";
-import { sql } from "drizzle-orm";
-import { eq } from "drizzle-orm";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import ExerciseUI from "@/components/ExerciseUI";
 import { Exercise } from "@/lib/types";
-import { exercises, sets, workouts } from "@/db/schema";
-import { Set } from "@/lib/types";
 
 async function getExercises() {
   const userId = auth().userId;
@@ -59,35 +56,14 @@ export default async function ExercisesPage() {
 }
 
 function ExerciseItem({ date, exercise }: { date: Date; exercise: Exercise }) {
-  console.log(date, exercise);
   return (
     <AccordionItem key={exercise.id} value={`exercise-${exercise.id}`}>
       <AccordionTrigger>
+        {/* TODO: Would like this text to cut off with ellipsis rather than wrap */}
         {date.toLocaleDateString()} - {exercise.name}
       </AccordionTrigger>
       <AccordionContent>
-        <div className="p-2 text-left">
-          {exercise.sets.length > 0 && (
-            // Could have global state (set in settings) to determine if this
-            // has other columns like RPE, would need changes in the input modal too
-            <div className="flex justify-around">
-              <div>Reps</div>
-              <div>Weight</div>
-            </div>
-          )}
-          {exercise.sets.map(
-            (set: Set, index3) =>
-              (set.reps || set.weight) && (
-                <div key={index3} className="flex justify-around">
-                  <div>{set.reps}</div>
-                  <div>{set.weight}</div>
-                </div>
-              )
-          )}
-          {exercise.notes && (
-            <p className="mt-2 rounded-md bg-slate-300 p-2">{exercise.notes}</p>
-          )}
-        </div>
+        <ExerciseUI exercise={exercise}></ExerciseUI>
       </AccordionContent>
     </AccordionItem>
   );
