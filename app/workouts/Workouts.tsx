@@ -20,7 +20,8 @@ export default function Workouts({
 }) {
   const router = useRouter();
 
-  const [modalOpen, setModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [duplicateModalOpen, setDuplicateModalOpen] = useState(false);
   const [workoutToDelete, setWorkoutToDelete] = useState(-1);
 
   const getDate = (date: Date | null) => {
@@ -36,7 +37,7 @@ export default function Workouts({
       .then((response) => {
         if (response.ok) {
           setWorkoutToDelete(-1);
-          setModalOpen(false);
+          setDeleteModalOpen(false);
           router.refresh();
         } else {
           console.log("Failed to delete exercise.");
@@ -47,6 +48,13 @@ export default function Workouts({
       });
   };
 
+  const duplicateWorkout = () => {
+    // Prefill modal with this workout, but with the sets and notes removed
+    // Ideally would have this in the edit screen, but that presents the issue of
+    // potentially having two modals on the screen at once
+    console.log("duplicating workout");
+  };
+
   workouts.sort((a, b) => b.date.getTime() - a.date.getTime());
 
   return (
@@ -55,17 +63,27 @@ export default function Workouts({
         <AccordionItem key={index} value={`item-${index}`}>
           <AccordionTrigger>{workout.name}</AccordionTrigger>
           <AccordionContent>
-            <Button
-              onClick={() => {
-                setModalOpen(true);
-                setWorkoutToDelete(workout.id);
-              }}
-              className="absolute right-5 py-1 px-2"
-              variant="destructive"
-            >
-              Delete
-            </Button>
-            <div onClick={() => editWorkout(workout)}>
+            <div className="text-right">
+              <Button
+                onClick={() => {
+                  setDuplicateModalOpen(true);
+                }}
+                className="mr-4 bg-blue-600 py-1 px-2"
+              >
+                Duplicate
+              </Button>
+              <Button
+                onClick={() => {
+                  setDeleteModalOpen(true);
+                  setWorkoutToDelete(workout.id);
+                }}
+                className="py-1 px-2"
+                variant="destructive"
+              >
+                Delete
+              </Button>
+            </div>
+            <div onClick={() => editWorkout(workout)} className="text-center">
               <div className="p-2 text-left">{getDate(workout.date)}</div>
               <div className="divide-y-2 px-2">
                 {workout.exercises.map((exercise: Exercise) => (
@@ -79,14 +97,17 @@ export default function Workouts({
           </AccordionContent>
         </AccordionItem>
       ))}
-      <Modal isOpen={modalOpen} handleClose={() => setModalOpen(false)}>
+      <Modal
+        isOpen={deleteModalOpen}
+        handleClose={() => setDeleteModalOpen(false)}
+      >
         <div className="fixed top-1/3 left-1/2 z-10 max-h-[80%] w-56 translate-x-[-50%] overflow-scroll rounded-lg bg-white p-5 text-center">
           Delete workout?
           <div className="mt-4 flex justify-around">
             <Button
               variant="outline"
               onClick={() => {
-                setModalOpen(false);
+                setDeleteModalOpen(false);
                 setWorkoutToDelete(-1);
               }}
             >
@@ -94,6 +115,28 @@ export default function Workouts({
             </Button>
             <Button variant="destructive" onClick={deleteWorkout}>
               Delete
+            </Button>
+          </div>
+        </div>
+      </Modal>
+      <Modal
+        isOpen={duplicateModalOpen}
+        handleClose={() => setDuplicateModalOpen(false)}
+      >
+        <div className="fixed top-1/3 left-1/2 z-10 max-h-[80%] w-56 translate-x-[-50%] overflow-scroll rounded-lg bg-white p-5 text-center">
+          Duplicate Workout?
+          <div className="mt-4 flex justify-around">
+            {/* TODO: Add description text here */}
+            <Button
+              variant="outline"
+              onClick={() => {
+                setDuplicateModalOpen(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button className="bg-blue-600 " onClick={duplicateWorkout}>
+              Duplicate
             </Button>
           </div>
         </div>
