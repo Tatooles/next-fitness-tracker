@@ -217,7 +217,7 @@ export default function WorkoutModal({
     <Modal isOpen={modalOpen} handleClose={() => setModalOpen(false)}>
       <div className="fixed top-20 left-1/2 z-10 max-h-[80%] w-4/5 translate-x-[-50%] translate-y-[-10%] overflow-scroll rounded-lg bg-white p-5">
         <h2 className="mb-3 text-center text-3xl font-medium leading-none">
-          Add Workout
+          {editWorkoutValue ? "Edit Workout" : "Create Workout"}
         </h2>
         <form onSubmit={handleSubmit} className="flex flex-col">
           <Label htmlFor="date">Date:</Label>
@@ -227,7 +227,7 @@ export default function WorkoutModal({
             name="date"
             onChange={handleDateChange}
             value={formData.date.toISOString().split("T")[0]}
-            className="mt-2 mb-4 w-36 text-[16px]"
+            className="mt-2 mb-4 w-40 text-[16px]"
           ></Input>
           <Label htmlFor="name">Workout Name:</Label>
           <Input
