@@ -24,9 +24,6 @@ export default function Navbar() {
               <div className="h-[2px] w-7 bg-slate-700 "></div>
             </div>
           </div>
-          <Link href="/">
-            <div className="flex items-center p-5 text-slate-700">Logo</div>
-          </Link>
           <div className="p-5">
             <UserButton></UserButton>
           </div>

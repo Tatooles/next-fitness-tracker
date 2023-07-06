@@ -23,12 +23,6 @@ export default function Workouts({
   const [modalOpen, setModalOpen] = useState(false);
   const [workoutToDelete, setWorkoutToDelete] = useState(-1);
 
-  const getDate = (date: Date | null) => {
-    if (date) {
-      return new Date(date).toLocaleDateString();
-    }
-  };
-
   const deleteWorkout = async () => {
     await fetch(`/api/workouts/${workoutToDelete}`, {
       method: "DELETE",
@@ -66,7 +60,9 @@ export default function Workouts({
               Delete
             </Button>
             <div onClick={() => editWorkout(workout)}>
-              <div className="p-2 text-left">{getDate(workout.date)}</div>
+              <div className="p-2 text-left">
+                {workout.date.toLocaleDateString()}
+              </div>
               <div className="divide-y-2 px-2">
                 {workout.exercises.map((exercise: Exercise) => (
                   <div className="p-2" key={exercise.id}>
