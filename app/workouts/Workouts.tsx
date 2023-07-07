@@ -23,6 +23,7 @@ export default function Workouts({
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [duplicateModalOpen, setDuplicateModalOpen] = useState(false);
   const [workoutToDelete, setWorkoutToDelete] = useState(-1);
+  const [workoutToDuplicate, setWorkoutToDuplicate] = useState(-1);
 
   const getDate = (date: Date | null) => {
     if (date) {
@@ -49,10 +50,26 @@ export default function Workouts({
   };
 
   const duplicateWorkout = () => {
-    // Prefill modal with this workout, but with the sets and notes removed
-    // Ideally would have this in the edit screen, but that presents the issue of
-    // potentially having two modals on the screen at once
-    console.log("duplicating workout");
+    // May be faster to just pass the entire workout to state rather than finding it
+    const workout = workouts.find(
+      (workout) => workout.id === workoutToDuplicate
+    );
+    if (workout) {
+      const workoutCopy = structuredClone(workout);
+      // Set id to -2 so submit logic knows it's duplicate
+      workoutCopy.id = -2;
+      workoutCopy.date = new Date();
+      workoutCopy.name = `Copy of ${workout.name}`;
+      // Clear all weight and notes for new workout
+      for (const exercise of workoutCopy.exercises) {
+        exercise.notes = "";
+        for (const set of exercise.sets) {
+          set.weight = "";
+        }
+      }
+      setDuplicateModalOpen(false);
+      editWorkout(workoutCopy);
+    }
   };
 
   workouts.sort((a, b) => b.date.getTime() - a.date.getTime());
@@ -67,6 +84,7 @@ export default function Workouts({
               <Button
                 onClick={() => {
                   setDuplicateModalOpen(true);
+                  setWorkoutToDuplicate(workout.id);
                 }}
                 className="mr-4 bg-blue-600 py-1 px-2"
               >
@@ -82,6 +100,10 @@ export default function Workouts({
               >
                 Delete
               </Button>
+              {/* 
+                  TODO: Consider adding the edit workout functionality to this toolbar rather than the unintuitive tapping the area
+                  Would reduve chance of accidental input as well
+               */}
             </div>
             <div onClick={() => editWorkout(workout)} className="text-center">
               <div className="p-2 text-left">{getDate(workout.date)}</div>
@@ -125,8 +147,8 @@ export default function Workouts({
       >
         <div className="fixed top-1/3 left-1/2 z-10 max-h-[80%] w-56 translate-x-[-50%] overflow-scroll rounded-lg bg-white p-5 text-center">
           Duplicate Workout?
+          {/* TODO: Does this really need a confirmation modal? */}
           <div className="mt-4 flex justify-around">
-            {/* TODO: Add description text here */}
             <Button
               variant="outline"
               onClick={() => {
