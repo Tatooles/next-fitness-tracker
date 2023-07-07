@@ -66,7 +66,7 @@ export default function WorkoutModal({
     // TODO: Replace this function with a server action
     event.preventDefault();
 
-    if (!editWorkoutValue) {
+    if (!editWorkoutValue || editWorkoutValue.id === -2) {
       // If adding, just add new workout on to the end
       await addToDB();
       router.refresh();
