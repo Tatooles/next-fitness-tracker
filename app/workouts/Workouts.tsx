@@ -74,35 +74,37 @@ export default function Workouts({
         <AccordionItem key={index} value={`item-${index}`}>
           <AccordionTrigger>{workout.name}</AccordionTrigger>
           <AccordionContent>
-            <div className="text-right">
-              <Button
-                onClick={() => {
-                  setDuplicateModalOpen(true);
-                  setWorkoutToDuplicate(workout.id);
-                }}
-                className="mr-4 bg-blue-600 py-1 px-2"
-              >
-                Duplicate
-              </Button>
-              <Button
-                onClick={() => {
-                  setDeleteModalOpen(true);
-                  setWorkoutToDelete(workout.id);
-                }}
-                className="py-1 px-2"
-                variant="destructive"
-              >
-                Delete
-              </Button>
+            <div className="flex justify-between">
+              <div className="p-2 text-lg">
+                {workout.date.toLocaleDateString()}
+              </div>
+              <div>
+                <Button
+                  onClick={() => {
+                    setDuplicateModalOpen(true);
+                    setWorkoutToDuplicate(workout.id);
+                  }}
+                  className="mr-4 bg-blue-600 py-1 px-2"
+                >
+                  Duplicate
+                </Button>
+                <Button
+                  onClick={() => {
+                    setDeleteModalOpen(true);
+                    setWorkoutToDelete(workout.id);
+                  }}
+                  className="py-1 px-2"
+                  variant="destructive"
+                >
+                  Delete
+                </Button>
+              </div>
               {/* 
                   TODO: Consider adding the edit workout functionality to this toolbar rather than the unintuitive tapping the area
                   Would reduve chance of accidental input as well
                */}
             </div>
             <div onClick={() => editWorkout(workout)} className="text-center">
-              <div className="p-2 text-left">
-                {workout.date.toLocaleDateString()}
-              </div>
               <div className="divide-y-2 px-2">
                 {workout.exercises.map((exercise: Exercise) => (
                   <div className="p-2" key={exercise.id}>
