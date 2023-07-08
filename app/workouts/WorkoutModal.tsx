@@ -301,22 +301,24 @@ export default function WorkoutModal({
                   </div>
                 </div>
               ))}
-              {exercise.sets.length > 0 && (
+              <div className="flex gap-2">
                 <button
                   type="button"
-                  onClick={() => duplicateSet(exerciseIndex)}
-                  className="w-36 rounded-md bg-blue-600 py-1 text-sm text-white"
+                  onClick={() => handleAddSet(exerciseIndex)}
+                  className="w-20 rounded-md bg-green-500 py-1 text-sm text-white"
                 >
-                  Duplicate previous
+                  New Set
                 </button>
-              )}
-              <button
-                type="button"
-                onClick={() => handleAddSet(exerciseIndex)}
-                className="w-20 rounded-md bg-green-500 py-1 text-sm text-white"
-              >
-                Add Set
-              </button>
+                {exercise.sets.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => duplicateSet(exerciseIndex)}
+                    className="w-36 rounded-md bg-blue-600 py-1 text-sm text-white"
+                  >
+                    Duplicate previous
+                  </button>
+                )}
+              </div>
               <Textarea
                 placeholder="Notes"
                 name="notes"
