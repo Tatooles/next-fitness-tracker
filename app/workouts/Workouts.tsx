@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import Modal from "@/components/Modal";
 import ExerciseUI from "@/components/ExerciseUI";
-import { Workout, Exercise, Set } from "@/lib/types";
+import { Workout, Exercise } from "@/lib/types";
 
 export default function Workouts({
   workouts,
@@ -99,7 +99,6 @@ export default function Workouts({
                   setDeleteModalOpen(true);
                   setWorkoutToDelete(workout.id);
                 }}
-                className=""
                 variant="destructive"
               >
                 Delete

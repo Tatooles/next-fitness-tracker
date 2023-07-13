@@ -21,6 +21,7 @@ export default function WorkoutModal({
   const [formData, setFormData] = useState<Workout>({
     id: 0,
     userId: "",
+    // TODO: Fix this, sometimes prepopulates the wrong date. I think its related to timezones
     date: new Date(),
     name: "",
     exercises: [
@@ -221,7 +222,6 @@ export default function WorkoutModal({
         </h2>
         <form onSubmit={handleSubmit} className="flex flex-col">
           <Label htmlFor="date">Date:</Label>
-          {/* TODO: Make date a required field in the form */}
           <Input
             type="date"
             name="date"
