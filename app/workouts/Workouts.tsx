@@ -72,39 +72,40 @@ export default function Workouts({
     <Accordion type="single" collapsible className="mb-5">
       {workouts.map((workout: Workout, index) => (
         <AccordionItem key={index} value={`item-${index}`}>
-          <AccordionTrigger>{workout.name}</AccordionTrigger>
+          <AccordionTrigger>
+            <span>
+              {workout.date.toLocaleDateString()} - {workout.name}
+            </span>
+          </AccordionTrigger>
           <AccordionContent>
-            <div className="flex justify-between">
-              <div className="p-2 text-lg">
-                {workout.date.toLocaleDateString()}
-              </div>
-              <div>
-                <Button
-                  onClick={() => {
-                    setDuplicateModalOpen(true);
-                    setWorkoutToDuplicate(workout.id);
-                  }}
-                  className="mr-4 bg-blue-600 py-1 px-2"
-                >
-                  Duplicate
-                </Button>
-                <Button
-                  onClick={() => {
-                    setDeleteModalOpen(true);
-                    setWorkoutToDelete(workout.id);
-                  }}
-                  className="py-1 px-2"
-                  variant="destructive"
-                >
-                  Delete
-                </Button>
-              </div>
-              {/* 
-                  TODO: Consider adding the edit workout functionality to this toolbar rather than the unintuitive tapping the area
-                  Would reduve chance of accidental input as well
-               */}
+            <div className="flex justify-start">
+              <Button
+                onClick={() => editWorkout(workout)}
+                className="mr-4 bg-green-500"
+              >
+                Edit
+              </Button>
+              <Button
+                onClick={() => {
+                  setDuplicateModalOpen(true);
+                  setWorkoutToDuplicate(workout.id);
+                }}
+                className="mr-4 bg-blue-600"
+              >
+                Duplicate
+              </Button>
+              <Button
+                onClick={() => {
+                  setDeleteModalOpen(true);
+                  setWorkoutToDelete(workout.id);
+                }}
+                className=""
+                variant="destructive"
+              >
+                Delete
+              </Button>
             </div>
-            <div onClick={() => editWorkout(workout)} className="text-center">
+            <div className="text-center">
               <div className="divide-y-2 px-2">
                 {workout.exercises.map((exercise: Exercise) => (
                   <div className="p-2" key={exercise.id}>
