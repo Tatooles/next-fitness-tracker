@@ -21,6 +21,7 @@ export default function WorkoutModal({
   const [formData, setFormData] = useState<Workout>({
     id: 0,
     userId: "",
+    // TODO: Fix this, sometimes prepopulates the wrong date. I think its related to timezones
     date: new Date(),
     name: "",
     exercises: [
@@ -217,24 +218,23 @@ export default function WorkoutModal({
     <Modal isOpen={modalOpen} handleClose={() => setModalOpen(false)}>
       <div className="fixed top-20 left-1/2 z-10 max-h-[80%] w-4/5 translate-x-[-50%] translate-y-[-10%] overflow-scroll rounded-lg bg-white p-5">
         <h2 className="mb-3 text-center text-3xl font-medium leading-none">
-          Add Workout
+          {editWorkoutValue ? "Edit Workout" : "Create Workout"}
         </h2>
         <form onSubmit={handleSubmit} className="flex flex-col">
           <Label htmlFor="date">Date:</Label>
-          {/* TODO: Make date a required field in the form */}
           <Input
             type="date"
             name="date"
             onChange={handleDateChange}
             value={formData.date.toISOString().split("T")[0]}
-            className="mt-2 mb-4 w-36"
+            className="mt-2 mb-4 w-40 text-[16px]"
           ></Input>
           <Label htmlFor="name">Workout Name:</Label>
           <Input
             type="text"
             name="name"
             value={formData.name}
-            className="mt-2 mb-4"
+            className="mt-2 mb-4 text-[16px]"
             onChange={handleChange}
           ></Input>
           {/* TODO: At this point would like to give the user the ability to use a template rather than filling in the whole thing manually */}
@@ -251,7 +251,7 @@ export default function WorkoutModal({
                   placeholder="Exercise Name"
                   name="exerciseName"
                   value={exercise.name}
-                  className="w-48"
+                  className="w-48 text-[16px]"
                   onChange={(event) =>
                     handleExerciseNameChange(exerciseIndex, event)
                   }
@@ -277,7 +277,7 @@ export default function WorkoutModal({
                     placeholder="Reps"
                     name="reps"
                     value={set.reps}
-                    className="w-16"
+                    className="w-16 text-[16px]"
                     onChange={(event) =>
                       handleRepsChange(exerciseIndex, setIndex, event)
                     }
@@ -288,7 +288,7 @@ export default function WorkoutModal({
                     placeholder="Weight"
                     name="weight"
                     value={set.weight}
-                    className="w-20"
+                    className="w-20 text-[16px]"
                     onChange={(event) =>
                       handleWeightChange(exerciseIndex, setIndex, event)
                     }
@@ -301,26 +301,29 @@ export default function WorkoutModal({
                   </div>
                 </div>
               ))}
-              {exercise.sets.length > 0 && (
+              <div className="flex gap-2">
                 <button
                   type="button"
-                  onClick={() => duplicateSet(exerciseIndex)}
-                  className="w-36 rounded-md bg-blue-600 py-1 text-sm text-white"
+                  onClick={() => handleAddSet(exerciseIndex)}
+                  className="w-20 rounded-md bg-green-500 py-1 text-sm text-white"
                 >
-                  Duplicate previous
+                  New Set
                 </button>
-              )}
-              <button
-                type="button"
-                onClick={() => handleAddSet(exerciseIndex)}
-                className="w-20 rounded-md bg-green-500 py-1 text-sm text-white"
-              >
-                Add Set
-              </button>
+                {exercise.sets.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => duplicateSet(exerciseIndex)}
+                    className="w-36 rounded-md bg-blue-600 py-1 text-sm text-white"
+                  >
+                    Duplicate previous
+                  </button>
+                )}
+              </div>
               <Textarea
                 placeholder="Notes"
                 name="notes"
                 value={exercise.notes}
+                className="text-[16px]"
                 onChange={(event) =>
                   handleExerciseNotesChange(exerciseIndex, event)
                 }
