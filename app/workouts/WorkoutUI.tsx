@@ -4,9 +4,12 @@ import { Button } from "@/components/ui/button";
 import WorkoutModal from "./WorkoutModal";
 import Workouts from "./Workouts";
 import { Workout } from "@/lib/types";
+import Spinner from "@/components/Spinner";
 
 export default function WorkoutUI({ workouts }: { workouts: Workout[] }) {
   const [addWorkoutModalOpen, setAddWorkoutModalOpen] = useState(false);
+
+  const [showSpinner, setShowSpinner] = useState(false);
 
   const [editWorkoutValue, setEditWorkoutValue] = useState<Workout | undefined>(
     undefined
@@ -32,6 +35,7 @@ export default function WorkoutUI({ workouts }: { workouts: Workout[] }) {
         setModalOpen={setAddWorkoutModalOpen}
         editWorkoutValue={editWorkoutValue}
       ></WorkoutModal>
+      <Spinner show={showSpinner}></Spinner>
     </div>
   );
 }
