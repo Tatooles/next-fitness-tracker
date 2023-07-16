@@ -29,11 +29,16 @@ export default function WorkoutUI({ workouts }: { workouts: Workout[] }) {
     <div className="p-5 text-center">
       <h1 className="mb-5 text-3xl">Workouts</h1>
       <Button onClick={addWorkout}>Add a Workout</Button>
-      <Workouts workouts={workouts} editWorkout={editWorkout}></Workouts>
+      <Workouts
+        workouts={workouts}
+        editWorkout={editWorkout}
+        setShowSpinner={setShowSpinner}
+      ></Workouts>
       <WorkoutModal
         modalOpen={addWorkoutModalOpen}
         setModalOpen={setAddWorkoutModalOpen}
         editWorkoutValue={editWorkoutValue}
+        setShowSpinner={setShowSpinner}
       ></WorkoutModal>
       <Spinner show={showSpinner}></Spinner>
     </div>

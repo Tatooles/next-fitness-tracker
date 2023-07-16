@@ -11,10 +11,12 @@ export default function WorkoutModal({
   modalOpen,
   setModalOpen,
   editWorkoutValue,
+  setShowSpinner,
 }: {
   modalOpen: boolean;
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   editWorkoutValue: Workout | undefined;
+  setShowSpinner: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const router = useRouter();
   // This state holds the current data in the form
@@ -22,6 +24,7 @@ export default function WorkoutModal({
     id: 0,
     userId: "",
     // TODO: Fix this, sometimes prepopulates the wrong date. I think its related to timezones
+    // May need to add 7 hours to the date
     date: new Date(),
     name: "",
     exercises: [
@@ -66,20 +69,22 @@ export default function WorkoutModal({
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     // TODO: Replace this function with a server action
     event.preventDefault();
+    setModalOpen(false);
+    setShowSpinner(true);
 
     if (!editWorkoutValue || editWorkoutValue.id === -2) {
       // If adding, just add new workout on to the end
       await addToDB();
+      setShowSpinner(false);
       router.refresh();
     } else {
       if (JSON.stringify(editWorkoutValue) !== JSON.stringify(formData)) {
         // Call delete to delete the existing workout, then addToDB to add the new one
         await Promise.all([deleteWorkout(editWorkoutValue.id), addToDB()]);
-        // TODO: Would be nice to have some sort of loading indicator because this can take a bit
+        setShowSpinner(false);
         router.refresh();
       }
     }
-    setModalOpen(false);
   };
 
   const addToDB = async () => {
