@@ -75,14 +75,13 @@ export default function WorkoutModal({
     if (!editWorkoutValue || editWorkoutValue.id === -2) {
       // If adding or duplicating, just create new workout
       await addToDB();
-      setShowSpinner(false);
       router.refresh();
     } else if (JSON.stringify(editWorkoutValue) !== JSON.stringify(formData)) {
       // If updating, call delete to delete the existing workout, then addToDB to add udpated one
       await Promise.all([deleteWorkout(editWorkoutValue.id), addToDB()]);
-      setShowSpinner(false);
       router.refresh();
     }
+    setShowSpinner(false);
   };
 
   const addToDB = async () => {
