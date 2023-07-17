@@ -14,9 +14,11 @@ import { Workout, Exercise } from "@/lib/types";
 export default function Workouts({
   workouts,
   editWorkout,
+  setShowSpinner,
 }: {
   workouts: Workout[];
   editWorkout: (workout: Workout) => void;
+  setShowSpinner: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const router = useRouter();
 
@@ -26,21 +28,23 @@ export default function Workouts({
   const [workoutToDuplicate, setWorkoutToDuplicate] = useState(-1);
 
   const deleteWorkout = async () => {
+    setDeleteModalOpen(false);
+    setShowSpinner(true);
     await fetch(`/api/workouts/${workoutToDelete}`, {
       method: "DELETE",
     })
       .then((response) => {
         if (response.ok) {
-          setWorkoutToDelete(-1);
-          setDeleteModalOpen(false);
           router.refresh();
         } else {
-          console.log("Failed to delete exercise.");
+          console.error("Failed to delete exercise.");
         }
       })
       .catch((error) => {
         console.error("An error occurred while deleting exercise:", error);
       });
+    setWorkoutToDelete(-1);
+    setShowSpinner(false);
   };
 
   const duplicateWorkout = () => {
