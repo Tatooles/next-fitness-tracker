@@ -73,17 +73,15 @@ export default function WorkoutModal({
     setShowSpinner(true);
 
     if (!editWorkoutValue || editWorkoutValue.id === -2) {
-      // If adding, just add new workout on to the end
+      // If adding or duplicating, just create new workout
       await addToDB();
       setShowSpinner(false);
       router.refresh();
-    } else {
-      if (JSON.stringify(editWorkoutValue) !== JSON.stringify(formData)) {
-        // Call delete to delete the existing workout, then addToDB to add the new one
-        await Promise.all([deleteWorkout(editWorkoutValue.id), addToDB()]);
-        setShowSpinner(false);
-        router.refresh();
-      }
+    } else if (JSON.stringify(editWorkoutValue) !== JSON.stringify(formData)) {
+      // If updating, call delete to delete the existing workout, then addToDB to add udpated one
+      await Promise.all([deleteWorkout(editWorkoutValue.id), addToDB()]);
+      setShowSpinner(false);
+      router.refresh();
     }
   };
 
@@ -96,7 +94,7 @@ export default function WorkoutModal({
     })
       .then((response) => {
         if (!response.ok) {
-          console.log("Failed to add exercise.");
+          console.error("Failed to add exercise.");
         }
       })
       .catch((error) => {

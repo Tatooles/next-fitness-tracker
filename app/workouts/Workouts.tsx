@@ -35,16 +35,16 @@ export default function Workouts({
     })
       .then((response) => {
         if (response.ok) {
-          setWorkoutToDelete(-1);
-          setShowSpinner(false);
           router.refresh();
         } else {
-          console.log("Failed to delete exercise.");
+          console.error("Failed to delete exercise.");
         }
       })
       .catch((error) => {
         console.error("An error occurred while deleting exercise:", error);
       });
+    setWorkoutToDelete(-1);
+    setShowSpinner(false);
   };
 
   const duplicateWorkout = () => {
