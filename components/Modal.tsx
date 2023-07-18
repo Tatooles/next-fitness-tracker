@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { createPortal } from "react-dom";
 
 export default function Modal({
@@ -9,6 +10,15 @@ export default function Modal({
   isOpen: boolean;
   handleClose: () => void;
 }) {
+  useEffect(() => {
+    // Prevent background scrolling when modal is open
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   // This is where we will use a portal

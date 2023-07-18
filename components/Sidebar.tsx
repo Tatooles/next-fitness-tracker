@@ -1,4 +1,4 @@
-"use client";
+import { useEffect } from "react";
 import Link from "next/link";
 
 export default function Sidebar({
@@ -8,6 +8,17 @@ export default function Sidebar({
   isOpen: boolean;
   setIsOpen: Function;
 }) {
+  useEffect(() => {
+    // Prevent background scrolling when sidebar is open
+    if (isOpen) {
+      console.log("sidebar open");
+      document.body.style.overflow = "hidden";
+    } else {
+      console.log("sidebar closed");
+      document.body.style.overflow = "unset";
+    }
+  }, [isOpen]);
+
   return (
     <div
       className={`fixed top-0 left-0 z-20 h-full w-40 bg-white duration-300 ease-in-out ${
