@@ -23,9 +23,7 @@ export default function Workouts({
   const router = useRouter();
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [duplicateModalOpen, setDuplicateModalOpen] = useState(false);
   const [workoutToDelete, setWorkoutToDelete] = useState(-1);
-  const [workoutToDuplicate, setWorkoutToDuplicate] = useState(-1);
 
   const deleteWorkout = async () => {
     setDeleteModalOpen(false);
@@ -47,11 +45,7 @@ export default function Workouts({
     setShowSpinner(false);
   };
 
-  const duplicateWorkout = () => {
-    // May be faster to just pass the entire workout to state rather than finding it
-    const workout = workouts.find(
-      (workout) => workout.id === workoutToDuplicate
-    );
+  const duplicateWorkout = (workout: Workout) => {
     if (workout) {
       const workoutCopy = structuredClone(workout);
       // Set id to -2 so submit logic knows it's duplicate
@@ -62,10 +56,10 @@ export default function Workouts({
       for (const exercise of workoutCopy.exercises) {
         exercise.notes = "";
         for (const set of exercise.sets) {
+          // TODO: Just copy first (or last) set
           set.weight = "";
         }
       }
-      setDuplicateModalOpen(false);
       editWorkout(workoutCopy);
     }
   };
@@ -73,54 +67,55 @@ export default function Workouts({
   workouts.sort((a, b) => b.date.getTime() - a.date.getTime());
 
   return (
-    <Accordion type="single" collapsible className="mb-5">
-      {workouts.map((workout: Workout, index) => (
-        <AccordionItem key={index} value={`item-${index}`}>
-          <AccordionTrigger>
-            <span>
-              {workout.date.toLocaleDateString()} - {workout.name}
-            </span>
-          </AccordionTrigger>
-          <AccordionContent>
-            <div className="flex justify-start">
-              <Button
-                onClick={() => editWorkout(workout)}
-                className="mr-4 bg-green-500"
-              >
-                Edit
-              </Button>
-              <Button
-                onClick={() => {
-                  setDuplicateModalOpen(true);
-                  setWorkoutToDuplicate(workout.id);
-                }}
-                className="mr-4 bg-blue-600"
-              >
-                Duplicate
-              </Button>
-              <Button
-                onClick={() => {
-                  setDeleteModalOpen(true);
-                  setWorkoutToDelete(workout.id);
-                }}
-                variant="destructive"
-              >
-                Delete
-              </Button>
-            </div>
-            <div className="text-center">
-              <div className="divide-y-2 px-2">
-                {workout.exercises.map((exercise: Exercise) => (
-                  <div className="p-2" key={exercise.id}>
-                    <h3 className="text-lg font-bold">{exercise.name}</h3>
-                    <ExerciseUI exercise={exercise}></ExerciseUI>
-                  </div>
-                ))}
+    <>
+      <Accordion type="single" collapsible className="mb-5">
+        {workouts.map((workout: Workout, index) => (
+          <AccordionItem key={index} value={`item-${index}`}>
+            <AccordionTrigger>
+              <span>
+                {workout.date.toLocaleDateString()} - {workout.name}
+              </span>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="flex justify-start">
+                <Button
+                  onClick={() => editWorkout(workout)}
+                  className="mr-4 bg-green-500"
+                >
+                  Edit
+                </Button>
+                <Button
+                  onClick={() => {
+                    duplicateWorkout(workout);
+                  }}
+                  className="mr-4 bg-blue-600"
+                >
+                  Duplicate
+                </Button>
+                <Button
+                  onClick={() => {
+                    setDeleteModalOpen(true);
+                    setWorkoutToDelete(workout.id);
+                  }}
+                  variant="destructive"
+                >
+                  Delete
+                </Button>
               </div>
-            </div>
-          </AccordionContent>
-        </AccordionItem>
-      ))}
+              <div className="text-center">
+                <div className="divide-y-2 px-2">
+                  {workout.exercises.map((exercise: Exercise) => (
+                    <div className="p-2" key={exercise.id}>
+                      <h3 className="text-lg font-bold">{exercise.name}</h3>
+                      <ExerciseUI exercise={exercise}></ExerciseUI>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
       <Modal
         isOpen={deleteModalOpen}
         handleClose={() => setDeleteModalOpen(false)}
@@ -143,28 +138,6 @@ export default function Workouts({
           </div>
         </div>
       </Modal>
-      <Modal
-        isOpen={duplicateModalOpen}
-        handleClose={() => setDuplicateModalOpen(false)}
-      >
-        <div className="fixed top-1/3 left-1/2 z-10 max-h-[80%] w-56 translate-x-[-50%] overflow-scroll rounded-lg bg-white p-5 text-center">
-          Duplicate Workout?
-          {/* TODO: Does this really need a confirmation modal? */}
-          <div className="mt-4 flex justify-around">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setDuplicateModalOpen(false);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button className="bg-blue-600 " onClick={duplicateWorkout}>
-              Duplicate
-            </Button>
-          </div>
-        </div>
-      </Modal>
-    </Accordion>
+    </>
   );
 }
