@@ -68,7 +68,7 @@ export default function Workouts({
 
   return (
     <>
-      <Accordion type="single" collapsible className="mb-5">
+      <Accordion type="single" collapsible className="mb-5 mt-2">
         {workouts.map((workout: Workout, index) => (
           <AccordionItem key={index} value={`item-${index}`}>
             <AccordionTrigger>
@@ -77,7 +77,7 @@ export default function Workouts({
               </span>
             </AccordionTrigger>
             <AccordionContent>
-              <div className="flex justify-start">
+              <div className="flex justify-start pt-2">
                 <Button
                   onClick={() => editWorkout(workout)}
                   className="mr-4 bg-green-500"

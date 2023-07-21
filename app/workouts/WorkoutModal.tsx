@@ -229,7 +229,7 @@ export default function WorkoutModal({
             name="date"
             onChange={handleDateChange}
             value={formData.date.toISOString().split("T")[0]}
-            className="mt-2 mb-4 w-40 text-[16px]"
+            className="mt-2 mb-4 text-[16px]"
           ></Input>
           <Label htmlFor="name">Workout Name:</Label>
           <Input
@@ -309,15 +309,15 @@ export default function WorkoutModal({
                   onClick={() => handleAddSet(exerciseIndex)}
                   className="w-20 rounded-md bg-green-500 py-1 text-sm text-white"
                 >
-                  New Set
+                  New set
                 </button>
                 {exercise.sets.length > 0 && (
                   <button
                     type="button"
                     onClick={() => duplicateSet(exerciseIndex)}
-                    className="w-36 rounded-md bg-blue-600 py-1 text-sm text-white"
+                    className="w-20 rounded-md bg-blue-600 py-1 text-sm text-white"
                   >
-                    Duplicate previous
+                    Clone set
                   </button>
                 )}
               </div>
