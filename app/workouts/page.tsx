@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs";
 import { db } from "@/db/drizzle";
-import WorkoutUI from "./WorkoutUI";
+import WorkoutsUI from "./WorkoutsUI";
 import { Workout } from "@/lib/types";
 
 async function getWorkouts() {
@@ -26,5 +26,5 @@ async function getWorkouts() {
 
 export default async function WorkoutsPage() {
   const workouts = await getWorkouts();
-  return <WorkoutUI workouts={workouts}></WorkoutUI>;
+  return <WorkoutsUI workouts={workouts}></WorkoutsUI>;
 }

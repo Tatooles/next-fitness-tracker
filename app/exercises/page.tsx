@@ -6,7 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import ExerciseUI from "@/components/ExerciseUI";
+import ExerciseItem from "@/components/ExerciseItem";
 import { Exercise } from "@/lib/types";
 
 async function getExercises() {
@@ -43,29 +43,22 @@ export default async function ExercisesPage() {
         {workouts.map((workout, index) => (
           <div key={index}>
             {workout.exercises.map((exercise) => (
-              <ExerciseItem
+              <AccordionItem
                 key={exercise.id}
-                date={workout.date}
-                exercise={exercise}
-              ></ExerciseItem>
+                value={`exercise-${exercise.id}`}
+              >
+                <AccordionTrigger>
+                  {/* TODO: Would like this text to cut off with ellipsis rather than wrap */}
+                  {workout.date.toLocaleDateString()} - {exercise.name}
+                </AccordionTrigger>
+                <AccordionContent>
+                  <ExerciseItem exercise={exercise}></ExerciseItem>
+                </AccordionContent>
+              </AccordionItem>
             ))}
           </div>
         ))}
       </Accordion>
     </div>
-  );
-}
-
-function ExerciseItem({ date, exercise }: { date: Date; exercise: Exercise }) {
-  return (
-    <AccordionItem key={exercise.id} value={`exercise-${exercise.id}`}>
-      <AccordionTrigger>
-        {/* TODO: Would like this text to cut off with ellipsis rather than wrap */}
-        {date.toLocaleDateString()} - {exercise.name}
-      </AccordionTrigger>
-      <AccordionContent>
-        <ExerciseUI exercise={exercise}></ExerciseUI>
-      </AccordionContent>
-    </AccordionItem>
   );
 }

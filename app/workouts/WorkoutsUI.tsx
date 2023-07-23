@@ -6,7 +6,7 @@ import Workouts from "./Workouts";
 import { Workout } from "@/lib/types";
 import Spinner from "@/components/Spinner";
 
-export default function WorkoutUI({ workouts }: { workouts: Workout[] }) {
+export default function WorkoutsUI({ workouts }: { workouts: Workout[] }) {
   const [addWorkoutModalOpen, setAddWorkoutModalOpen] = useState(false);
 
   const [showSpinner, setShowSpinner] = useState(false);
