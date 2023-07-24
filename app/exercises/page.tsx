@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs";
 import { db } from "@/db/drizzle";
 import ExercisesUI from "./ExercisesUI";
-import { Workout } from "@/lib/types";
+import { Exercise, Workout } from "@/lib/types";
 
 async function getExercises() {
   const userId = auth().userId;
@@ -29,6 +29,12 @@ async function getExercises() {
 
 export default async function ExercisesPage() {
   const workouts = (await getExercises()) as Workout[];
-  workouts.sort((a, b) => b.date.getTime() - a.date.getTime());
-  return <ExercisesUI workouts={workouts}></ExercisesUI>;
+  const exercises = workouts.flatMap((workout) =>
+    workout.exercises.map((exercise) => ({
+      ...exercise,
+      date: workout.date,
+    }))
+  );
+  exercises.sort((a, b) => b.date.getTime() - a.date.getTime());
+  return <ExercisesUI exercises={exercises}></ExercisesUI>;
 }
