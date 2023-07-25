@@ -7,9 +7,13 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import ExerciseItem from "@/components/ExerciseItem";
-import { Exercise } from "@/lib/types";
+import { DateExercise } from "@/lib/types";
 
-export default function ExercisesUI({ exercises }: { exercises: any[] }) {
+export default function ExercisesUI({
+  exercises,
+}: {
+  exercises: DateExercise[];
+}) {
   return (
     <div className="p-5 text-center">
       <h1 className="mb-5 text-3xl">Exercises</h1>

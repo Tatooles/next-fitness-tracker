@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs";
 import { db } from "@/db/drizzle";
 import ExercisesUI from "./ExercisesUI";
-import { Exercise, Workout } from "@/lib/types";
+import { DateExercise, Workout } from "@/lib/types";
 
 async function getExercises() {
   const userId = auth().userId;
@@ -34,7 +34,7 @@ export default async function ExercisesPage() {
       ...exercise,
       date: workout.date,
     }))
-  );
+  ) as DateExercise[];
   exercises.sort((a, b) => b.date.getTime() - a.date.getTime());
   return <ExercisesUI exercises={exercises}></ExercisesUI>;
 }
