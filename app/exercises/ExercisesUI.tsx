@@ -43,6 +43,7 @@ export default function ExercisesUI({
       <h1 className="mb-5 text-3xl">Exercises</h1>
       <Input
         placeholder="Search exercises"
+        className="text-[16px]"
         onChange={(e) => {
           setInputValue(e.target.value);
         }}
