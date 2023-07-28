@@ -1,13 +1,7 @@
 import { auth } from "@clerk/nextjs";
 import { db } from "@/db/drizzle";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import ExerciseUI from "@/components/ExerciseUI";
-import { Exercise } from "@/lib/types";
+import ExercisesUI from "./ExercisesUI";
+import { DateExercise, Workout } from "@/lib/types";
 
 async function getExercises() {
   const userId = auth().userId;
@@ -34,38 +28,13 @@ async function getExercises() {
 }
 
 export default async function ExercisesPage() {
-  const workouts = await getExercises();
-  workouts.sort((a, b) => b.date.getTime() - a.date.getTime());
-  return (
-    <div className="p-5 text-center">
-      <h1 className="mb-5 text-3xl">Exercises</h1>
-      <Accordion type="single" collapsible className="mb-5">
-        {workouts.map((workout, index) => (
-          <div key={index}>
-            {workout.exercises.map((exercise) => (
-              <ExerciseItem
-                key={exercise.id}
-                date={workout.date}
-                exercise={exercise}
-              ></ExerciseItem>
-            ))}
-          </div>
-        ))}
-      </Accordion>
-    </div>
-  );
-}
-
-function ExerciseItem({ date, exercise }: { date: Date; exercise: Exercise }) {
-  return (
-    <AccordionItem key={exercise.id} value={`exercise-${exercise.id}`}>
-      <AccordionTrigger>
-        {/* TODO: Would like this text to cut off with ellipsis rather than wrap */}
-        {date.toLocaleDateString()} - {exercise.name}
-      </AccordionTrigger>
-      <AccordionContent>
-        <ExerciseUI exercise={exercise}></ExerciseUI>
-      </AccordionContent>
-    </AccordionItem>
-  );
+  const workouts = (await getExercises()) as Workout[];
+  const exercises = workouts.flatMap((workout) =>
+    workout.exercises.map((exercise) => ({
+      ...exercise,
+      date: workout.date,
+    }))
+  ) as DateExercise[];
+  exercises.sort((a, b) => b.date.getTime() - a.date.getTime());
+  return <ExercisesUI exercises={exercises}></ExercisesUI>;
 }

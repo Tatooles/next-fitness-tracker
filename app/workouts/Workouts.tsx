@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import Modal from "@/components/Modal";
-import ExerciseUI from "@/components/ExerciseUI";
+import ExerciseItem from "@/components/ExerciseItem";
 import { Workout, Exercise } from "@/lib/types";
 
 export default function Workouts({
@@ -107,7 +107,7 @@ export default function Workouts({
                   {workout.exercises.map((exercise: Exercise) => (
                     <div className="p-2" key={exercise.id}>
                       <h3 className="text-lg font-bold">{exercise.name}</h3>
-                      <ExerciseUI exercise={exercise}></ExerciseUI>
+                      <ExerciseItem exercise={exercise}></ExerciseItem>
                     </div>
                   ))}
                 </div>

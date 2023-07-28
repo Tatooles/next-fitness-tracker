@@ -1,6 +1,6 @@
 import { Exercise, Set } from "@/lib/types";
 
-export default function ExerciseUI({ exercise }: { exercise: Exercise }) {
+export default function ExerciseItem({ exercise }: { exercise: Exercise }) {
   return (
     <>
       {exercise.sets.length > 0 && (

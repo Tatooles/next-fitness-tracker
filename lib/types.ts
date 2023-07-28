@@ -15,6 +15,10 @@ export interface Exercise {
   sets: Set[];
 }
 
+export interface DateExercise extends Exercise {
+  date: Date;
+}
+
 export interface Set {
   id: number;
   reps: string;
