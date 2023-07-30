@@ -1,10 +1,15 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import Modal from "../../components/Modal";
 import { Workout } from "@/lib/types";
 
 export default function WorkoutModal({
@@ -217,11 +222,13 @@ export default function WorkoutModal({
   };
 
   return (
-    <Modal isOpen={modalOpen} handleClose={() => setModalOpen(false)}>
-      <div className="fixed top-20 left-1/2 z-10 max-h-[80%] w-4/5 translate-x-[-50%] translate-y-[-10%] overflow-scroll rounded-lg bg-white p-5">
-        <h2 className="mb-3 text-center text-3xl font-medium leading-none">
-          {editWorkoutValue ? "Edit Workout" : "Create Workout"}
-        </h2>
+    <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+      <DialogContent className="max-h-[90%] w-5/6 overflow-y-scroll rounded-lg">
+        <DialogHeader>
+          <DialogTitle>
+            {editWorkoutValue ? "Edit Workout" : "Create Workout"}
+          </DialogTitle>
+        </DialogHeader>
         <form onSubmit={handleSubmit} className="flex flex-col">
           <Label htmlFor="date">Date:</Label>
           <Input
@@ -347,7 +354,7 @@ export default function WorkoutModal({
             Submit
           </Button>
         </form>
-      </div>
-    </Modal>
+      </DialogContent>
+    </Dialog>
   );
 }
