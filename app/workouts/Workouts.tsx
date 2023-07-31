@@ -6,8 +6,18 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import Modal from "@/components/Modal";
 import ExerciseItem from "@/components/ExerciseItem";
 import { Workout, Exercise } from "@/lib/types";
 
@@ -116,28 +126,34 @@ export default function Workouts({
           </AccordionItem>
         ))}
       </Accordion>
-      <Modal
-        isOpen={deleteModalOpen}
-        handleClose={() => setDeleteModalOpen(false)}
-      >
-        <div className="fixed top-1/3 left-1/2 z-10 max-h-[80%] w-56 translate-x-[-50%] overflow-scroll rounded-lg bg-white p-5 text-center">
-          Delete workout?
-          <div className="mt-4 flex justify-around">
-            <Button
-              variant="outline"
+      <AlertDialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
+        <AlertDialogContent className="w-5/6">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete workout?</AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogDescription>
+            This action cannot be undone. This workout will be permanently
+            deleted and removed from our servers.
+          </AlertDialogDescription>
+          <AlertDialogFooter className="flex flex-row justify-around">
+            <AlertDialogCancel
               onClick={() => {
                 setDeleteModalOpen(false);
                 setWorkoutToDelete(-1);
               }}
+              className="mt-0"
             >
               Cancel
-            </Button>
-            <Button variant="destructive" onClick={deleteWorkout}>
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={deleteWorkout}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
               Delete
-            </Button>
-          </div>
-        </div>
-      </Modal>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

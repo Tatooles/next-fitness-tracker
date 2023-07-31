@@ -350,10 +350,7 @@ export default function WorkoutModal({
           >
             Add Exercise
           </Button>
-          <Button
-            type="submit"
-            className="mt-4 self-center bg-blue-400 text-white"
-          >
+          <Button type="submit" className="mt-4 self-center">
             Submit
           </Button>
         </form>
