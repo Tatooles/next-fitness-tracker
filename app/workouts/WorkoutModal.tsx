@@ -223,7 +223,10 @@ export default function WorkoutModal({
 
   return (
     <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-      <DialogContent className="max-h-[90%] w-5/6 overflow-y-scroll rounded-lg">
+      <DialogContent
+        onOpenAutoFocus={(e) => e.preventDefault()}
+        className="max-h-[90%] w-5/6 overflow-y-scroll rounded-lg"
+      >
         <DialogHeader>
           <DialogTitle>
             {editWorkoutValue ? "Edit Workout" : "Create Workout"}
