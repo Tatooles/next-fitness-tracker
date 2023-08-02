@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Accordion,
@@ -6,8 +5,18 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import Modal from "@/components/Modal";
 import ExerciseItem from "@/components/ExerciseItem";
 import { Workout, Exercise } from "@/lib/types";
 
@@ -22,13 +31,9 @@ export default function Workouts({
 }) {
   const router = useRouter();
 
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [workoutToDelete, setWorkoutToDelete] = useState(-1);
-
-  const deleteWorkout = async () => {
-    setDeleteModalOpen(false);
+  const deleteWorkout = async (workout: number) => {
     setShowSpinner(true);
-    await fetch(`/api/workouts/${workoutToDelete}`, {
+    await fetch(`/api/workouts/${workout}`, {
       method: "DELETE",
     })
       .then((response) => {
@@ -41,7 +46,6 @@ export default function Workouts({
       .catch((error) => {
         console.error("An error occurred while deleting exercise:", error);
       });
-    setWorkoutToDelete(-1);
     setShowSpinner(false);
   };
 
@@ -67,77 +71,71 @@ export default function Workouts({
   workouts.sort((a, b) => b.date.getTime() - a.date.getTime());
 
   return (
-    <>
-      <Accordion type="single" collapsible className="mb-5 mt-2">
-        {workouts.map((workout: Workout, index) => (
-          <AccordionItem key={index} value={`item-${index}`}>
-            <AccordionTrigger>
-              <span>
-                {workout.date.toLocaleDateString()} - {workout.name}
-              </span>
-            </AccordionTrigger>
-            <AccordionContent>
-              <div className="flex justify-start pt-2">
-                <Button
-                  onClick={() => editWorkout(workout)}
-                  className="mr-4 bg-green-500"
-                >
-                  Edit
-                </Button>
-                <Button
-                  onClick={() => {
-                    duplicateWorkout(workout);
-                  }}
-                  className="mr-4 bg-blue-600"
-                >
-                  Duplicate
-                </Button>
-                <Button
-                  onClick={() => {
-                    setDeleteModalOpen(true);
-                    setWorkoutToDelete(workout.id);
-                  }}
-                  variant="destructive"
-                >
-                  Delete
-                </Button>
+    <Accordion type="single" collapsible className="mb-5 mt-2">
+      {workouts.map((workout: Workout, index) => (
+        <AccordionItem key={index} value={`item-${index}`}>
+          <AccordionTrigger>
+            <span>
+              {workout.date.toLocaleDateString()} - {workout.name}
+            </span>
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="flex justify-start pt-2">
+              <Button
+                onClick={() => editWorkout(workout)}
+                className="mr-4 bg-green-500"
+              >
+                Edit
+              </Button>
+              <Button
+                onClick={() => {
+                  duplicateWorkout(workout);
+                }}
+                className="mr-4 bg-blue-600"
+              >
+                Duplicate
+              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive">Delete</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="w-5/6">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete workout?</AlertDialogTitle>
+                  </AlertDialogHeader>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This workout will be
+                    permanently deleted and removed from our servers.
+                  </AlertDialogDescription>
+                  <AlertDialogFooter className="flex flex-row justify-around">
+                    <AlertDialogCancel className="mt-0">
+                      Cancel
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => {
+                        deleteWorkout(workout.id);
+                      }}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+            <div className="text-center">
+              <div className="divide-y-2 px-2">
+                {workout.exercises.map((exercise: Exercise) => (
+                  <div className="p-2" key={exercise.id}>
+                    <h3 className="text-lg font-bold">{exercise.name}</h3>
+                    <ExerciseItem exercise={exercise}></ExerciseItem>
+                  </div>
+                ))}
               </div>
-              <div className="text-center">
-                <div className="divide-y-2 px-2">
-                  {workout.exercises.map((exercise: Exercise) => (
-                    <div className="p-2" key={exercise.id}>
-                      <h3 className="text-lg font-bold">{exercise.name}</h3>
-                      <ExerciseItem exercise={exercise}></ExerciseItem>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion>
-      <Modal
-        isOpen={deleteModalOpen}
-        handleClose={() => setDeleteModalOpen(false)}
-      >
-        <div className="fixed top-1/3 left-1/2 z-10 max-h-[80%] w-56 translate-x-[-50%] overflow-scroll rounded-lg bg-white p-5 text-center">
-          Delete workout?
-          <div className="mt-4 flex justify-around">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setDeleteModalOpen(false);
-                setWorkoutToDelete(-1);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button variant="destructive" onClick={deleteWorkout}>
-              Delete
-            </Button>
-          </div>
-        </div>
-      </Modal>
-    </>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      ))}
+    </Accordion>
   );
 }
