@@ -263,7 +263,7 @@ export default function WorkoutModal({
                   placeholder="Exercise Name"
                   name="exerciseName"
                   value={exercise.name}
-                  className="w-48 text-[16px]"
+                  className="text-[16px]"
                   onChange={(event) =>
                     handleExerciseNameChange(exerciseIndex, event)
                   }
@@ -272,7 +272,7 @@ export default function WorkoutModal({
                 ></Input>
                 <div
                   onClick={() => handleRemoveExercise(exerciseIndex)}
-                  className="ml-5 h-6 w-6 cursor-pointer rounded-full bg-red-600 text-center text-white"
+                  className="ml-5 h-6 w-7 cursor-pointer rounded-full bg-red-600 text-center text-white"
                 >
                   <div className="-translate-y-[1px]">-</div>
                 </div>
