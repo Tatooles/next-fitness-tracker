@@ -18,7 +18,7 @@ export default function Navbar() {
     <>
       <header>
         <nav className="flex items-center justify-between border-b-2 text-lg text-black">
-          <Sheet>
+          <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
             <SheetTrigger>
               <div className="p-5">
                 <div className="flex h-[20px] w-[20px] flex-col justify-between overflow-hidden">
@@ -28,18 +28,34 @@ export default function Navbar() {
                 </div>
               </div>
             </SheetTrigger>
-            <SheetContent side="left">
-              <ul className="flex flex-col space-y-1">
-                <Link onClick={() => setIsOpen(false)} href="/">
+            <SheetContent side="left" className="w-[200px]">
+              <ul className="flex flex-col space-y-4">
+                <Link
+                  onClick={() => setSidebarOpen(false)}
+                  className="text-2xl hover:underline"
+                  href="/"
+                >
                   Home
                 </Link>
-                <Link onClick={() => setIsOpen(false)} href="/workouts">
+                <Link
+                  onClick={() => setSidebarOpen(false)}
+                  className="text-2xl hover:underline"
+                  href="/workouts"
+                >
                   Workouts
                 </Link>
-                <Link onClick={() => setIsOpen(false)} href="/exercises">
+                <Link
+                  onClick={() => setSidebarOpen(false)}
+                  className="text-2xl hover:underline"
+                  href="/exercises"
+                >
                   Exercises
                 </Link>
-                <Link onClick={() => setIsOpen(false)} href="/settings">
+                <Link
+                  onClick={() => setSidebarOpen(false)}
+                  className="text-2xl hover:underline"
+                  href="/settings"
+                >
                   Settings
                 </Link>
               </ul>
