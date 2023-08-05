@@ -12,12 +12,26 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const sidebarItems = [
+    {
+      title: "Home",
+      href: "/",
+    },
+    {
+      title: "Workouts",
+      href: "/workouts",
+    },
+    {
+      title: "Exercises",
+      href: "/exercises",
+    },
+  ];
   return (
     <ClerkProvider>
       <html lang="en">
         <body>
           <div id="modal"></div>
-          <Navbar></Navbar>
+          <Navbar sidebarItems={sidebarItems}></Navbar>
           <div id="root" className="flex h-screen flex-col">
             {/* TODO: Put main in a container so it doesn't span the whole screen on desktop */}
             <main className="grow">{children}</main>
