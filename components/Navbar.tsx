@@ -3,6 +3,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
+
+import { cn } from "@/lib/utils";
 import {
   Sheet,
   SheetContent,
@@ -11,9 +13,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import Sidebar from "./Sidebar";
 
-export default function Navbar() {
+interface SidebarItem {
+  title: string;
+  href: string;
+}
+
+export default function Navbar({
+  sidebarItems,
+}: {
+  sidebarItems: SidebarItem[];
+}) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathName = usePathname();
   console.log(pathName);
@@ -34,36 +44,23 @@ export default function Navbar() {
               </div>
             </SheetTrigger>
             <SheetContent side="left" className="w-[250px]">
-              <ul className="flex flex-col space-y-2">
-                <Link
-                  onClick={() => setSidebarOpen(false)}
-                  // className="rouded-md p-2 text-2xl hover:underline"
-                  href="/"
-                >
-                  Home
-                </Link>
-                <Link
-                  onClick={() => setSidebarOpen(false)}
-                  className="rouded-md p-2 text-2xl hover:underline"
-                  href="/workouts"
-                >
-                  Workouts
-                </Link>
-                <Link
-                  onClick={() => setSidebarOpen(false)}
-                  className="rouded-md p-2 text-2xl hover:underline"
-                  href="/exercises"
-                >
-                  Exercises
-                </Link>
-                <Link
-                  onClick={() => setSidebarOpen(false)}
-                  className="rouded-md p-2 text-2xl hover:underline"
-                  href="/settings"
-                >
-                  Settings
-                </Link>
-              </ul>
+              <nav className="flex flex-col space-y-2">
+                {sidebarItems.map((item) => (
+                  <Link
+                    onClick={() => setSidebarOpen(false)}
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      pathName === item.href
+                        ? "bg-muted hover:bg-muted"
+                        : "hover:underline",
+                      "rounded-md p-2 text-2xl"
+                    )}
+                  >
+                    {item.title}
+                  </Link>
+                ))}
+              </nav>
             </SheetContent>
           </Sheet>
           <div className="p-5">
