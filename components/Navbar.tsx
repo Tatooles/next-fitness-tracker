@@ -19,7 +19,6 @@ export default function Navbar({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathName = usePathname();
-  console.log(pathName);
 
   return (
     <header className="flex items-center justify-between border-b-2 text-lg text-black">
