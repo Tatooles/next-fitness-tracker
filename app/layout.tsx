@@ -12,6 +12,12 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const sidebarItems = [
+    {
+      title: "Home",
+      href: "/",
+    },
+  ];
   return (
     <ClerkProvider>
       <html lang="en">
