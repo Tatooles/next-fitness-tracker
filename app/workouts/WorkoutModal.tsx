@@ -307,9 +307,13 @@ export default function WorkoutModal({
                   ></Input>
                   <div
                     onClick={() => handleRemoveSet(exerciseIndex, setIndex)}
-                    className="h-4 w-4 cursor-pointer rounded-full bg-red-600 text-center text-white"
+                    className="p-2"
                   >
-                    <div className="-translate-y-[5px]">-</div>
+                    <div className="h-4 w-4 cursor-pointer rounded-full bg-red-600 p-2 text-center text-white">
+                      <div className="-translate-y-[13px] -translate-x-[4px]">
+                        -
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
