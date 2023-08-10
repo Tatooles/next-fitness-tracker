@@ -225,6 +225,7 @@ export default function WorkoutModal({
     <Dialog open={modalOpen} onOpenChange={setModalOpen}>
       <DialogContent
         onOpenAutoFocus={(e) => e.preventDefault()}
+        onInteractOutside={(e) => e.preventDefault()}
         className="max-h-[90%] w-5/6 overflow-y-scroll rounded-lg"
       >
         <DialogHeader>
