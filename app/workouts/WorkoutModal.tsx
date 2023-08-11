@@ -6,6 +6,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -77,9 +78,14 @@ export default function WorkoutModal({
     }
   }, [modalOpen]);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  /**
+   * This function handles the logic of saving the form the user has filled out. This save is for
+   * creating new and editing existing as well as duplicate workouts. In the case of editing a
+   * workout, the workout in the form is compared to the workout that was passed in and the save
+   * call is only made if the value was changed
+   */
+  const handleSubmit = async () => {
     // TODO: Replace this function with a server action
-    event.preventDefault();
     setModalOpen(false);
     setShowSpinner(true);
 
@@ -231,6 +237,7 @@ export default function WorkoutModal({
     <Dialog open={modalOpen} onOpenChange={setModalOpen}>
       <DialogContent
         onOpenAutoFocus={(e) => e.preventDefault()}
+        onInteractOutside={(e) => e.preventDefault()}
         className="max-h-[90%] w-5/6 overflow-y-scroll rounded-lg"
       >
         <DialogHeader>
@@ -360,10 +367,19 @@ export default function WorkoutModal({
           >
             Add Exercise
           </Button>
-          <Button type="submit" className="mt-4 self-center">
+        </form>
+        <DialogFooter>
+          <Button
+            onClick={() => setModalOpen(false)}
+            variant="outline"
+            className="mt-4 self-center"
+          >
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit} className="mt-4 self-center">
             Submit
           </Button>
-        </form>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
