@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import * as z from "zod";
 import {
   Dialog,
   DialogContent,
@@ -23,6 +24,11 @@ export default function WorkoutModal({
   editWorkoutValue: Workout | undefined;
   setShowSpinner: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const formSchema = z.object({
+    date: z.date(),
+    name: z.string().min(1).max(50),
+  });
+
   const router = useRouter();
   // This state holds the current data in the form
   const [formData, setFormData] = useState<Workout>({
