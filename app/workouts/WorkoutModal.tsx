@@ -133,15 +133,32 @@ export default function WorkoutModal({
             <FormField
               control={form.control}
               name="date"
-              render={({ field }) => (
+              render={() => (
                 <FormItem>
                   <FormLabel>Date</FormLabel>
                   <FormControl>
-                    <Input type="date"></Input>
+                    <Input type="date" />
                   </FormControl>
                   <FormDescription>
                     Enter the date this workout occurred.
                   </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            ></FormField>
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Workout Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Enter the name of this workout.
+                  </FormDescription>
+                  <FormMessage />
                 </FormItem>
               )}
             ></FormField>
