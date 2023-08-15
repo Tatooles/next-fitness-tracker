@@ -34,7 +34,21 @@ const formSchema = z.object({
       message: "Wokout name must be at least 1 character",
     })
     .max(50),
+  // exercises: z
+  //   .object({
+  //     name: z.string(),
+  //     notes: z.string(),
+  //     sets: z
+  //       .object({
+  //         reps: z.string(),
+  //         weight: z.string(),
+  //       })
+  //       .array(),
+  //   })
+  //   .array(),
 });
+
+type workoutFormSchema = z.infer<typeof formSchema>;
 
 export default function WorkoutModal({
   modalOpen,
@@ -103,12 +117,12 @@ export default function WorkoutModal({
       });
   };
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = (values: workoutFormSchema) => {
     console.log("submitting");
     console.log(values);
   };
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<workoutFormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       date: new Date(),
