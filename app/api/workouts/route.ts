@@ -8,6 +8,7 @@ import { Workout } from "@/lib/types";
 export async function POST(request: Request) {
   const body = await request.json();
   const workout = body.workout as Workout;
+  // TODO: Use zod to valudate input, there seems to be some sort of type mismatch
   const id = auth().userId;
   try {
     await db.transaction(async (tx) => {

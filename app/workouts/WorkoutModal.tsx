@@ -95,12 +95,13 @@ export default function WorkoutModal({
   //   setShowSpinner(false);
   // };
 
-  const addToDB = async () => {
+  const addToDB = async (form: workoutFormSchema) => {
+    console.log(form);
     await fetch("/api/workouts", {
       method: "POST",
-      // body: JSON.stringify({
-      //   workout: formData,
-      // }),
+      body: JSON.stringify({
+        workout: form,
+      }),
     })
       .then((response) => {
         if (!response.ok) {
@@ -127,8 +128,9 @@ export default function WorkoutModal({
   };
 
   const onSubmit = (values: workoutFormSchema) => {
-    console.log("submitting");
-    console.log(values);
+    // console.log("submitting", values);
+    addToDB(values);
+    // reset();
   };
 
   const {
@@ -137,8 +139,10 @@ export default function WorkoutModal({
     register,
     formState: { errors, isSubmitting },
     getValues,
+    reset,
   } = useForm<workoutFormSchema>({
     resolver: zodResolver(formSchema),
+    // TODO: Pass this value in as props if editing or duplicating
     defaultValues: {
       date: new Date(),
       name: "",
