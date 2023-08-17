@@ -45,8 +45,8 @@ const formSchema = z.object({
   exercises: z
     .object({
       name: z.string(),
+      notes: z.string(),
     })
-    //     notes: z.string(),
     //     sets: z
     //       .object({
     //         reps: z.string(),
@@ -181,31 +181,37 @@ export default function WorkoutModal({
               {...register("name")}
             ></Input>
             {errors.name && (
-              <p className="text-sm font-medium text-destructive">{`${errors.name.message}`}</p>
+              <p className="mt-2 text-sm font-medium text-destructive">{`${errors.name.message}`}</p>
             )}
           </div>
           <div>
             <Label>Exercises</Label>
-            <div>
-              {fields.map((field, index) => (
-                <div className="form-control" key={field.id}>
-                  <Input
-                    {...register(`exercises.${index}.name` as const)}
-                    placeholder="Exercise name"
-                  />
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    onClick={() => remove(index)}
-                  >
-                    Remove Exercise
-                  </Button>
-                </div>
-              ))}
-              <Button type="button" onClick={() => append({ name: "" })}>
-                Add Exercise
-              </Button>
-            </div>
+            {fields.map((field, index) => (
+              <div className="form-control" key={field.id}>
+                <Input
+                  {...register(`exercises.${index}.name` as const)}
+                  placeholder="Exercise name"
+                />
+                <Textarea
+                  {...register(`exercises.${index}.notes` as const)}
+                  placeholder="Notes"
+                  className="text-[16px]"
+                ></Textarea>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={() => remove(index)}
+                >
+                  Remove Exercise
+                </Button>
+              </div>
+            ))}
+            <Button
+              type="button"
+              onClick={() => append({ name: "", notes: "" })}
+            >
+              Add Exercise
+            </Button>
           </div>
           <Button type="submit">Submit</Button>
         </form>
