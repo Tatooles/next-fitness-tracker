@@ -164,7 +164,7 @@ export default function WorkoutModal({
           </DialogTitle>
         </DialogHeader>
         {/* <Form> */}
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
           <Label htmlFor="date">Date:</Label>
           <Input
             type="date"
@@ -218,6 +218,8 @@ export default function WorkoutModal({
               </div>
             ))}
             <Button
+              variant="secondary"
+              className="mt-4 w-full"
               type="button"
               onClick={() =>
                 append({
@@ -230,7 +232,9 @@ export default function WorkoutModal({
               Add Exercise
             </Button>
           </div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit" className="mt-4 self-center">
+            Submit
+          </Button>
         </form>
       </DialogContent>
     </Dialog>
