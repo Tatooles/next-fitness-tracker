@@ -136,6 +136,7 @@ export default function WorkoutModal({
     control,
     register,
     formState: { errors, isSubmitting },
+    getValues,
   } = useForm<workoutFormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -188,24 +189,32 @@ export default function WorkoutModal({
           <div>
             <Label>Exercises</Label>
             {fields.map((field, index) => (
-              <div className="form-control" key={field.id}>
-                <Input
-                  {...register(`exercises.${index}.name` as const)}
-                  placeholder="Exercise name"
+              <div
+                className="form-control flex flex-col gap-4 border-b-2 border-slate-700 px-2 py-4"
+                key={field.id}
+              >
+                <div className="flex items-center">
+                  <Input
+                    {...register(`exercises.${index}.name` as const)}
+                    placeholder="Exercise name"
+                    className="text-[16px]"
+                  />
+                  <div
+                    onClick={() => remove(index)}
+                    className="ml-5 h-6 w-7 cursor-pointer rounded-full bg-red-600 text-center text-white"
+                  >
+                    <div className="-translate-y-[1px]">-</div>
+                  </div>
+                </div>
+                <FormSets
+                  exerciseIndex={index}
+                  {...{ control, register, getValues }}
                 />
-                <FormSets exerciseIndex={index} {...{ control, register }} />
                 <Textarea
                   {...register(`exercises.${index}.notes` as const)}
                   placeholder="Notes"
                   className="text-[16px]"
                 ></Textarea>
-                <Button
-                  type="button"
-                  variant="destructive"
-                  onClick={() => remove(index)}
-                >
-                  Remove Exercise
-                </Button>
               </div>
             ))}
             <Button
