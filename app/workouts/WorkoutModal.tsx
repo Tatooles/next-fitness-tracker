@@ -32,6 +32,7 @@ import {
   FormMessage,
   FormField,
 } from "@/components/ui/form";
+import FormSets from "@/components/FormSets";
 import { Workout } from "@/lib/types";
 
 const formSchema = z.object({
@@ -46,13 +47,13 @@ const formSchema = z.object({
     .object({
       name: z.string(),
       notes: z.string(),
+      sets: z
+        .object({
+          reps: z.string(),
+          weight: z.string(),
+        })
+        .array(),
     })
-    //     sets: z
-    //       .object({
-    //         reps: z.string(),
-    //         weight: z.string(),
-    //       })
-    //       .array(),
     .array(),
 });
 
@@ -140,7 +141,7 @@ export default function WorkoutModal({
     defaultValues: {
       date: new Date(),
       name: "",
-      exercises: [{ name: "" }],
+      exercises: [{ name: "", notes: "", sets: [{ reps: "", weight: "" }] }],
     },
   });
 
@@ -192,6 +193,7 @@ export default function WorkoutModal({
                   {...register(`exercises.${index}.name` as const)}
                   placeholder="Exercise name"
                 />
+                <FormSets exerciseIndex={index} {...{ control, register }} />
                 <Textarea
                   {...register(`exercises.${index}.notes` as const)}
                   placeholder="Notes"
@@ -208,7 +210,13 @@ export default function WorkoutModal({
             ))}
             <Button
               type="button"
-              onClick={() => append({ name: "", notes: "" })}
+              onClick={() =>
+                append({
+                  name: "",
+                  notes: "",
+                  sets: [{ reps: "", weight: "" }],
+                })
+              }
             >
               Add Exercise
             </Button>
