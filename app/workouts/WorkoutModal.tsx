@@ -35,30 +35,25 @@ import {
 import { Workout } from "@/lib/types";
 
 const formSchema = z.object({
-  // date: z.date(),
-  // name: z
-  //   .string()
-  //   .min(1, {
-  //     message: "Wokout name must be at least 1 character",
-  //   })
-  //   .max(50),
+  date: z.date(),
+  name: z
+    .string()
+    .min(1, {
+      message: "Workout name must be at least 1 character",
+    })
+    .max(50),
   exercises: z
     .object({
       name: z.string(),
     })
+    //     notes: z.string(),
+    //     sets: z
+    //       .object({
+    //         reps: z.string(),
+    //         weight: z.string(),
+    //       })
+    //       .array(),
     .array(),
-  // exercises: z
-  //   .object({
-  //     name: z.string(),
-  //     notes: z.string(),
-  //     sets: z
-  //       .object({
-  //         reps: z.string(),
-  //         weight: z.string(),
-  //       })
-  //       .array(),
-  //   })
-  //   .array(),
 });
 
 type workoutFormSchema = z.infer<typeof formSchema>;
@@ -135,11 +130,16 @@ export default function WorkoutModal({
     console.log(values);
   };
 
-  const { handleSubmit, control, register } = useForm<workoutFormSchema>({
+  const {
+    handleSubmit,
+    control,
+    register,
+    formState: { errors, isSubmitting },
+  } = useForm<workoutFormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      // date: new Date(),
-      // name: "",
+      date: new Date(),
+      name: "",
       exercises: [{ name: "" }],
     },
   });
@@ -163,63 +163,27 @@ export default function WorkoutModal({
         </DialogHeader>
         {/* <Form> */}
         <form onSubmit={handleSubmit(onSubmit)}>
-          {/* <FormField
-            control={control}
-            name="date"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Date</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-[240px] pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, "PPP")
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      disabled={(date) =>
-                        date > new Date() || date < new Date("1900-01-01")
-                      }
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-              </FormItem>
+          <Label htmlFor="date">Date:</Label>
+          <Input
+            type="date"
+            id="date"
+            className="mt-2 mb-4 text-[16px]"
+            {...register("date", {
+              valueAsDate: true,
+            })}
+          ></Input>
+          <Label htmlFor="name">Workout Name:</Label>
+          <div className="mt-2 mb-4">
+            <Input
+              type="text"
+              id="name"
+              className="text-[16px]"
+              {...register("name")}
+            ></Input>
+            {errors.name && (
+              <p className="text-sm font-medium text-destructive">{`${errors.name.message}`}</p>
             )}
-          ></FormField>
-          <FormField
-            control={control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Workout Name</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormDescription>
-                  Enter the name of this workout.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          ></FormField> */}
-
+          </div>
           <div>
             <Label>Exercises</Label>
             <div>
@@ -245,7 +209,6 @@ export default function WorkoutModal({
           </div>
           <Button type="submit">Submit</Button>
         </form>
-        {/* </Form> */}
       </DialogContent>
     </Dialog>
   );
