@@ -16,7 +16,7 @@ export default function FormSets({
 }) {
   const { fields, remove, append } = useFieldArray({
     control,
-    name: `exercise[${exerciseIndex}].setArray`,
+    name: `exercises[${exerciseIndex}].sets`,
   });
   return (
     <div className="flex flex-col gap-2">
@@ -24,14 +24,16 @@ export default function FormSets({
         <div key={field.id} className="flex items-center justify-between">
           <Label>Set {index + 1}</Label>
           <Input
-            {...register(`exercise[${exerciseIndex}].setArray[${index}].reps`)}
+            {...register(
+              `exercises[${exerciseIndex}].sets[${index}].reps` as const
+            )}
             placeholder="Reps"
             inputMode="numeric"
             className="w-16 text-[16px]"
           ></Input>
           <Input
             {...register(
-              `exercise[${exerciseIndex}].setArray[${index}].weight`
+              `exercises[${exerciseIndex}].sets[${index}].weight` as const
             )}
             placeholder="Weight"
             inputMode="numeric"
@@ -64,12 +66,10 @@ export default function FormSets({
             onClick={() =>
               append({
                 reps: getValues(
-                  `exercise[${exerciseIndex}].setArray[${
-                    fields.length - 1
-                  }].reps`
+                  `exercises[${exerciseIndex}].sets[${fields.length - 1}].reps`
                 ),
                 weight: getValues(
-                  `exercise[${exerciseIndex}].setArray.[${
+                  `exercises[${exerciseIndex}].sets.[${
                     fields.length - 1
                   }].weight`
                 ),

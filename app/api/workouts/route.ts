@@ -3,13 +3,22 @@ import { db } from "@/db/drizzle";
 import { workouts } from "@/db/schema";
 import { exercises } from "@/db/schema";
 import { sets } from "@/db/schema";
-import { Workout } from "@/lib/types";
+import { TWorkoutFormSchema, workoutFormSchema } from "@/lib/types";
+import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-  const body = await request.json();
-  const workout = body.workout as Workout;
-  // TODO: Use zod to valudate input, there seems to be some sort of type mismatch
+  const body: unknown = await request.json();
+  // Use zod to validate input
+  const result = workoutFormSchema.safeParse(body);
+  let zodErrors = {};
+  if (!result.success) {
+    result.error.issues.forEach((issue) => {
+      zodErrors = { ...zodErrors, [issue.path[0]]: issue.message };
+    });
+    return NextResponse.json({ errors: zodErrors });
+  }
   const id = auth().userId;
+  const workout = body as TWorkoutFormSchema;
   try {
     await db.transaction(async (tx) => {
       const workoutResult = await db.insert(workouts).values({
@@ -35,9 +44,10 @@ export async function POST(request: Request) {
         }
       }
     });
-    return new Response("Hello from api/workouts");
   } catch (error) {
     console.log("An error ocurred!");
     if (error instanceof Error) console.log(error.message);
+    return NextResponse.json({ success: false });
   }
+  return NextResponse.json({ success: true });
 }

@@ -1,16 +1,11 @@
 import { useRouter } from "next/navigation";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
-import * as z from "zod";
-import { cn } from "@/lib/utils";
-import { CalendarIcon } from "@radix-ui/react-icons";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,31 +28,7 @@ import {
   FormField,
 } from "@/components/ui/form";
 import FormSets from "@/components/FormSets";
-import { Workout } from "@/lib/types";
-
-const formSchema = z.object({
-  date: z.date(),
-  name: z
-    .string()
-    .min(1, {
-      message: "Workout name must be at least 1 character",
-    })
-    .max(50),
-  exercises: z
-    .object({
-      name: z.string(),
-      notes: z.string(),
-      sets: z
-        .object({
-          reps: z.string(),
-          weight: z.string(),
-        })
-        .array(),
-    })
-    .array(),
-});
-
-type workoutFormSchema = z.infer<typeof formSchema>;
+import { Workout, workoutFormSchema, TWorkoutFormSchema } from "@/lib/types";
 
 export default function WorkoutModal({
   modalOpen,
@@ -95,13 +66,13 @@ export default function WorkoutModal({
   //   setShowSpinner(false);
   // };
 
-  const addToDB = async (form: workoutFormSchema) => {
-    console.log(form);
+  const addToDB = async (form: TWorkoutFormSchema) => {
     await fetch("/api/workouts", {
       method: "POST",
-      body: JSON.stringify({
-        workout: form,
-      }),
+      body: JSON.stringify(form),
+      headers: {
+        "Content-Type": "application/json",
+      },
     })
       .then((response) => {
         if (!response.ok) {
@@ -127,8 +98,7 @@ export default function WorkoutModal({
       });
   };
 
-  const onSubmit = (values: workoutFormSchema) => {
-    // console.log("submitting", values);
+  const onSubmit = (values: TWorkoutFormSchema) => {
     addToDB(values);
     // reset();
   };
@@ -140,11 +110,11 @@ export default function WorkoutModal({
     formState: { errors, isSubmitting },
     getValues,
     reset,
-  } = useForm<workoutFormSchema>({
-    resolver: zodResolver(formSchema),
+  } = useForm<TWorkoutFormSchema>({
+    resolver: zodResolver(workoutFormSchema),
     // TODO: Pass this value in as props if editing or duplicating
     defaultValues: {
-      date: new Date(),
+      date: new Date().toISOString(),
       name: "",
       exercises: [{ name: "", notes: "", sets: [{ reps: "", weight: "" }] }],
     },
@@ -170,13 +140,12 @@ export default function WorkoutModal({
         {/* <Form> */}
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
           <Label htmlFor="date">Date:</Label>
+          {/* TODO: Ideally prefill date */}
           <Input
             type="date"
             id="date"
             className="mt-2 mb-4 text-[16px]"
-            {...register("date", {
-              valueAsDate: true,
-            })}
+            {...register("date")}
           ></Input>
           <Label htmlFor="name">Workout Name:</Label>
           <div className="mt-2 mb-4">
