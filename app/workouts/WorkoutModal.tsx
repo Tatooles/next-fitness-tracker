@@ -98,9 +98,14 @@ export default function WorkoutModal({
       });
   };
 
-  const onSubmit = (values: TWorkoutFormSchema) => {
-    addToDB(values);
-    // reset();
+  const onSubmit = async (values: TWorkoutFormSchema) => {
+    setModalOpen(false);
+    reset();
+    // TODO: Ideally use isSubmitting for the spinner
+    setShowSpinner(true);
+    await addToDB(values);
+    router.refresh();
+    setShowSpinner(false);
   };
 
   const {
