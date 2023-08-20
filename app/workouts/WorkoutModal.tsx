@@ -118,12 +118,6 @@ export default function WorkoutModal({
     reset,
   } = useForm<TWorkoutFormSchema>({
     resolver: zodResolver(workoutFormSchema),
-    // TODO: Pass this value in as props if editing or duplicating
-    defaultValues: {
-      date: new Date().toISOString(),
-      name: "",
-      exercises: [{ name: "", notes: "", sets: [{ reps: "", weight: "" }] }],
-    },
     values: workoutValue,
   });
 

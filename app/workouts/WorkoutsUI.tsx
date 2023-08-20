@@ -7,22 +7,21 @@ import { TWorkoutFormSchema, Workout } from "@/lib/types";
 import Spinner from "@/components/Spinner";
 
 export default function WorkoutsUI({ workouts }: { workouts: Workout[] }) {
+  const emptyWorkout = {
+    date: new Date().toISOString(),
+    name: "",
+    exercises: [{ name: "", notes: "", sets: [{ reps: "", weight: "" }] }],
+  };
+
   const [addWorkoutModalOpen, setAddWorkoutModalOpen] = useState(false);
 
   const [showSpinner, setShowSpinner] = useState(false);
 
-  const [workoutValue, setWorkoutValue] = useState<TWorkoutFormSchema>({
-    date: new Date().toISOString(),
-    name: "",
-    exercises: [{ name: "", notes: "", sets: [{ reps: "", weight: "" }] }],
-  });
+  const [workoutValue, setWorkoutValue] =
+    useState<TWorkoutFormSchema>(emptyWorkout);
 
   const addWorkout = () => {
-    setWorkoutValue({
-      date: new Date().toISOString(),
-      name: "",
-      exercises: [{ name: "", notes: "", sets: [{ reps: "", weight: "" }] }],
-    });
+    setWorkoutValue(emptyWorkout);
     setAddWorkoutModalOpen(true);
   };
 

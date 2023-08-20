@@ -71,20 +71,21 @@ export default function Workouts({
 
   const convertToFormType = (workout: Workout) => {
     // TODO: Time this operation, with slow cpu as well
+    // const ukWorkout = workout as unknown;
 
-    const convertedExercises = workout.exercises.map((exercise) => ({
-      name: exercise.name,
-      notes: exercise.notes,
-      sets: exercise.sets.map((set) => ({
-        reps: set.reps,
-        weight: set.weight,
-      })),
-    }));
+    // const convertedWorkout = ukWorkout as TWorkoutFormSchema;
 
     const convertedWorkout: TWorkoutFormSchema = {
       name: workout.name,
       date: workout.date.toISOString(),
-      exercises: convertedExercises,
+      exercises: workout.exercises.map((exercise) => ({
+        name: exercise.name,
+        notes: exercise.notes,
+        sets: exercise.sets.map((set) => ({
+          reps: set.reps,
+          weight: set.weight,
+        })),
+      })),
     };
 
     editWorkout(convertedWorkout);
