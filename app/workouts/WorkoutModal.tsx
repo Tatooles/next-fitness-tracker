@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -33,12 +34,12 @@ import { Workout, workoutFormSchema, TWorkoutFormSchema } from "@/lib/types";
 export default function WorkoutModal({
   modalOpen,
   setModalOpen,
-  editWorkoutValue,
+  workoutValue,
   setShowSpinner,
 }: {
   modalOpen: boolean;
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  editWorkoutValue: Workout | undefined;
+  workoutValue: TWorkoutFormSchema;
   setShowSpinner: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const router = useRouter();
@@ -123,6 +124,7 @@ export default function WorkoutModal({
       name: "",
       exercises: [{ name: "", notes: "", sets: [{ reps: "", weight: "" }] }],
     },
+    values: workoutValue,
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -139,7 +141,7 @@ export default function WorkoutModal({
       >
         <DialogHeader>
           <DialogTitle>
-            {editWorkoutValue ? "Edit Workout" : "Create Workout"}
+            {workoutValue ? "Edit Workout" : "Create Workout"}
           </DialogTitle>
         </DialogHeader>
         {/* <Form> */}

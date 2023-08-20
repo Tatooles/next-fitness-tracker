@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import ExerciseItem from "@/components/ExerciseItem";
-import { Workout, Exercise } from "@/lib/types";
+import { Workout, Exercise, TWorkoutFormSchema } from "@/lib/types";
 
 export default function Workouts({
   workouts,
@@ -26,7 +26,7 @@ export default function Workouts({
   setShowSpinner,
 }: {
   workouts: Workout[];
-  editWorkout: (workout: Workout) => void;
+  editWorkout: (workout: TWorkoutFormSchema) => void;
   setShowSpinner: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const router = useRouter();
@@ -64,8 +64,30 @@ export default function Workouts({
           set.weight = "";
         }
       }
-      editWorkout(workoutCopy);
+      // TODO: Convert this to zod version?
+      // editWorkout(workoutCopy);
     }
+  };
+
+  const convertToFormType = (workout: Workout) => {
+    // TODO: Time this operation, with slow cpu as well
+
+    const convertedExercises = workout.exercises.map((exercise) => ({
+      name: exercise.name,
+      notes: exercise.notes,
+      sets: exercise.sets.map((set) => ({
+        reps: set.reps,
+        weight: set.weight,
+      })),
+    }));
+
+    const convertedWorkout: TWorkoutFormSchema = {
+      name: workout.name,
+      date: workout.date.toISOString(),
+      exercises: convertedExercises,
+    };
+
+    editWorkout(convertedWorkout);
   };
 
   workouts.sort((a, b) => b.date.getTime() - a.date.getTime());
@@ -82,7 +104,7 @@ export default function Workouts({
           <AccordionContent>
             <div className="flex justify-start pt-2">
               <Button
-                onClick={() => editWorkout(workout)}
+                onClick={() => convertToFormType(workout)}
                 className="mr-4 bg-green-500"
               >
                 Edit
