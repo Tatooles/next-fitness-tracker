@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -109,10 +108,9 @@ export default function WorkoutModal({
       >
         <DialogHeader>
           <DialogTitle>
-            {workoutValue ? "Edit Workout" : "Create Workout"}
+            {editWorkoutId > 0 ? "Edit Workout" : "Create Workout"}
           </DialogTitle>
         </DialogHeader>
-        {/* <Form> */}
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
           <Label htmlFor="date">Date:</Label>
           {/* TODO: Ideally prefill date */}

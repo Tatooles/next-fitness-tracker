@@ -1,7 +1,8 @@
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useFieldArray } from "react-hook-form";
+import { Control, UseFormRegister, UseFormGetValues } from "react-hook-form";
+import { TWorkoutFormSchema } from "@/lib/types";
 
 export default function FormSets({
   exerciseIndex,
@@ -10,13 +11,13 @@ export default function FormSets({
   getValues,
 }: {
   exerciseIndex: number;
-  control: any;
-  register: any;
-  getValues: any;
+  control: Control<TWorkoutFormSchema>;
+  register: UseFormRegister<TWorkoutFormSchema>;
+  getValues: UseFormGetValues<TWorkoutFormSchema>;
 }) {
   const { fields, remove, append } = useFieldArray({
     control,
-    name: `exercises[${exerciseIndex}].sets`,
+    name: `exercises.${exerciseIndex}.sets`,
   });
   return (
     <div className="flex flex-col gap-2">
@@ -25,7 +26,7 @@ export default function FormSets({
           <Label>Set {index + 1}</Label>
           <Input
             {...register(
-              `exercises[${exerciseIndex}].sets[${index}].reps` as const
+              `exercises.${exerciseIndex}.sets.${index}.reps` as const
             )}
             placeholder="Reps"
             inputMode="numeric"
@@ -33,7 +34,7 @@ export default function FormSets({
           ></Input>
           <Input
             {...register(
-              `exercises[${exerciseIndex}].sets[${index}].weight` as const
+              `exercises.${exerciseIndex}.sets.${index}.weight` as const
             )}
             placeholder="Weight"
             inputMode="numeric"
@@ -66,12 +67,10 @@ export default function FormSets({
             onClick={() =>
               append({
                 reps: getValues(
-                  `exercises[${exerciseIndex}].sets[${fields.length - 1}].reps`
+                  `exercises.${exerciseIndex}.sets.${fields.length - 1}.reps`
                 ),
                 weight: getValues(
-                  `exercises[${exerciseIndex}].sets.[${
-                    fields.length - 1
-                  }].weight`
+                  `exercises.${exerciseIndex}.sets.${fields.length - 1}.weight`
                 ),
               })
             }

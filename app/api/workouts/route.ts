@@ -8,6 +8,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   const body: unknown = await request.json();
+
   // Use zod to validate input
   const result = workoutFormSchema.safeParse(body);
   let zodErrors = {};
@@ -17,6 +18,7 @@ export async function POST(request: Request) {
     });
     return NextResponse.json({ errors: zodErrors });
   }
+
   const id = auth().userId;
   const workout = body as TWorkoutFormSchema;
   try {
