@@ -55,6 +55,7 @@ export default function Workouts({
     const convertedWorkout = convertToFormType(workout);
 
     convertedWorkout.name = `Copy of ${workout.name}`;
+    convertedWorkout.date = new Date().toISOString().substring(0, 10);
     // Clear all weight and notes for new workout
     for (const exercise of convertedWorkout.exercises) {
       exercise.notes = "";
@@ -78,7 +79,7 @@ export default function Workouts({
   const convertToFormType = (workout: Workout): TWorkoutFormSchema => {
     const convertedWorkout: TWorkoutFormSchema = {
       name: workout.name,
-      date: workout.date.toISOString(),
+      date: workout.date.toISOString().substring(0, 10),
       exercises: workout.exercises.map((exercise) => ({
         name: exercise.name,
         notes: exercise.notes,

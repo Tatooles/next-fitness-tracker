@@ -8,7 +8,7 @@ import Spinner from "@/components/Spinner";
 
 export default function WorkoutsUI({ workouts }: { workouts: Workout[] }) {
   const emptyWorkout = {
-    date: new Date().toISOString(),
+    date: new Date().toISOString().substring(0, 10),
     name: "",
     exercises: [{ name: "", notes: "", sets: [{ reps: "", weight: "" }] }],
   };
