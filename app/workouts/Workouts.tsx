@@ -23,10 +23,12 @@ import { Workout, Exercise, TWorkoutFormSchema } from "@/lib/types";
 export default function Workouts({
   workouts,
   editWorkout,
+  setEditWorkoutId,
   setShowSpinner,
 }: {
   workouts: Workout[];
   editWorkout: (workout: TWorkoutFormSchema) => void;
+  setEditWorkoutId: React.Dispatch<React.SetStateAction<number>>;
   setShowSpinner: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const router = useRouter();
@@ -50,31 +52,30 @@ export default function Workouts({
   };
 
   const duplicateWorkout = (workout: Workout) => {
-    if (workout) {
-      const workoutCopy = structuredClone(workout);
-      // Set id to -2 so submit logic knows it's duplicate
-      workoutCopy.id = -2;
-      workoutCopy.date = new Date();
-      workoutCopy.name = `Copy of ${workout.name}`;
-      // Clear all weight and notes for new workout
-      for (const exercise of workoutCopy.exercises) {
-        exercise.notes = "";
-        for (const set of exercise.sets) {
-          // TODO: Just copy first (or last) set
-          set.weight = "";
-        }
+    const convertedWorkout = convertToFormType(workout);
+
+    convertedWorkout.name = `Copy of ${workout.name}`;
+    // Clear all weight and notes for new workout
+    for (const exercise of convertedWorkout.exercises) {
+      exercise.notes = "";
+      for (const set of exercise.sets) {
+        // TODO: This logic could be changed
+        set.weight = "";
       }
-      // TODO: Convert this to zod version?
-      // editWorkout(workoutCopy);
     }
+
+    editWorkout(convertedWorkout);
+    setEditWorkoutId(-1);
   };
 
-  const convertToFormType = (workout: Workout) => {
-    // TODO: Time this operation, with slow cpu as well
-    // const ukWorkout = workout as unknown;
+  const editWorkoutHelper = (workout: Workout) => {
+    const convertedWorkout = convertToFormType(workout);
 
-    // const convertedWorkout = ukWorkout as TWorkoutFormSchema;
+    editWorkout(convertedWorkout);
+    setEditWorkoutId(workout.id);
+  };
 
+  const convertToFormType = (workout: Workout): TWorkoutFormSchema => {
     const convertedWorkout: TWorkoutFormSchema = {
       name: workout.name,
       date: workout.date.toISOString(),
@@ -88,7 +89,7 @@ export default function Workouts({
       })),
     };
 
-    editWorkout(convertedWorkout);
+    return convertedWorkout;
   };
 
   workouts.sort((a, b) => b.date.getTime() - a.date.getTime());
@@ -105,7 +106,7 @@ export default function Workouts({
           <AccordionContent>
             <div className="flex justify-start pt-2">
               <Button
-                onClick={() => convertToFormType(workout)}
+                onClick={() => editWorkoutHelper(workout)}
                 className="mr-4 bg-green-500"
               >
                 Edit

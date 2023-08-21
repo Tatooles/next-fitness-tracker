@@ -20,8 +20,11 @@ export default function WorkoutsUI({ workouts }: { workouts: Workout[] }) {
   const [workoutValue, setWorkoutValue] =
     useState<TWorkoutFormSchema>(emptyWorkout);
 
+  const [editWorkoutId, setEditWorkoutId] = useState(-1);
+
   const addWorkout = () => {
     setWorkoutValue(emptyWorkout);
+    setEditWorkoutId(-1);
     setAddWorkoutModalOpen(true);
   };
 
@@ -37,12 +40,14 @@ export default function WorkoutsUI({ workouts }: { workouts: Workout[] }) {
       <Workouts
         workouts={workouts}
         editWorkout={editWorkout}
+        setEditWorkoutId={setEditWorkoutId}
         setShowSpinner={setShowSpinner}
       ></Workouts>
       <WorkoutModal
         modalOpen={addWorkoutModalOpen}
         setModalOpen={setAddWorkoutModalOpen}
         workoutValue={workoutValue}
+        editWorkoutId={editWorkoutId}
         setShowSpinner={setShowSpinner}
       ></WorkoutModal>
       <Spinner show={showSpinner}></Spinner>

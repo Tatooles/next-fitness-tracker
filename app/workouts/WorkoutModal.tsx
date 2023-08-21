@@ -12,60 +12,45 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  useFormField,
-  Form,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormDescription,
-  FormMessage,
-  FormField,
-} from "@/components/ui/form";
 import FormSets from "@/components/FormSets";
-import { Workout, workoutFormSchema, TWorkoutFormSchema } from "@/lib/types";
+import { workoutFormSchema, TWorkoutFormSchema } from "@/lib/types";
 
 export default function WorkoutModal({
   modalOpen,
   setModalOpen,
   workoutValue,
+  editWorkoutId,
   setShowSpinner,
 }: {
   modalOpen: boolean;
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   workoutValue: TWorkoutFormSchema;
+  editWorkoutId: number;
   setShowSpinner: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const router = useRouter();
 
   /**
    * This function handles the logic of saving the form the user has filled out. This save is for
-   * creating new and editing existing as well as duplicate workouts. In the case of editing a
-   * workout, the workout in the form is compared to the workout that was passed in and the save
-   * call is only made if the value was changed
+   * creating new and editing existing as well as duplicate workouts.
    */
-  // const handleSubmit = async () => {
-  //   // TODO: Replace this function with a server action
-  //   setModalOpen(false);
-  //   setShowSpinner(true);
+  const onSubmit = async (values: TWorkoutFormSchema) => {
+    // TODO: Replace this function with a server action
+    // TODO: Ideally use isSubmitting for the spinner
+    setModalOpen(false);
+    setShowSpinner(true);
 
-  //   // if (!editWorkoutValue || editWorkoutValue.id === -2) {
-  //   //   // If adding or duplicating, just create new workout
-  //   //   await addToDB();
-  //   //   router.refresh();
-  //   // } else if (JSON.stringify(editWorkoutValue) !== JSON.stringify(formData)) {
-  //   //   // If updating, call delete to delete the existing workout, then addToDB to add udpated one
-  //   //   await Promise.all([deleteWorkout(editWorkoutValue.id), addToDB()]);
-  //   //   router.refresh();
-  //   // }
-  //   setShowSpinner(false);
-  // };
+    if (editWorkoutId < 0) {
+      // If adding or duplicating, just create new workout
+      await addToDB(values);
+      router.refresh();
+    } else {
+      // If updating, call delete to delete the existing workout, then addToDB to add udpated one
+      await Promise.all([deleteWorkout(editWorkoutId), addToDB(values)]);
+      router.refresh();
+    }
+    setShowSpinner(false);
+  };
 
   const addToDB = async (form: TWorkoutFormSchema) => {
     await fetch("/api/workouts", {
@@ -99,23 +84,12 @@ export default function WorkoutModal({
       });
   };
 
-  const onSubmit = async (values: TWorkoutFormSchema) => {
-    setModalOpen(false);
-    reset();
-    // TODO: Ideally use isSubmitting for the spinner
-    setShowSpinner(true);
-    await addToDB(values);
-    router.refresh();
-    setShowSpinner(false);
-  };
-
   const {
     handleSubmit,
     control,
     register,
     formState: { errors, isSubmitting },
     getValues,
-    reset,
   } = useForm<TWorkoutFormSchema>({
     resolver: zodResolver(workoutFormSchema),
     values: workoutValue,
