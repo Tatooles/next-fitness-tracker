@@ -1,106 +1,63 @@
-import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useForm, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Workout } from "@/lib/types";
+import FormSets from "@/components/FormSets";
+import { workoutFormSchema, TWorkoutFormSchema } from "@/lib/types";
 
 export default function WorkoutModal({
   modalOpen,
   setModalOpen,
-  editWorkoutValue,
+  workoutValue,
+  editWorkoutId,
   setShowSpinner,
 }: {
   modalOpen: boolean;
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  editWorkoutValue: Workout | undefined;
+  workoutValue: TWorkoutFormSchema;
+  editWorkoutId: number;
   setShowSpinner: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const router = useRouter();
-  // This state holds the current data in the form
-  const [formData, setFormData] = useState<Workout>({
-    id: 0,
-    userId: "",
-    // TODO: Fix this, sometimes prepopulates the wrong date. I think its related to timezones
-    // May need to add 7 hours to the date
-    date: new Date(),
-    name: "",
-    exercises: [
-      {
-        id: 0,
-        workoutId: 0,
-        sets: [{ id: 0, exerciseId: 0, reps: "", weight: "" }],
-        name: "",
-        notes: "",
-      },
-    ],
-  });
-
-  /**
-   * Conditionally fill formData based on whether
-   * we are in add mode or edit mode
-   */
-  useEffect(() => {
-    if (!modalOpen) {
-      // Clear modal on close
-      setFormData({
-        id: 0,
-        userId: "",
-        date: new Date(),
-        name: "",
-        exercises: [
-          {
-            id: 0,
-            workoutId: 0,
-            sets: [],
-            name: "",
-            notes: "",
-          },
-        ],
-      });
-    } else if (editWorkoutValue) {
-      // Pre fill with a copy if editing
-      setFormData(structuredClone(editWorkoutValue));
-    }
-  }, [modalOpen]);
 
   /**
    * This function handles the logic of saving the form the user has filled out. This save is for
-   * creating new and editing existing as well as duplicate workouts. In the case of editing a
-   * workout, the workout in the form is compared to the workout that was passed in and the save
-   * call is only made if the value was changed
+   * creating new and editing existing as well as duplicate workouts.
    */
-  const handleSubmit = async () => {
+  const onSubmit = async (values: TWorkoutFormSchema) => {
     // TODO: Replace this function with a server action
+    // TODO: Ideally use isSubmitting for the spinner
     setModalOpen(false);
     setShowSpinner(true);
 
-    if (!editWorkoutValue || editWorkoutValue.id === -2) {
+    if (editWorkoutId < 0) {
       // If adding or duplicating, just create new workout
-      await addToDB();
+      await addToDB(values);
       router.refresh();
-    } else if (JSON.stringify(editWorkoutValue) !== JSON.stringify(formData)) {
+    } else {
       // If updating, call delete to delete the existing workout, then addToDB to add udpated one
-      await Promise.all([deleteWorkout(editWorkoutValue.id), addToDB()]);
+      await Promise.all([deleteWorkout(editWorkoutId), addToDB(values)]);
       router.refresh();
     }
     setShowSpinner(false);
   };
 
-  const addToDB = async () => {
+  const addToDB = async (form: TWorkoutFormSchema) => {
     await fetch("/api/workouts", {
       method: "POST",
-      body: JSON.stringify({
-        workout: formData,
-      }),
+      body: JSON.stringify(form),
+      headers: {
+        "Content-Type": "application/json",
+      },
     })
       .then((response) => {
         if (!response.ok) {
@@ -126,106 +83,21 @@ export default function WorkoutModal({
       });
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [event.target.name]: event.target.value,
-    });
-  };
+  const {
+    handleSubmit,
+    control,
+    register,
+    formState: { errors, isSubmitting },
+    getValues,
+  } = useForm<TWorkoutFormSchema>({
+    resolver: zodResolver(workoutFormSchema),
+    values: workoutValue,
+  });
 
-  const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedDate = new Date(event.target.value);
-    setFormData({ ...formData, date: selectedDate });
-  };
-
-  const handleExerciseNameChange = (
-    exerciseIndex: number,
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const data = { ...formData };
-    const exercise = data.exercises[exerciseIndex];
-    exercise.name = event.target.value;
-    data.exercises[exerciseIndex] = exercise;
-    setFormData(data);
-  };
-
-  const handleExerciseNotesChange = (
-    exerciseIndex: number,
-    event: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    const data = { ...formData };
-    const exercise = data.exercises[exerciseIndex];
-    exercise.notes = event.target.value;
-    data.exercises[exerciseIndex] = exercise;
-    setFormData(data);
-  };
-
-  const handleRepsChange = (
-    exerciseIndex: number,
-    setIndex: number,
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const data = { ...formData };
-    const set = data.exercises[exerciseIndex].sets[setIndex];
-    set.reps = event.target.value;
-    setFormData(data);
-  };
-
-  const handleWeightChange = (
-    exerciseIndex: number,
-    setIndex: number,
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const data = { ...formData };
-    const set = data.exercises[exerciseIndex].sets[setIndex];
-    set.weight = event.target.value;
-    setFormData(data);
-  };
-
-  const handleAddExercise = () => {
-    const data = { ...formData };
-    data.exercises.push({
-      id: 0,
-      workoutId: 0,
-      name: "",
-      sets: [],
-      notes: "",
-    });
-    setFormData(data);
-  };
-
-  const handleAddSet = (exerciseIndex: number) => {
-    const data = { ...formData };
-    data.exercises[exerciseIndex].sets.push({
-      id: 0,
-      exerciseId: 0,
-      reps: "",
-      weight: "",
-    });
-    setFormData(data);
-  };
-
-  const handleRemoveSet = (exerciseIndex: number, setIndex: number) => {
-    const data = { ...formData };
-    data.exercises[exerciseIndex].sets.splice(setIndex, 1);
-    setFormData(data);
-  };
-
-  const handleRemoveExercise = (exerciseIndex: number) => {
-    const data = { ...formData };
-    data.exercises.splice(exerciseIndex, 1);
-    setFormData(data);
-  };
-
-  /**
-   * Duplicate the last set of the given exercise
-   */
-  const duplicateSet = (exerciseIndex: number) => {
-    const data = { ...formData };
-    const sets = data.exercises[exerciseIndex].sets;
-    sets.push({ ...sets[sets.length - 1] });
-    setFormData(data);
-  };
+  const { fields, append, remove } = useFieldArray({
+    name: "exercises",
+    control,
+  });
 
   return (
     <Dialog open={modalOpen} onOpenChange={setModalOpen}>
@@ -236,144 +108,79 @@ export default function WorkoutModal({
       >
         <DialogHeader>
           <DialogTitle>
-            {editWorkoutValue ? "Edit Workout" : "Create Workout"}
+            {editWorkoutId > 0 ? "Edit Workout" : "Create Workout"}
           </DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="flex flex-col">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
           <Label htmlFor="date">Date:</Label>
           <Input
             type="date"
-            name="date"
-            onChange={handleDateChange}
-            value={formData.date.toISOString().split("T")[0]}
+            id="date"
             className="mt-2 mb-4 text-[16px]"
+            {...register("date")}
           ></Input>
           <Label htmlFor="name">Workout Name:</Label>
-          <Input
-            type="text"
-            name="name"
-            value={formData.name}
-            className="mt-2 mb-4 text-[16px]"
-            onChange={handleChange}
-          ></Input>
-          {/* TODO: At this point would like to give the user the ability to use a template rather than filling in the whole thing manually */}
-          <Label>Exercises:</Label>
-          {formData.exercises.map((exercise, exerciseIndex) => (
-            <div
-              key={exerciseIndex}
-              className="flex flex-col gap-4 border-b-2 border-slate-700 px-2 py-4"
-            >
-              {/* TODO: This would be a search of a list of exercises */}
-              <div className="flex items-center">
-                <Input
-                  type="text"
-                  placeholder="Exercise Name"
-                  name="exerciseName"
-                  value={exercise.name}
-                  className="text-[16px]"
-                  onChange={(event) =>
-                    handleExerciseNameChange(exerciseIndex, event)
-                  }
-                  // TODO: Maybe have main exercise name (bench press, squat, deadlift) in one dropdown
-                  // Then another dropdown with modifications susch a incline, low bar, pause, pin, bands, chains, etc
-                ></Input>
-                <div
-                  onClick={() => handleRemoveExercise(exerciseIndex)}
-                  className="ml-5 h-6 w-7 cursor-pointer rounded-full bg-red-600 text-center text-white"
-                >
-                  <div className="-translate-y-[1px]">-</div>
-                </div>
-              </div>
-              {exercise.sets.map((set, setIndex) => (
-                <div
-                  key={setIndex}
-                  className="flex items-center justify-between"
-                >
-                  <h3>Set {setIndex + 1}:</h3>
+          <div className="mt-2 mb-4">
+            <Input
+              type="text"
+              id="name"
+              className="text-[16px]"
+              {...register("name")}
+            ></Input>
+            {errors.name && (
+              <p className="mt-2 text-sm font-medium text-destructive">{`${errors.name.message}`}</p>
+            )}
+          </div>
+          <div>
+            <Label>Exercises</Label>
+            {fields.map((field, index) => (
+              <div
+                className="form-control flex flex-col gap-4 border-b-2 border-slate-700 px-2 py-4"
+                key={field.id}
+              >
+                <div className="flex items-center">
                   <Input
-                    type="text"
-                    inputMode="numeric"
-                    placeholder="Reps"
-                    name="reps"
-                    value={set.reps}
-                    className="w-16 text-[16px]"
-                    onChange={(event) =>
-                      handleRepsChange(exerciseIndex, setIndex, event)
-                    }
-                  ></Input>
-                  <Input
-                    type="text"
-                    inputMode="decimal"
-                    placeholder="Weight"
-                    name="weight"
-                    value={set.weight}
-                    className="w-20 text-[16px]"
-                    onChange={(event) =>
-                      handleWeightChange(exerciseIndex, setIndex, event)
-                    }
-                  ></Input>
+                    {...register(`exercises.${index}.name` as const)}
+                    placeholder="Exercise name"
+                    className="text-[16px]"
+                  />
                   <div
-                    onClick={() => handleRemoveSet(exerciseIndex, setIndex)}
-                    className="p-2"
+                    onClick={() => remove(index)}
+                    className="ml-5 h-6 w-7 cursor-pointer rounded-full bg-red-600 text-center text-white"
                   >
-                    <div className="h-4 w-4 cursor-pointer rounded-full bg-red-600 p-2 text-center text-white">
-                      <div className="-translate-y-[13px] -translate-x-[4px]">
-                        -
-                      </div>
-                    </div>
+                    <div className="-translate-y-[1px]">-</div>
                   </div>
                 </div>
-              ))}
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleAddSet(exerciseIndex)}
-                  className="w-20 rounded-md bg-green-500 py-1 text-sm text-white"
-                >
-                  New set
-                </button>
-                {exercise.sets.length > 0 && (
-                  <button
-                    type="button"
-                    onClick={() => duplicateSet(exerciseIndex)}
-                    className="w-20 rounded-md bg-blue-600 py-1 text-sm text-white"
-                  >
-                    Clone set
-                  </button>
-                )}
+                <FormSets
+                  exerciseIndex={index}
+                  {...{ control, register, getValues }}
+                />
+                <Textarea
+                  {...register(`exercises.${index}.notes` as const)}
+                  placeholder="Notes"
+                  className="text-[16px]"
+                ></Textarea>
               </div>
-              <Textarea
-                placeholder="Notes"
-                name="notes"
-                value={exercise.notes}
-                className="text-[16px]"
-                onChange={(event) =>
-                  handleExerciseNotesChange(exerciseIndex, event)
-                }
-              ></Textarea>
-            </div>
-          ))}
-          <Button
-            variant="secondary"
-            type="button"
-            className="mt-4"
-            onClick={handleAddExercise}
-          >
-            Add Exercise
-          </Button>
-        </form>
-        <DialogFooter>
-          <Button
-            onClick={() => setModalOpen(false)}
-            variant="outline"
-            className="mt-4 self-center"
-          >
-            Cancel
-          </Button>
-          <Button onClick={handleSubmit} className="mt-4 self-center">
+            ))}
+            <Button
+              variant="secondary"
+              className="mt-4 w-full"
+              type="button"
+              onClick={() =>
+                append({
+                  name: "",
+                  notes: "",
+                  sets: [{ reps: "", weight: "" }],
+                })
+              }
+            >
+              Add Exercise
+            </Button>
+          </div>
+          <Button type="submit" className="mt-4 self-center">
             Submit
           </Button>
-        </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

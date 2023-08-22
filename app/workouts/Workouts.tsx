@@ -18,15 +18,17 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import ExerciseItem from "@/components/ExerciseItem";
-import { Workout, Exercise } from "@/lib/types";
+import { Workout, Exercise, TWorkoutFormSchema } from "@/lib/types";
 
 export default function Workouts({
   workouts,
   editWorkout,
+  setEditWorkoutId,
   setShowSpinner,
 }: {
   workouts: Workout[];
-  editWorkout: (workout: Workout) => void;
+  editWorkout: (workout: TWorkoutFormSchema) => void;
+  setEditWorkoutId: React.Dispatch<React.SetStateAction<number>>;
   setShowSpinner: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const router = useRouter();
@@ -50,22 +52,45 @@ export default function Workouts({
   };
 
   const duplicateWorkout = (workout: Workout) => {
-    if (workout) {
-      const workoutCopy = structuredClone(workout);
-      // Set id to -2 so submit logic knows it's duplicate
-      workoutCopy.id = -2;
-      workoutCopy.date = new Date();
-      workoutCopy.name = `Copy of ${workout.name}`;
-      // Clear all weight and notes for new workout
-      for (const exercise of workoutCopy.exercises) {
-        exercise.notes = "";
-        for (const set of exercise.sets) {
-          // TODO: Just copy first (or last) set
-          set.weight = "";
-        }
+    const convertedWorkout = convertToFormType(workout);
+
+    convertedWorkout.name = `Copy of ${workout.name}`;
+    convertedWorkout.date = new Date().toISOString().substring(0, 10);
+    // Clear all weight and notes for new workout
+    for (const exercise of convertedWorkout.exercises) {
+      exercise.notes = "";
+      for (const set of exercise.sets) {
+        // TODO: This logic could be changed
+        set.weight = "";
       }
-      editWorkout(workoutCopy);
     }
+
+    editWorkout(convertedWorkout);
+    setEditWorkoutId(-1);
+  };
+
+  const editWorkoutHelper = (workout: Workout) => {
+    const convertedWorkout = convertToFormType(workout);
+
+    editWorkout(convertedWorkout);
+    setEditWorkoutId(workout.id);
+  };
+
+  const convertToFormType = (workout: Workout): TWorkoutFormSchema => {
+    const convertedWorkout: TWorkoutFormSchema = {
+      name: workout.name,
+      date: workout.date.toISOString().substring(0, 10),
+      exercises: workout.exercises.map((exercise) => ({
+        name: exercise.name,
+        notes: exercise.notes,
+        sets: exercise.sets.map((set) => ({
+          reps: set.reps,
+          weight: set.weight,
+        })),
+      })),
+    };
+
+    return convertedWorkout;
   };
 
   workouts.sort((a, b) => b.date.getTime() - a.date.getTime());
@@ -82,7 +107,7 @@ export default function Workouts({
           <AccordionContent>
             <div className="flex justify-start pt-2">
               <Button
-                onClick={() => editWorkout(workout)}
+                onClick={() => editWorkoutHelper(workout)}
                 className="mr-4 bg-green-500"
               >
                 Edit

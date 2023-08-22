@@ -3,25 +3,33 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import WorkoutModal from "./WorkoutModal";
 import Workouts from "./Workouts";
-import { Workout } from "@/lib/types";
+import { TWorkoutFormSchema, Workout } from "@/lib/types";
 import Spinner from "@/components/Spinner";
 
 export default function WorkoutsUI({ workouts }: { workouts: Workout[] }) {
+  const emptyWorkout = {
+    date: new Date().toISOString().substring(0, 10),
+    name: "",
+    exercises: [{ name: "", notes: "", sets: [{ reps: "", weight: "" }] }],
+  };
+
   const [addWorkoutModalOpen, setAddWorkoutModalOpen] = useState(false);
 
   const [showSpinner, setShowSpinner] = useState(false);
 
-  const [editWorkoutValue, setEditWorkoutValue] = useState<Workout | undefined>(
-    undefined
-  );
+  const [workoutValue, setWorkoutValue] =
+    useState<TWorkoutFormSchema>(emptyWorkout);
+
+  const [editWorkoutId, setEditWorkoutId] = useState(-1);
 
   const addWorkout = () => {
-    setEditWorkoutValue(undefined);
+    setWorkoutValue(emptyWorkout);
+    setEditWorkoutId(-1);
     setAddWorkoutModalOpen(true);
   };
 
-  const editWorkout = (workout: Workout) => {
-    setEditWorkoutValue(workout);
+  const editWorkout = (workout: TWorkoutFormSchema) => {
+    setWorkoutValue(workout);
     setAddWorkoutModalOpen(true);
   };
 
@@ -32,12 +40,14 @@ export default function WorkoutsUI({ workouts }: { workouts: Workout[] }) {
       <Workouts
         workouts={workouts}
         editWorkout={editWorkout}
+        setEditWorkoutId={setEditWorkoutId}
         setShowSpinner={setShowSpinner}
       ></Workouts>
       <WorkoutModal
         modalOpen={addWorkoutModalOpen}
         setModalOpen={setAddWorkoutModalOpen}
-        editWorkoutValue={editWorkoutValue}
+        workoutValue={workoutValue}
+        editWorkoutId={editWorkoutId}
         setShowSpinner={setShowSpinner}
       ></WorkoutModal>
       <Spinner show={showSpinner}></Spinner>
