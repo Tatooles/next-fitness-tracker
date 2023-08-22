@@ -113,7 +113,6 @@ export default function WorkoutModal({
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
           <Label htmlFor="date">Date:</Label>
-          {/* TODO: Ideally prefill date */}
           <Input
             type="date"
             id="date"
