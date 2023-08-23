@@ -32,3 +32,6 @@ This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-opti
 - Stats on the home page or a stats page
 - Workout names prefill from a list of existing exercises
 - Search bar on exercises page
+- Workout form on a page rather than a modal
+  - Previous instances of an exercise from that can be viewed in a modal
+- Implement max width for larger screen sizes
