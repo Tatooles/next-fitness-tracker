@@ -24,14 +24,11 @@ This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-opti
 
 # App Ideas
 
-## UI
+## Features to Add
 
-This is a nice looking top nav that I would like to replicate
-
-<img src="public/ui-screenshot.png" alt="" width="200" />
-
-## Data Model
-
-Here is an idea for how the data for a user's exercises could be organized
-
-<img src="public/data-model.png" alt="" width="300" />
+- Dark mode
+- shadcn/ui calendar
+- How to page to tell the user how to use the app
+- Stats on the home page or a stats page
+- Workout names prefill from a list of existing exercises
+- Search bar on exercises page
