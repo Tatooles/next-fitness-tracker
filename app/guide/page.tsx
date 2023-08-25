@@ -4,10 +4,11 @@ export default function HowTo() {
   return (
     <div className="p-5 text-center">
       <h1 className="mb-5 text-3xl">Usage Guide</h1>
-      <div className="text-left">
+      <article className="text-left">
+        {/* <h2 className="mb-2 text-xl underline">Workouts page</h2> */}
         <p>
           Begin by going to the Workouts page and creating a workout by clicking
-          "Add a Workout"
+          &quot;Add a Workout&quot;
         </p>
         <Image
           src="/add-workout-image.png"
@@ -18,7 +19,7 @@ export default function HowTo() {
         />
         <p>
           Enter the name and date of your workout. The date will default to
-          today's date.
+          today&apos;s date.
         </p>
         <Image
           src="/workout-date-name-image.png"
@@ -40,9 +41,10 @@ export default function HowTo() {
           className="my-4 border-2 border-black"
         />
         <p>
-          You can press "Add set" to create a new blank set, or "Clone set" to
-          make a copy of the reps and sets of the last set in the list. Use the
-          "-" button to remove a set or exercise.
+          You can press &quot;Add set&quot; to create a new blank set, or
+          &quot;Clone set&quot; to make a copy of the reps and sets of the last
+          set in the list. Use the &quot;-&quot; button to remove a set or
+          exercise.
         </p>
         <p className="mt-4">
           Once you have finished entering your workout, press submit to save
@@ -56,9 +58,9 @@ export default function HowTo() {
           className="my-4 border-2 border-black"
         />
         <p>
-          After entering your workout, it will appear under the "Add workout"
-          button. You can see the history of all the workouts you have completed
-          on the workouts page. Tap to expand a specific workout.
+          After entering your workout, it will appear under the &quot;Add
+          workout&quot; button. You can see the history of all the workouts you
+          have completed on the workouts page. Tap to expand a specific workout.
         </p>
         <Image
           src="/workout-history-image.png"
@@ -69,14 +71,14 @@ export default function HowTo() {
         />
         <p>
           If you have a long workout and would like to enter information as you
-          go, or if you would like to update a previous workout, use the "Edit"
-          button.
+          go, or if you would like to update a previous workout, use the
+          &quot;Edit&quot; button.
         </p>
         <p className="mt-4">
           If you are performing a workout that has similar exercises to a
-          previous workout, use the "Duplicate" button. This will create a new
-          workout with the same exercies as the orignal workout, but with the
-          weight and notes fields emptied.
+          previous workout, use the &quot;Duplicate&quot; button. This will
+          create a new workout with the same exercies as the orignal workout,
+          but with the weight and notes fields emptied.
         </p>
         <Image
           src="/duplicate-workout-image.png"
@@ -85,7 +87,8 @@ export default function HowTo() {
           height={300}
           className="my-4 border-2 border-black"
         />
-      </div>
+        {/* <h2 className="mb-2 text-xl underline">Exercises page</h2> */}
+      </article>
     </div>
   );
 }
