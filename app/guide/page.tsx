@@ -5,7 +5,7 @@ export default function HowTo() {
     <div className="p-5 text-center">
       <h1 className="mb-5 text-3xl">Usage Guide</h1>
       <article className="text-left">
-        {/* <h2 className="mb-2 text-xl underline">Workouts page</h2> */}
+        <h2 className="mb-2 text-xl underline">Workouts page</h2>
         <p>
           Begin by going to the Workouts page and creating a workout by clicking
           &quot;Add a Workout&quot;
@@ -87,7 +87,18 @@ export default function HowTo() {
           height={300}
           className="my-4 border-2 border-black"
         />
-        {/* <h2 className="mb-2 text-xl underline">Exercises page</h2> */}
+        <h2 className="mb-2 text-xl underline">Exercises page</h2>
+        <p>
+          One the Exercises page you can see a list of all the exercises you
+          have logged. Use the search bar to filter your exercises by name.
+        </p>
+        <Image
+          src="/exercises-image.png"
+          alt=""
+          width={300}
+          height={300}
+          className="my-4 border-2 border-black"
+        />
       </article>
     </div>
   );
