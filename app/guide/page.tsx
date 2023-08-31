@@ -15,7 +15,7 @@ export default function HowTo() {
         <h2 className="mb-2 text-xl underline">Workouts Page</h2>
         <p>
           Navigate to the Workouts page and create a workout by clicking
-          &quot;Add a Workout.&quot;
+          &quot;Add Workout.&quot;
         </p>
         <Image
           src={addWorkoutImage}
@@ -56,7 +56,7 @@ export default function HowTo() {
           className="my-4 h-auto w-full border-2 border-black sm:w-2/3"
         />
         <p>
-          After entering a workout, it will be visible under the &quot;Add a
+          After entering a workout, it will be visible under the &quot;Add
           workout&quot; button. The history of all the workouts completed is
           visible on the workouts page. Tap to expand a specific workout.
         </p>
