@@ -19,7 +19,7 @@ export default function HowTo() {
         </p>
         <Image
           src={addWorkoutImage}
-          alt="Screenshot of the add workout button"
+          alt="Screenshot of the Add Workout button"
           className="my-4 h-auto w-full border-2 border-black sm:w-2/3"
         />
         <p>
@@ -57,7 +57,7 @@ export default function HowTo() {
         />
         <p>
           After entering a workout, it will be visible under the &quot;Add
-          workout&quot; button. The history of all the workouts completed is
+          Workout&quot; button. The history of all the workouts completed is
           visible on the workouts page. Tap to expand a specific workout.
         </p>
         <Image
