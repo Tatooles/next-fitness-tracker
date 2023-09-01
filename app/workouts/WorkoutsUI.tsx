@@ -36,7 +36,7 @@ export default function WorkoutsUI({ workouts }: { workouts: Workout[] }) {
   return (
     <div className="p-5 text-center">
       <h1 className="mb-5 text-3xl">Workouts</h1>
-      <Button onClick={addWorkout}>Add a Workout</Button>
+      <Button onClick={addWorkout}>Add Workout</Button>
       <Workouts
         workouts={workouts}
         editWorkout={editWorkout}

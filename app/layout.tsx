@@ -25,6 +25,10 @@ export default function RootLayout({
       title: "Exercises",
       href: "/exercises",
     },
+    {
+      title: "Guide",
+      href: "/guide",
+    },
   ];
   return (
     <ClerkProvider>

@@ -1,6 +1,9 @@
 import { authMiddleware } from "@clerk/nextjs";
 
-export default authMiddleware();
+export default authMiddleware({
+  // "/guide" will be accessible to all users
+  publicRoutes: ["/guide"],
+});
 
 // Stop Middleware running on static files and public folder
 export const config = {
