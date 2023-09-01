@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 export default function Home() {
   return (
     <div className="p-4 text-center">
-      <h1 className="mb-5 text-3xl">Welcome to the Lifting Log!</h1>
+      <h1 className="mb-5 text-2xl">Welcome to the Lifting Log!</h1>
       <div className="flex flex-col justify-center gap-4 sm:flex-row">
         <div className="border-2 border-black p-3">
           <h1 className="text-lg font-bold">Workouts</h1>
