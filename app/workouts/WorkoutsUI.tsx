@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import WorkoutModal from "./WorkoutModal";
 import Workouts from "./Workouts";
@@ -36,7 +37,9 @@ export default function WorkoutsUI({ workouts }: { workouts: Workout[] }) {
   return (
     <div className="p-5 text-center">
       <h1 className="mb-5 text-3xl">Workouts</h1>
-      <Button onClick={addWorkout}>Add Workout</Button>
+      <Button>
+        <Link href="/workouts/create">Add Workout</Link>
+      </Button>
       <Workouts
         workouts={workouts}
         editWorkout={editWorkout}
