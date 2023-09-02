@@ -1,3 +1,4 @@
+"use client";
 import { useRouter } from "next/navigation";
 import {
   Accordion,
@@ -20,21 +21,10 @@ import { Button } from "@/components/ui/button";
 import ExerciseItem from "@/components/ExerciseItem";
 import { Workout, Exercise, TWorkoutFormSchema } from "@/lib/types";
 
-export default function Workouts({
-  workouts,
-  editWorkout,
-  setEditWorkoutId,
-  setShowSpinner,
-}: {
-  workouts: Workout[];
-  editWorkout: (workout: TWorkoutFormSchema) => void;
-  setEditWorkoutId: React.Dispatch<React.SetStateAction<number>>;
-  setShowSpinner: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
+export default function Workouts({ workouts }: { workouts: Workout[] }) {
   const router = useRouter();
 
   const deleteWorkout = async (workout: number) => {
-    setShowSpinner(true);
     await fetch(`/api/workouts/${workout}`, {
       method: "DELETE",
     })
@@ -48,7 +38,6 @@ export default function Workouts({
       .catch((error) => {
         console.error("An error occurred while deleting exercise:", error);
       });
-    setShowSpinner(false);
   };
 
   const duplicateWorkout = (workout: Workout) => {
@@ -64,16 +53,10 @@ export default function Workouts({
         set.weight = "";
       }
     }
-
-    editWorkout(convertedWorkout);
-    setEditWorkoutId(-1);
   };
 
   const editWorkoutHelper = (workout: Workout) => {
     const convertedWorkout = convertToFormType(workout);
-
-    editWorkout(convertedWorkout);
-    setEditWorkoutId(workout.id);
   };
 
   const convertToFormType = (workout: Workout): TWorkoutFormSchema => {
