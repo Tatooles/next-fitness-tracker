@@ -47,6 +47,11 @@ export default function CreateWorkoutPage() {
     getValues,
   } = useForm<TWorkoutFormSchema>({
     resolver: zodResolver(workoutFormSchema),
+    defaultValues: {
+      date: new Date().toISOString().substring(0, 10),
+      name: "",
+      exercises: [{ name: "", notes: "", sets: [{ reps: "", weight: "" }] }],
+    },
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -55,8 +60,8 @@ export default function CreateWorkoutPage() {
   });
 
   return (
-    <div className="p-4 text-center">
-      <h2 className="text-2xl">Create Workout</h2>
+    <div className="mx-auto p-4 sm:max-w-md">
+      <h2 className="text-center text-2xl">Create Workout</h2>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
