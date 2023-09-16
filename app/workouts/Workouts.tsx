@@ -1,5 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   Accordion,
   AccordionContent,
@@ -55,10 +56,6 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
     }
   };
 
-  const editWorkoutHelper = (workout: Workout) => {
-    const convertedWorkout = convertToFormType(workout);
-  };
-
   const convertToFormType = (workout: Workout): TWorkoutFormSchema => {
     const convertedWorkout: TWorkoutFormSchema = {
       name: workout.name,
@@ -88,18 +85,21 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
             </span>
           </AccordionTrigger>
           <AccordionContent>
-            <div className="flex justify-start pt-2">
-              <Button
-                onClick={() => editWorkoutHelper(workout)}
-                className="mr-4 bg-green-500"
+            <div className="flex justify-start gap-4 pt-2">
+              <Link
+                href={{
+                  pathname: "/workouts/edit",
+                  query: { id: workout.id },
+                }}
+                className="flex w-16 flex-col justify-center rounded-md bg-green-500 text-white hover:bg-green-500/70"
               >
                 Edit
-              </Button>
+              </Link>
               <Button
                 onClick={() => {
                   duplicateWorkout(workout);
                 }}
-                className="mr-4 bg-blue-600"
+                className="bg-blue-600 hover:bg-blue-600/70"
               >
                 Duplicate
               </Button>
@@ -123,7 +123,7 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                       onClick={() => {
                         deleteWorkout(workout.id);
                       }}
-                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/70"
                     >
                       Delete
                     </AlertDialogAction>

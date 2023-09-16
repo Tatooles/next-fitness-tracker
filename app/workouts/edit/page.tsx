@@ -20,8 +20,12 @@ async function getWorkout(id: number) {
   return data;
 }
 
-export default async function EditWorkoutPage() {
-  const workout = await getWorkout(147);
+export default async function EditWorkoutPage({
+  searchParams,
+}: {
+  searchParams: { id: number };
+}) {
+  const workout = await getWorkout(searchParams.id);
   // TODO: Show a not found error page if the workout is not found
   return (
     <div className="mx-auto p-4 sm:max-w-md">
