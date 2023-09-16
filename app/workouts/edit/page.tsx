@@ -1,10 +1,11 @@
 import { auth } from "@clerk/nextjs";
 import { db } from "@/db/drizzle";
-import { Workout } from "@/lib/types";
+import { Workout, Exercise } from "@/lib/types";
+import ExerciseItem from "@/components/ExerciseItem";
 
 async function getWorkout(id: number) {
   // TODO: We do want to enforce userId so people can't look at other users' workouts
-  const data: Workout[] = await db.query.workouts.findMany({
+  const data: Workout | undefined = await db.query.workouts.findFirst({
     where: (workouts, { eq }) => eq(workouts.id, id),
     with: {
       exercises: {
@@ -16,13 +17,28 @@ async function getWorkout(id: number) {
       },
     },
   });
-  console.log(data[0]);
-  console.log(data[0].exercises[0].sets);
   return data;
 }
 
 export default async function EditWorkoutPage() {
   const workout = await getWorkout(147);
-  // Could run a query on page load to get the workout, but it would be nice to pass it in since we already have it
-  return <div>test</div>;
+  // TODO: Show a not found error page if the workout is not found
+  return (
+    <div className="mx-auto p-4 sm:max-w-md">
+      <span>
+        {workout?.date.toLocaleDateString()} - {workout?.name}
+      </span>
+      <div className="flex justify-start pt-2"></div>
+      <div className="text-center">
+        <div className="divide-y-2 px-2">
+          {workout?.exercises.map((exercise: Exercise) => (
+            <div className="p-2" key={exercise.id}>
+              <h3 className="text-lg font-bold">{exercise.name}</h3>
+              <ExerciseItem exercise={exercise}></ExerciseItem>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }
