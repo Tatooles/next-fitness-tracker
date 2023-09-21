@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { auth } from "@clerk/nextjs";
 import { db } from "@/db/drizzle";
-import { Workout, Exercise } from "@/lib/types";
+import { Workout, Exercise, TWorkoutFormSchema } from "@/lib/types";
+import WorkoutForm from "@/components/WorkoutForm";
 import ExerciseItem from "@/components/ExerciseItem";
 
 async function getWorkout(id: number) {
@@ -18,15 +19,36 @@ async function getWorkout(id: number) {
       },
     },
   });
-  return data;
+  return convertToFormType(data);
 }
+
+const convertToFormType = (
+  workout: Workout | undefined
+): TWorkoutFormSchema | undefined => {
+  if (!workout) return workout;
+  const convertedWorkout: TWorkoutFormSchema = {
+    name: workout.name,
+    date: workout.date.toISOString().substring(0, 10),
+    exercises: workout.exercises.map((exercise) => ({
+      name: exercise.name,
+      notes: exercise.notes,
+      sets: exercise.sets.map((set) => ({
+        reps: set.reps,
+        weight: set.weight,
+      })),
+    })),
+  };
+
+  return convertedWorkout;
+};
 
 export default async function EditWorkoutPage({
   searchParams,
 }: {
   searchParams: { id: number };
 }) {
-  const workout = await getWorkout(searchParams.id);
+  const workoutId = searchParams.id;
+  const workout = await getWorkout(workoutId);
 
   if (!workout) {
     return (
@@ -44,22 +66,11 @@ export default async function EditWorkoutPage({
     );
   } else {
     return (
-      <div className="mx-auto p-4 sm:max-w-md">
-        <span>
-          {workout?.date.toLocaleDateString()} - {workout?.name}
-        </span>
-        <div className="flex justify-start pt-2"></div>
-        <div className="text-center">
-          <div className="divide-y-2 px-2">
-            {workout?.exercises.map((exercise: Exercise) => (
-              <div className="p-2" key={exercise.id}>
-                <h3 className="text-lg font-bold">{exercise.name}</h3>
-                <ExerciseItem exercise={exercise}></ExerciseItem>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      <WorkoutForm
+        workoutValue={workout}
+        editMode={true}
+        workoutId={workoutId}
+      ></WorkoutForm>
     );
   }
 }
