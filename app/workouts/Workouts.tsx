@@ -41,38 +41,6 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
       });
   };
 
-  const duplicateWorkout = (workout: Workout) => {
-    const convertedWorkout = convertToFormType(workout);
-
-    convertedWorkout.name = `Copy of ${workout.name}`;
-    convertedWorkout.date = new Date().toISOString().substring(0, 10);
-    // Clear all weight and notes for new workout
-    for (const exercise of convertedWorkout.exercises) {
-      exercise.notes = "";
-      for (const set of exercise.sets) {
-        // TODO: This logic could be changed
-        set.weight = "";
-      }
-    }
-  };
-
-  const convertToFormType = (workout: Workout): TWorkoutFormSchema => {
-    const convertedWorkout: TWorkoutFormSchema = {
-      name: workout.name,
-      date: workout.date.toISOString().substring(0, 10),
-      exercises: workout.exercises.map((exercise) => ({
-        name: exercise.name,
-        notes: exercise.notes,
-        sets: exercise.sets.map((set) => ({
-          reps: set.reps,
-          weight: set.weight,
-        })),
-      })),
-    };
-
-    return convertedWorkout;
-  };
-
   workouts.sort((a, b) => b.date.getTime() - a.date.getTime());
 
   return (
@@ -95,14 +63,15 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
               >
                 Edit
               </Link>
-              <Button
-                onClick={() => {
-                  duplicateWorkout(workout);
+              <Link
+                href={{
+                  pathname: "/workouts/duplicate",
+                  query: { id: workout.id },
                 }}
-                className="bg-blue-600 hover:bg-blue-600/70"
+                className="flex w-24 flex-col justify-center rounded-md bg-blue-600 text-white hover:bg-blue-600/70"
               >
                 Duplicate
-              </Button>
+              </Link>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="destructive">Delete</Button>

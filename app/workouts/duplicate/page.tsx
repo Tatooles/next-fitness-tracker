@@ -26,14 +26,14 @@ const convertToFormType = (
 ): TWorkoutFormSchema | undefined => {
   if (!workout) return workout;
   const convertedWorkout: TWorkoutFormSchema = {
-    name: workout.name,
-    date: workout.date.toISOString().substring(0, 10),
+    name: `Copy of ${workout.name}`,
+    date: new Date().toISOString().substring(0, 10),
     exercises: workout.exercises.map((exercise) => ({
       name: exercise.name,
-      notes: exercise.notes,
+      notes: "",
       sets: exercise.sets.map((set) => ({
         reps: set.reps,
-        weight: set.weight,
+        weight: "",
       })),
     })),
   };
@@ -41,7 +41,7 @@ const convertToFormType = (
   return convertedWorkout;
 };
 
-export default async function EditWorkoutPage({
+export default async function DuplicateWorkoutPage({
   searchParams,
 }: {
   searchParams: { id: number };
@@ -51,7 +51,6 @@ export default async function EditWorkoutPage({
 
   if (!workout) {
     return (
-      // TODO: Put this into a separate component
       <div className="mx-auto flex flex-col p-4 text-center sm:max-w-md">
         <p className="text-left">
           Workout not found, please return to the Workouts page
@@ -68,8 +67,8 @@ export default async function EditWorkoutPage({
     return (
       <WorkoutForm
         workoutValue={workout}
-        editMode={true}
-        workoutId={workoutId}
+        editMode={false}
+        workoutId={-1}
       ></WorkoutForm>
     );
   }
