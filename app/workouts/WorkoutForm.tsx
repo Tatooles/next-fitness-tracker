@@ -27,11 +27,11 @@ export default function WorkoutForm({
     setShowSpinner(true);
 
     if (!editMode) {
-      // If adding or duplicating, just create new workout
+      // If creating or duplicating, just create new workout
       await addToDB(values);
       router.refresh();
     } else {
-      // If updating, call delete to delete the existing workout, then addToDB to add udpated one
+      // If editing, delete existing workout, then add new one
       await Promise.all([deleteWorkout(workoutId), addToDB(values)]);
       router.refresh();
     }

@@ -26,7 +26,7 @@ async function getWorkout(id: number) {
 const convertToFormType = (
   workout: Workout | undefined
 ): TWorkoutFormSchema | undefined => {
-  if (!workout) return workout;
+  if (!workout) return undefined;
   const convertedWorkout: TWorkoutFormSchema = {
     name: workout.name,
     date: workout.date.toISOString().substring(0, 10),
