@@ -88,8 +88,9 @@ export default function WorkoutForm({
 
   return (
     <div className="mx-auto p-4 sm:max-w-md">
-      {/* TODO: This title should be condtional */}
-      <h2 className="text-center text-2xl">Create Workout</h2>
+      <h2 className="text-center text-2xl">
+        {workoutId !== -1 ? "Edit Workout" : "Create Workout"}
+      </h2>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col text-left"

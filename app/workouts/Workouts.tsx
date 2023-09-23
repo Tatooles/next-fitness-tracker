@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -19,13 +20,17 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import Spinner from "@/components/Spinner";
 import ExerciseItem from "@/components/ExerciseItem";
-import { Workout, Exercise, TWorkoutFormSchema } from "@/lib/types";
+import { Workout, Exercise } from "@/lib/types";
 
 export default function Workouts({ workouts }: { workouts: Workout[] }) {
+  const [showSpinner, setShowSpinner] = useState(false);
+
   const router = useRouter();
 
   const deleteWorkout = async (workout: number) => {
+    setShowSpinner(true);
     await fetch(`/api/workouts/${workout}`, {
       method: "DELETE",
     })
@@ -39,6 +44,7 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
       .catch((error) => {
         console.error("An error occurred while deleting exercise:", error);
       });
+    setShowSpinner(false);
   };
 
   workouts.sort((a, b) => b.date.getTime() - a.date.getTime());
@@ -113,6 +119,7 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
           </AccordionContent>
         </AccordionItem>
       ))}
+      <Spinner show={showSpinner}></Spinner>
     </Accordion>
   );
 }
