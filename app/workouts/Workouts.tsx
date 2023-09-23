@@ -1,4 +1,7 @@
+"use client";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   Accordion,
   AccordionContent,
@@ -17,20 +20,13 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import Spinner from "@/components/Spinner";
 import ExerciseItem from "@/components/ExerciseItem";
-import { Workout, Exercise, TWorkoutFormSchema } from "@/lib/types";
+import { Workout, Exercise } from "@/lib/types";
 
-export default function Workouts({
-  workouts,
-  editWorkout,
-  setEditWorkoutId,
-  setShowSpinner,
-}: {
-  workouts: Workout[];
-  editWorkout: (workout: TWorkoutFormSchema) => void;
-  setEditWorkoutId: React.Dispatch<React.SetStateAction<number>>;
-  setShowSpinner: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
+export default function Workouts({ workouts }: { workouts: Workout[] }) {
+  const [showSpinner, setShowSpinner] = useState(false);
+
   const router = useRouter();
 
   const deleteWorkout = async (workout: number) => {
@@ -51,48 +47,6 @@ export default function Workouts({
     setShowSpinner(false);
   };
 
-  const duplicateWorkout = (workout: Workout) => {
-    const convertedWorkout = convertToFormType(workout);
-
-    convertedWorkout.name = `Copy of ${workout.name}`;
-    convertedWorkout.date = new Date().toISOString().substring(0, 10);
-    // Clear all weight and notes for new workout
-    for (const exercise of convertedWorkout.exercises) {
-      exercise.notes = "";
-      for (const set of exercise.sets) {
-        // TODO: This logic could be changed
-        set.weight = "";
-      }
-    }
-
-    editWorkout(convertedWorkout);
-    setEditWorkoutId(-1);
-  };
-
-  const editWorkoutHelper = (workout: Workout) => {
-    const convertedWorkout = convertToFormType(workout);
-
-    editWorkout(convertedWorkout);
-    setEditWorkoutId(workout.id);
-  };
-
-  const convertToFormType = (workout: Workout): TWorkoutFormSchema => {
-    const convertedWorkout: TWorkoutFormSchema = {
-      name: workout.name,
-      date: workout.date.toISOString().substring(0, 10),
-      exercises: workout.exercises.map((exercise) => ({
-        name: exercise.name,
-        notes: exercise.notes,
-        sets: exercise.sets.map((set) => ({
-          reps: set.reps,
-          weight: set.weight,
-        })),
-      })),
-    };
-
-    return convertedWorkout;
-  };
-
   workouts.sort((a, b) => b.date.getTime() - a.date.getTime());
 
   return (
@@ -105,21 +59,25 @@ export default function Workouts({
             </span>
           </AccordionTrigger>
           <AccordionContent>
-            <div className="flex justify-start pt-2">
-              <Button
-                onClick={() => editWorkoutHelper(workout)}
-                className="mr-4 bg-green-500"
+            <div className="flex justify-start gap-4 pt-2">
+              <Link
+                href={{
+                  pathname: "/workouts/edit",
+                  query: { id: workout.id },
+                }}
+                className="flex w-16 flex-col justify-center rounded-md bg-green-500 text-white hover:bg-green-500/70"
               >
                 Edit
-              </Button>
-              <Button
-                onClick={() => {
-                  duplicateWorkout(workout);
+              </Link>
+              <Link
+                href={{
+                  pathname: "/workouts/duplicate",
+                  query: { id: workout.id },
                 }}
-                className="mr-4 bg-blue-600"
+                className="flex w-24 flex-col justify-center rounded-md bg-blue-600 text-white hover:bg-blue-600/70"
               >
                 Duplicate
-              </Button>
+              </Link>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="destructive">Delete</Button>
@@ -140,7 +98,7 @@ export default function Workouts({
                       onClick={() => {
                         deleteWorkout(workout.id);
                       }}
-                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/70"
                     >
                       Delete
                     </AlertDialogAction>
@@ -161,6 +119,7 @@ export default function Workouts({
           </AccordionContent>
         </AccordionItem>
       ))}
+      <Spinner show={showSpinner}></Spinner>
     </Accordion>
   );
 }

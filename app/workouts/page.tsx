@@ -1,6 +1,8 @@
+import Link from "next/link";
 import { auth } from "@clerk/nextjs";
 import { db } from "@/db/drizzle";
-import WorkoutsUI from "./WorkoutsUI";
+import { Button } from "@/components/ui/button";
+import Workouts from "./Workouts";
 import { Workout } from "@/lib/types";
 
 async function getWorkouts() {
@@ -26,5 +28,13 @@ async function getWorkouts() {
 
 export default async function WorkoutsPage() {
   const workouts = await getWorkouts();
-  return <WorkoutsUI workouts={workouts}></WorkoutsUI>;
+  return (
+    <div className="p-5 text-center">
+      <h1 className="mb-5 text-3xl">Workouts</h1>
+      <Button>
+        <Link href="/workouts/create">Add Workout</Link>
+      </Button>
+      <Workouts workouts={workouts}></Workouts>
+    </div>
+  );
 }
