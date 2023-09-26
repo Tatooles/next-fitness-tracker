@@ -42,6 +42,7 @@ export default function ExercisesUI({
     <div className="p-5 text-center">
       <h1 className="mb-5 text-3xl">Exercises</h1>
       <Input
+        type="search"
         placeholder="Search exercises"
         className="text-[16px]"
         onChange={(e) => {
