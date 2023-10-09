@@ -26,6 +26,10 @@ export default function RootLayout({
       href: "/exercises",
     },
     {
+      title: "Export",
+      href: "/export",
+    },
+    {
       title: "Guide",
       href: "/guide",
     },
