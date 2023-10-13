@@ -9,19 +9,19 @@ export default function ExportPage() {
   const getFile = async () => {
     setShowSpinner(true);
     console.log("getting file");
-    // await fetch(`/api/workouts/${workout}`, {
-    //   method: "DELETE",
-    // })
-    //   .then((response) => {
-    //     if (response.ok) {
-    //       console.log("response returned");
-    //     } else {
-    //       console.error("Failed to delete exercise.");
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     console.error("An error occurred while deleting exercise:", error);
-    //   });
+    await fetch(`/api/export`, {
+      method: "GET",
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log("response returned");
+        } else {
+          console.error("Failed to fetch workout data.");
+        }
+      })
+      .catch((error) => {
+        console.error("An error occurred while fetching workout data:", error);
+      });
     setShowSpinner(false);
   };
 
