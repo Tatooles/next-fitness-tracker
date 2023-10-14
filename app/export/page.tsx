@@ -1,7 +1,13 @@
+"use client";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import Spinner from "@/components/Spinner";
 
-export default async function ExportPage() {
+export default function ExportPage() {
+  const [showSpinner, setShowSpinner] = useState(false);
+
   const getFile = async () => {
+    setShowSpinner(true);
     console.log("getting file");
     await fetch(`/api/export`, {
       method: "GET",
@@ -16,6 +22,7 @@ export default async function ExportPage() {
       .catch((error) => {
         console.error("An error occurred while fetching workout data:", error);
       });
+    setShowSpinner(false);
   };
 
   return (
@@ -25,6 +32,7 @@ export default async function ExportPage() {
       <Button onClick={getFile} className="bg-[#1d6f42]">
         Export to Excel
       </Button>
+      <Spinner show={showSpinner}></Spinner>
     </div>
   );
 }

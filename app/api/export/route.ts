@@ -3,6 +3,6 @@ import * as xlsx from "xlsx";
 // Probably should be a get, we'll fetch all the data on the server
 
 export async function GET(request: Request) {
-  // Want to have the userid and start and end dates as params
+  // TODO: Can just get id in here, don't event need to pass it from client
   return new Response("Exporting data");
 }
