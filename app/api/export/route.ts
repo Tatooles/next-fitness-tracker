@@ -22,6 +22,12 @@ export async function GET(request: Request) {
       },
     });
     console.log(data);
+    const wb = xlsx.utils.book_new();
+    const ws = xlsx.utils.json_to_sheet(data);
+
+    xlsx.utils.book_append_sheet(wb, ws, "Workout Data");
+
+    xlsx.writeFile(wb, "text_file.xlsx");
   } else {
     console.log("no user found :(");
   }
