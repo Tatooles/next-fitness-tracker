@@ -27,7 +27,23 @@ export async function GET(request: Request) {
 
     xlsx.utils.book_append_sheet(wb, ws, "Workout Data");
 
-    xlsx.writeFile(wb, "text_file.xlsx");
+    // Can choose excel or CSV here
+    const excelBuffer = xlsx.write(wb, { bookType: "xlsx", type: "buffer" });
+
+    const headers = new Headers();
+    headers.append(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    headers.append(
+      "Content-Disposition",
+      "attachment; filename=user_data.xlsx"
+    );
+
+    const options = { status: 200, headers: headers };
+    const response = new Response(undefined, options);
+
+    return response;
   } else {
     console.log("no user found :(");
   }
