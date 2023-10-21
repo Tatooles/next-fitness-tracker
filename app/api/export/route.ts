@@ -40,8 +40,10 @@ export async function GET(request: Request) {
       "attachment; filename=user_data.xlsx"
     );
 
-    const options = { status: 200, headers: headers };
-    const response = new Response(undefined, options);
+    const response = new Response(excelBuffer, {
+      status: 200,
+      headers: headers,
+    });
 
     return response;
   } else {

@@ -15,6 +15,7 @@ export default function ExportPage() {
       .then((response) => {
         if (response.ok) {
           console.log("response returned");
+          console.log(response.body);
         } else {
           console.error("Failed to fetch workout data.");
         }
