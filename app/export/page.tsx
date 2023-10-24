@@ -9,20 +9,18 @@ export default function ExportPage() {
   const getFile = async () => {
     setShowSpinner(true);
     console.log("getting file");
-    await fetch(`/api/export`, {
-      method: "GET",
-    })
-      .then((response) => {
-        if (response.ok) {
-          console.log("response returned");
-          console.log(response.body);
-        } else {
-          console.error("Failed to fetch workout data.");
-        }
-      })
-      .catch((error) => {
-        console.error("An error occurred while fetching workout data:", error);
-      });
+    try {
+      const response = await fetch(`/api/export`);
+      if (response.ok) {
+        console.log("response returned");
+        const blob = await response.blob();
+        console.log(blob);
+      } else {
+        console.error("Failed to fetch workout data.");
+      }
+    } catch (error) {
+      console.error("An error occurred while fetching workout data:", error);
+    }
     setShowSpinner(false);
   };
 
