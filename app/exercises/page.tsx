@@ -4,8 +4,10 @@ import ExercisesUI from "./ExercisesUI";
 import { DateExercise, Workout } from "@/lib/types";
 
 async function getExercises() {
-  const userId = auth().userId;
-  if (userId) {
+  try {
+    const userId = auth().userId;
+    if (!userId) return [];
+
     const data = await db.query.workouts.findMany({
       where: (workouts, { eq }) => eq(workouts.userId, userId),
       columns: {
@@ -22,7 +24,8 @@ async function getExercises() {
       },
     });
     return data;
-  } else {
+  } catch (error) {
+    console.log("An error ocurred while fetching workout data");
     return [];
   }
 }
