@@ -6,8 +6,10 @@ import Workouts from "./Workouts";
 import { Workout } from "@/lib/types";
 
 async function getWorkouts() {
-  const userId = auth().userId;
-  if (userId) {
+  try {
+    const userId = auth().userId;
+    if (!userId) return [];
+
     const data: Workout[] = await db.query.workouts.findMany({
       where: (workouts, { eq }) => eq(workouts.userId, userId),
       with: {
@@ -21,7 +23,8 @@ async function getWorkouts() {
       },
     });
     return data;
-  } else {
+  } catch (error) {
+    console.log("An error ocurred while fetching workout data");
     return [];
   }
 }
