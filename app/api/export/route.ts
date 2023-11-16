@@ -2,9 +2,6 @@ import * as xlsx from "xlsx";
 import { auth } from "@clerk/nextjs";
 import { db } from "@/db/drizzle";
 import { Workout } from "@/lib/types";
-import { isExpressionWithTypeArguments } from "typescript";
-// Not sure if we want a get or post route
-// Probably should be a get, we'll fetch all the data on the server
 
 export async function GET(request: Request) {
   const userId = auth().userId;
@@ -22,9 +19,6 @@ export async function GET(request: Request) {
         },
       },
     });
-    console.log(data);
-    console.log(data[0].exercises);
-    console.log(data[0].exercises[0]);
     let input = [] as string[][];
     for (const workout of data) {
       input.push([workout.name]);
