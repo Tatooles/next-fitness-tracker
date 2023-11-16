@@ -2,6 +2,7 @@ import * as xlsx from "xlsx";
 import { auth } from "@clerk/nextjs";
 import { db } from "@/db/drizzle";
 import { Workout } from "@/lib/types";
+import { isExpressionWithTypeArguments } from "typescript";
 // Not sure if we want a get or post route
 // Probably should be a get, we'll fetch all the data on the server
 
@@ -22,8 +23,20 @@ export async function GET(request: Request) {
       },
     });
     console.log(data);
+    console.log(data[0].exercises);
+    console.log(data[0].exercises[0]);
+    // TODO: One option is to create an array of arrays and put that into a sheet
+    let input = [];
+    for (const workout of data) {
+      input.push([workout.name]);
+      input.push(["Name", "sets", "notes"]);
+      for (const exercise of workout.exercises) {
+        input.push([exercise.name, "TODO sets", exercise.notes]);
+      }
+      input.push([]);
+    }
     const wb = xlsx.utils.book_new();
-    const ws = xlsx.utils.json_to_sheet(data);
+    const ws = xlsx.utils.aoa_to_sheet(input);
 
     xlsx.utils.book_append_sheet(wb, ws, "Workout Data");
 
