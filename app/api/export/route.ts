@@ -25,14 +25,18 @@ export async function GET(request: Request) {
     console.log(data);
     console.log(data[0].exercises);
     console.log(data[0].exercises[0]);
-    // TODO: One option is to create an array of arrays and put that into a sheet
-    let input = [];
+    let input = [] as string[][];
     for (const workout of data) {
       input.push([workout.name]);
-      input.push(["Name", "sets", "notes"]);
       for (const exercise of workout.exercises) {
-        input.push([exercise.name, "TODO sets", exercise.notes]);
+        input.push([exercise.name]);
+        for (const set of exercise.sets) {
+          input.push([set.reps, set.weight]);
+        }
+        input.push([exercise.notes]);
+        input.push([]);
       }
+      input.push([]);
       input.push([]);
     }
     const wb = xlsx.utils.book_new();
