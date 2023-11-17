@@ -42,6 +42,7 @@ export async function GET(request: Request) {
   xlsx.utils.book_append_sheet(wb, ws, "Workout Data");
 
   // Can choose excel or CSV here
+  // TODO: Add conditional for CSV
   const excelBuffer = xlsx.write(wb, { bookType: "xlsx", type: "buffer" });
 
   const headers = new Headers();
