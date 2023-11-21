@@ -49,7 +49,6 @@ export async function GET(request: NextRequest) {
   xlsx.utils.book_append_sheet(wb, ws, "Workout Data");
 
   // Can choose excel or CSV here
-  // TODO: Add conditional for CSV
   const excelBuffer = xlsx.write(wb, { bookType: fileType, type: "buffer" });
 
   let mimeType = "application/json";
@@ -58,11 +57,17 @@ export async function GET(request: NextRequest) {
     case "xlsx":
       mimeType =
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+      break;
+    case "csv":
+      mimeType = "text/csv";
   }
 
   const headers = new Headers();
   headers.append("Content-Type", mimeType);
-  headers.append("Content-Disposition", "attachment; filename=user_data.xlsx");
+  headers.append(
+    "Content-Disposition",
+    `attachment; filename=user_data.${fileType}`
+  );
 
   const response = new Response(excelBuffer, {
     status: 200,
