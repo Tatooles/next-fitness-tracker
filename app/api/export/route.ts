@@ -2,8 +2,14 @@ import * as xlsx from "xlsx";
 import { auth } from "@clerk/nextjs";
 import { db } from "@/db/drizzle";
 import { Workout } from "@/lib/types";
+import { NextRequest } from "next/server";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const fileType = searchParams.get("fileType");
+
+  console.log(fileType);
+
   const userId = auth().userId;
   if (!userId) {
     console.log("no user found :(");
