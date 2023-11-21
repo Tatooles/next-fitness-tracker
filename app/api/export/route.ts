@@ -3,10 +3,11 @@ import { auth } from "@clerk/nextjs";
 import { db } from "@/db/drizzle";
 import { Workout } from "@/lib/types";
 import { NextRequest } from "next/server";
+import { BookType } from "xlsx";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
-  const fileType = searchParams.get("fileType");
+  const fileType = searchParams.get("fileType") as BookType;
 
   console.log(fileType);
 
@@ -49,13 +50,18 @@ export async function GET(request: NextRequest) {
 
   // Can choose excel or CSV here
   // TODO: Add conditional for CSV
-  const excelBuffer = xlsx.write(wb, { bookType: "xlsx", type: "buffer" });
+  const excelBuffer = xlsx.write(wb, { bookType: fileType, type: "buffer" });
+
+  let mimeType = "application/json";
+
+  switch (fileType) {
+    case "xlsx":
+      mimeType =
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+  }
 
   const headers = new Headers();
-  headers.append(
-    "Content-Type",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-  );
+  headers.append("Content-Type", mimeType);
   headers.append("Content-Disposition", "attachment; filename=user_data.xlsx");
 
   const response = new Response(excelBuffer, {
