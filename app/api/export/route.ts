@@ -9,11 +9,9 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const fileType = searchParams.get("fileType") as BookType;
 
-  console.log(fileType);
-
   const userId = auth().userId;
   if (!userId) {
-    console.log("no user found :(");
+    console.log("User not found");
     return Response.error();
   }
 
@@ -48,7 +46,6 @@ export async function GET(request: NextRequest) {
 
   xlsx.utils.book_append_sheet(wb, ws, "Workout Data");
 
-  // Can choose excel or CSV here
   const excelBuffer = xlsx.write(wb, { bookType: fileType, type: "buffer" });
 
   let mimeType = "application/json";
