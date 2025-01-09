@@ -25,10 +25,10 @@ export async function POST(request: Request) {
     await db.transaction(async (tx) => {
       const workoutResult = await db.insert(workouts).values({
         name: workout.name,
-        date: new Date(workout.date),
+        date: workout.date,
         userId: id,
       });
-      let workout_id = parseInt(workoutResult.insertId);
+      let workout_id = Number(workoutResult.lastInsertRowid!);
       // TODO: Is there a cleaner way aside from these loops?
       for (const exercise of workout.exercises) {
         let exerciseResult = await db.insert(exercises).values({
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
           name: exercise.name,
           notes: exercise.notes,
         });
-        let exercise_id = parseInt(exerciseResult.insertId);
+        let exercise_id = Number(exerciseResult.lastInsertRowid!);
         for (const set of exercise.sets) {
           const result = await db.insert(sets).values({
             exerciseId: exercise_id,

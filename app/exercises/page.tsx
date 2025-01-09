@@ -35,7 +35,7 @@ export default async function ExercisesPage() {
   const exercises = workouts.flatMap((workout) =>
     workout.exercises.map((exercise) => ({
       ...exercise,
-      date: workout.date,
+      date: new Date(workout.date),
     }))
   ) as DateExercise[];
   exercises.sort((a, b) => b.date.getTime() - a.date.getTime());

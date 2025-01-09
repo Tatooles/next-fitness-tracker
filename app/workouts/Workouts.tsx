@@ -47,7 +47,7 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
     setShowSpinner(false);
   };
 
-  workouts.sort((a, b) => b.date.getTime() - a.date.getTime());
+  // workouts.sort((a, b) => b.date - a.date);
 
   return (
     <Accordion type="single" collapsible className="mb-5 mt-2">
@@ -55,7 +55,7 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
         <AccordionItem key={index} value={`item-${index}`}>
           <AccordionTrigger>
             <span>
-              {workout.date.toLocaleDateString()} - {workout.name}
+              {workout.date} - {workout.name}
             </span>
           </AccordionTrigger>
           <AccordionContent>

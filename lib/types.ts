@@ -4,7 +4,7 @@ export interface Workout {
   id: number;
   name: string;
   userId: string | null;
-  date: Date;
+  date: string;
   exercises: Exercise[];
 }
 
