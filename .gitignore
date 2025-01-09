@@ -26,7 +26,7 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # local env files
-.env*.local
+.env
 
 # vercel
 .vercel
@@ -36,4 +36,4 @@ yarn-error.log*
 next-env.d.ts
 
 # DB
-db/migrations/
+migrations/
