@@ -22,24 +22,23 @@ export async function POST(request: Request) {
   const id = auth().userId;
   const workout = body as TWorkoutFormSchema;
   try {
-    await db.transaction(async (tx) => {
+    await db.transaction(async () => {
       const workoutResult = await db.insert(workouts).values({
         name: workout.name,
         date: workout.date,
         userId: id,
       });
-      let workout_id = Number(workoutResult.lastInsertRowid!);
-      // TODO: Is there a cleaner way aside from these loops?
+
       for (const exercise of workout.exercises) {
-        let exerciseResult = await db.insert(exercises).values({
-          workoutId: workout_id,
+        const exerciseResult = await db.insert(exercises).values({
+          workoutId: Number(workoutResult.lastInsertRowid),
           name: exercise.name,
           notes: exercise.notes,
         });
-        let exercise_id = Number(exerciseResult.lastInsertRowid!);
+
         for (const set of exercise.sets) {
-          const result = await db.insert(sets).values({
-            exerciseId: exercise_id,
+          await db.insert(sets).values({
+            exerciseId: Number(exerciseResult.lastInsertRowid),
             reps: set.reps,
             weight: set.weight,
           });
