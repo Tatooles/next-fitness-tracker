@@ -9,6 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 import ExerciseItem from "@/components/ExerciseItem";
 import { DateExercise } from "@/lib/types";
+import { formatDate } from "@/lib/utils";
 
 export default function ExercisesUI({
   exercises,
@@ -56,7 +57,7 @@ export default function ExercisesUI({
           <AccordionItem key={exercise.id} value={`exercise-${exercise.id}`}>
             <AccordionTrigger>
               {/* TODO: Would like this text to cut off with ellipsis rather than wrap */}
-              {exercise.date} - {exercise.name}
+              {formatDate(exercise.date)} - {exercise.name}
             </AccordionTrigger>
             <AccordionContent>
               <ExerciseItem exercise={exercise}></ExerciseItem>

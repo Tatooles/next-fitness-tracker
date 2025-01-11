@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
 import ExerciseItem from "@/components/ExerciseItem";
 import { Workout, Exercise } from "@/lib/types";
+import { formatDate } from "@/lib/utils";
 
 export default function Workouts({ workouts }: { workouts: Workout[] }) {
   const [showSpinner, setShowSpinner] = useState(false);
@@ -57,7 +58,7 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
         <AccordionItem key={index} value={`item-${index}`}>
           <AccordionTrigger>
             <span>
-              {workout.date} - {workout.name}
+              {formatDate(workout.date)} - {workout.name}
             </span>
           </AccordionTrigger>
           <AccordionContent>
