@@ -18,7 +18,7 @@ export interface Exercise {
 }
 
 export interface DateExercise extends Exercise {
-  date: Date;
+  date: string;
 }
 
 export interface Set {

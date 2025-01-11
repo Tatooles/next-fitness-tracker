@@ -15,6 +15,8 @@ export default function ExercisesUI({
 }: {
   exercises: DateExercise[];
 }) {
+  // TODO: Rework this page so each exercise only shows once in the list
+  // Expanding dropdown shows each time it was logged with the date
   const [inputValue, setInputValue] = useState("");
   const [initialList] = useState(exercises);
   const [filteredList, setFilteredList] = useState(exercises);
@@ -54,7 +56,7 @@ export default function ExercisesUI({
           <AccordionItem key={exercise.id} value={`exercise-${exercise.id}`}>
             <AccordionTrigger>
               {/* TODO: Would like this text to cut off with ellipsis rather than wrap */}
-              {exercise.date.toLocaleDateString()} - {exercise.name}
+              {exercise.date} - {exercise.name}
             </AccordionTrigger>
             <AccordionContent>
               <ExerciseItem exercise={exercise}></ExerciseItem>

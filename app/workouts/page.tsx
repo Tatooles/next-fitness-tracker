@@ -31,6 +31,7 @@ async function getWorkouts() {
 
 export default async function WorkoutsPage() {
   const workouts = await getWorkouts();
+
   return (
     <div className="p-5 text-center">
       <h1 className="mb-5 text-3xl">Workouts</h1>
