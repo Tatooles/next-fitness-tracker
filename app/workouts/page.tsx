@@ -22,6 +22,11 @@ async function getWorkouts() {
         },
       },
     });
+
+    data.sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+
     return data;
   } catch (error) {
     console.log("An error ocurred while fetching workout data");

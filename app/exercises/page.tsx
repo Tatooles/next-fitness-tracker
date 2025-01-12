@@ -23,6 +23,11 @@ async function getExercises() {
         },
       },
     });
+
+    data.sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+
     return data;
   } catch (error) {
     console.log("An error ocurred while fetching workout data");
@@ -38,8 +43,5 @@ export default async function ExercisesPage() {
       date: workout.date,
     }))
   ) as DateExercise[];
-  exercises.sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
   return <ExercisesUI exercises={exercises}></ExercisesUI>;
 }

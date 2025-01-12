@@ -48,10 +48,6 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
     setShowSpinner(false);
   };
 
-  workouts.sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
-
   return (
     <Accordion type="single" collapsible className="mb-5 mt-2">
       {workouts.map((workout: Workout, index) => (
