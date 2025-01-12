@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
 import ExerciseItem from "@/components/ExerciseItem";
 import { Workout, Exercise } from "@/lib/types";
+import { formatDate } from "@/lib/utils";
 
 export default function Workouts({ workouts }: { workouts: Workout[] }) {
   const [showSpinner, setShowSpinner] = useState(false);
@@ -47,15 +48,13 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
     setShowSpinner(false);
   };
 
-  workouts.sort((a, b) => b.date.getTime() - a.date.getTime());
-
   return (
     <Accordion type="single" collapsible className="mb-5 mt-2">
       {workouts.map((workout: Workout, index) => (
         <AccordionItem key={index} value={`item-${index}`}>
           <AccordionTrigger>
             <span>
-              {workout.date.toLocaleDateString()} - {workout.name}
+              {formatDate(workout.date)} - {workout.name}
             </span>
           </AccordionTrigger>
           <AccordionContent>

@@ -29,7 +29,7 @@ const convertToFormType = (
   if (!workout) return undefined;
   const convertedWorkout: TWorkoutFormSchema = {
     name: workout.name,
-    date: workout.date.toISOString().substring(0, 10),
+    date: workout.date,
     exercises: workout.exercises.map((exercise) => ({
       name: exercise.name,
       notes: exercise.notes,

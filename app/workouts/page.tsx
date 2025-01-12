@@ -22,6 +22,11 @@ async function getWorkouts() {
         },
       },
     });
+
+    data.sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+
     return data;
   } catch (error) {
     console.log("An error ocurred while fetching workout data");
@@ -31,6 +36,7 @@ async function getWorkouts() {
 
 export default async function WorkoutsPage() {
   const workouts = await getWorkouts();
+
   return (
     <div className="p-5 text-center">
       <h1 className="mb-5 text-3xl">Workouts</h1>

@@ -4,7 +4,7 @@ export interface Workout {
   id: number;
   name: string;
   userId: string | null;
-  date: Date;
+  date: string;
   exercises: Exercise[];
 }
 
@@ -18,7 +18,7 @@ export interface Exercise {
 }
 
 export interface DateExercise extends Exercise {
-  date: Date;
+  date: string;
 }
 
 export interface Set {
