@@ -6,9 +6,9 @@ import { sets } from "@/db/schema";
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { workout: number } }
+  { params }: { params: Promise<{ workout: number }> }
 ) {
-  const workout = params.workout;
+  const workout = (await params).workout;
   try {
     await db.transaction(async (tx) => {
       const result = await db.query.workouts.findMany({

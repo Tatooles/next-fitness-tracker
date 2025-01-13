@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { auth } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db/drizzle";
 import { Button } from "@/components/ui/button";
 import Workouts from "./Workouts";
@@ -7,11 +7,11 @@ import { Workout } from "@/lib/types";
 
 async function getWorkouts() {
   try {
-    const userId = auth().userId;
-    if (!userId) return [];
+    const { userId, redirectToSignIn } = await auth();
+    if (!userId) redirectToSignIn();
 
     const data: Workout[] = await db.query.workouts.findMany({
-      where: (workouts, { eq }) => eq(workouts.userId, userId),
+      where: (workouts, { eq }) => eq(workouts.userId, userId!),
       with: {
         exercises: {
           with: {

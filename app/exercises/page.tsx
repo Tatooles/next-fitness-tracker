@@ -1,15 +1,15 @@
-import { auth } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db/drizzle";
 import ExercisesUI from "./ExercisesUI";
 import { DateExercise, Workout } from "@/lib/types";
 
 async function getExercises() {
   try {
-    const userId = auth().userId;
-    if (!userId) return [];
+    const { userId, redirectToSignIn } = await auth();
+    if (!userId) redirectToSignIn();
 
     const data = await db.query.workouts.findMany({
-      where: (workouts, { eq }) => eq(workouts.userId, userId),
+      where: (workouts, { eq }) => eq(workouts.userId, userId!),
       columns: {
         date: true,
       },

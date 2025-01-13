@@ -1,11 +1,4 @@
 import Image from "next/image";
-import addWorkoutImage from "public/add-workout-image.png";
-import duplicateWorkoutImage from "public/duplicate-workout-image.png";
-import exerciseImage from "public/exercise-image.png";
-import exercisesImage from "public/exercises-image.png";
-import submitImage from "public/submit-image.png";
-import workoutNameDateImage from "public/workout-date-name-image.png";
-import workoutHistoryImage from "public/workout-history-image.png";
 
 export default function HowTo() {
   return (
@@ -18,7 +11,9 @@ export default function HowTo() {
           &quot;Add Workout.&quot;
         </p>
         <Image
-          src={addWorkoutImage}
+          src="/add-workout-image.png"
+          width={500}
+          height={500}
           alt="Screenshot of the Add Workout button"
           className="my-4 h-auto w-full border-2 border-black sm:w-2/3"
         />
@@ -27,7 +22,9 @@ export default function HowTo() {
           today&apos;s date.
         </p>
         <Image
-          src={workoutNameDateImage}
+          src="/workout-date-name-image.png"
+          width={500}
+          height={500}
           alt="Screenshot of the top of the create workout section"
           className="my-4 h-auto w-full border-2 border-black sm:w-2/3"
         />
@@ -37,7 +34,9 @@ export default function HowTo() {
           about the exercise.
         </p>
         <Image
-          src={exerciseImage}
+          src="/exercise-image.png"
+          width={500}
+          height={500}
           alt="Screenshot of exercise section"
           className="my-4 h-auto w-full border-2 border-black sm:w-1/2"
         />
@@ -51,7 +50,9 @@ export default function HowTo() {
           the Lifting Log.
         </p>
         <Image
-          src={submitImage}
+          src="/submit-image.png"
+          width={500}
+          height={500}
           alt="Screeshot of submit button"
           className="my-4 h-auto w-full border-2 border-black sm:w-2/3"
         />
@@ -61,7 +62,9 @@ export default function HowTo() {
           visible on the workouts page. Tap to expand a specific workout.
         </p>
         <Image
-          src={workoutHistoryImage}
+          src="/workout-history-image.png"
+          width={500}
+          height={500}
           alt="Screenshot of recent workouts on workouts page"
           className="my-4 h-auto w-full border-2 border-black sm:w-1/2"
         />
@@ -76,7 +79,9 @@ export default function HowTo() {
           weight and notes fields emptied.
         </p>
         <Image
-          src={duplicateWorkoutImage}
+          src="/duplicate-workout-image.png"
+          width={500}
+          height={500}
           alt="Screenshot of duplicated workout"
           className="my-4 h-auto w-full border-2 border-black sm:w-1/2"
         />
@@ -86,7 +91,9 @@ export default function HowTo() {
           search bar to filter exercises by name.
         </p>
         <Image
-          src={exercisesImage}
+          src="/exercises-image.png"
+          width={500}
+          height={500}
           alt="Screenshot of exercise list filtered by name"
           className="my-4 h-auto w-full border-2 border-black sm:w-1/2"
         />
