@@ -1,15 +1,16 @@
-import { auth } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db/drizzle";
 import WorkoutNotFound from "../WorkoutNotFound";
 import { Workout, TWorkoutFormSchema } from "@/lib/types";
 import WorkoutForm from "@/app/workouts/WorkoutForm";
 
 async function getWorkout(id: number) {
-  const userId = auth().userId;
-  if (!userId) return undefined;
+  const { userId, redirectToSignIn } = await auth();
+  if (!userId) redirectToSignIn();
+
   const data: Workout | undefined = await db.query.workouts.findFirst({
     where: (workouts, { eq, and }) =>
-      and(eq(workouts.id, id), eq(workouts.userId, userId)),
+      and(eq(workouts.id, id), eq(workouts.userId, userId!)),
     with: {
       exercises: {
         with: {
@@ -44,11 +45,11 @@ const convertToFormType = (
 };
 
 export default async function DuplicateWorkoutPage({
-  searchParams,
+  params,
 }: {
-  searchParams: { id: number };
+  params: Promise<{ id: number }>;
 }) {
-  const workoutId = searchParams.id;
+  const workoutId = (await params).id;
   const workout = await getWorkout(workoutId);
 
   if (!workout) {

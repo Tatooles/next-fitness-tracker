@@ -1,5 +1,5 @@
 import * as xlsx from "xlsx";
-import { auth } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db/drizzle";
 import { Workout } from "@/lib/types";
 import { NextRequest } from "next/server";
@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const fileType = searchParams.get("fileType") as BookType;
 
-  const userId = auth().userId;
+  const { userId } = await auth();
   if (!userId) {
     console.log("User not found");
     return Response.error();

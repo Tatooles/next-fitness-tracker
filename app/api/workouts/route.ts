@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db/drizzle";
 import { workouts } from "@/db/schema";
 import { exercises } from "@/db/schema";
@@ -19,14 +19,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ errors: zodErrors });
   }
 
-  const id = auth().userId;
+  const { userId } = await auth();
   const workout = body as TWorkoutFormSchema;
   try {
     await db.transaction(async () => {
       const workoutResult = await db.insert(workouts).values({
         name: workout.name,
         date: workout.date,
-        userId: id,
+        userId: userId,
       });
 
       for (const exercise of workout.exercises) {
