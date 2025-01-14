@@ -43,5 +43,8 @@ export default async function ExercisesPage() {
       date: workout.date,
     }))
   ) as DateExercise[];
+  // TODO: Ideally want to group these exercises by name
+  // Then display all excercises with the same name together
+  // The sets and notes for each instance of the exercise is displayed under it's date
   return <ExercisesUI exercises={exercises}></ExercisesUI>;
 }
