@@ -48,6 +48,9 @@ async function getExerciseSummary() {
     }))
   ) as DateExercise[];
 
+  // TODO: Probably possible to clean up this code
+  // May need to update DB entry, or possible can query for this directly
+
   const grouped = exercises.reduce((acc, exercise) => {
     if (!acc[exercise.name]) {
       acc[exercise.name] = [];
