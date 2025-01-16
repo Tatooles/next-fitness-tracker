@@ -108,12 +108,10 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
             <div className="text-center">
               <div className="divide-y-2 px-2">
                 {workout.exercises.map((exercise: ExerciseInstance) => (
-                  <div className="p-2" key={exercise.id}>
-                    <h3 className="text-lg font-bold">{exercise.name}</h3>
-                    <ExerciseInstanceItem
-                      exercise={exercise}
-                    ></ExerciseInstanceItem>
-                  </div>
+                  <ExerciseInstanceItem
+                    exercise={exercise}
+                    key={exercise.id}
+                  ></ExerciseInstanceItem>
                 ))}
               </div>
             </div>
