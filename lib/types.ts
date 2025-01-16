@@ -15,6 +15,7 @@ export interface ExerciseInstance {
   notes: string;
   workoutId: number;
   sets: Set[];
+  // It would make sense for ExerciseInstance to contain date :/
 }
 
 export interface DateExercise extends ExerciseInstance {
@@ -22,6 +23,7 @@ export interface DateExercise extends ExerciseInstance {
 }
 
 export interface ExerciseSummary {
+  name: string;
   exercises: DateExercise[];
 }
 

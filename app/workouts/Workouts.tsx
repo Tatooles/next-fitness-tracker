@@ -22,7 +22,7 @@ import {
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
 import ExerciseItem from "@/components/ExerciseItem";
-import { Workout, Exercise } from "@/lib/types";
+import { Workout, ExerciseInstance } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 
 export default function Workouts({ workouts }: { workouts: Workout[] }) {
@@ -107,7 +107,7 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
             </div>
             <div className="text-center">
               <div className="divide-y-2 px-2">
-                {workout.exercises.map((exercise: Exercise) => (
+                {workout.exercises.map((exercise: ExerciseInstance) => (
                   <div className="p-2" key={exercise.id}>
                     <h3 className="text-lg font-bold">{exercise.name}</h3>
                     <ExerciseItem exercise={exercise}></ExerciseItem>
