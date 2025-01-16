@@ -6,7 +6,8 @@ export default function ExerciseInstanceItem({
   exercise: ExerciseInstance;
 }) {
   return (
-    <>
+    <div className="p-2">
+      <h3 className="text-lg font-bold">{exercise.name}</h3>
       {exercise.sets.length > 0 && (
         // Could have global state (set in settings) to determine if this
         // has other columns like RPE, would need changes in the input modal too
@@ -27,6 +28,6 @@ export default function ExerciseInstanceItem({
       {exercise.notes && (
         <p className="mt-2 rounded-md bg-slate-300 p-2">{exercise.notes}</p>
       )}
-    </>
+    </div>
   );
 }
