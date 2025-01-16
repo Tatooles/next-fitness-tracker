@@ -1,9 +1,12 @@
-import { DateExercise, Set } from "@/lib/types";
+import { ExerciseInstance, Set } from "@/lib/types";
 
-export default function ExerciseItem({ exercise }: { exercise: DateExercise }) {
+export default function ExerciseInstanceItem({
+  exercise,
+}: {
+  exercise: ExerciseInstance;
+}) {
   return (
-    <div className="mb-6">
-      <span className="text-lg">{exercise.date}</span>
+    <>
       {exercise.sets.length > 0 && (
         // Could have global state (set in settings) to determine if this
         // has other columns like RPE, would need changes in the input modal too
@@ -24,6 +27,6 @@ export default function ExerciseItem({ exercise }: { exercise: DateExercise }) {
       {exercise.notes && (
         <p className="mt-2 rounded-md bg-slate-300 p-2">{exercise.notes}</p>
       )}
-    </div>
+    </>
   );
 }

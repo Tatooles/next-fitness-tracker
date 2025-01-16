@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
-import ExerciseItem from "@/components/ExerciseItem";
+import ExerciseInstanceItem from "@/components/ExerciseInstanceItem";
 import { Workout, ExerciseInstance } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 
@@ -110,7 +110,9 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                 {workout.exercises.map((exercise: ExerciseInstance) => (
                   <div className="p-2" key={exercise.id}>
                     <h3 className="text-lg font-bold">{exercise.name}</h3>
-                    <ExerciseItem exercise={exercise}></ExerciseItem>
+                    <ExerciseInstanceItem
+                      exercise={exercise}
+                    ></ExerciseInstanceItem>
                   </div>
                 ))}
               </div>
