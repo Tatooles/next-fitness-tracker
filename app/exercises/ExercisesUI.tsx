@@ -55,17 +55,19 @@ export default function ExercisesUI({
         }}
       />
       <Accordion type="single" collapsible className="mb-5">
-        {filteredList.map((exercise) => (
+        {filteredList.map((exerciseSummary) => (
           <AccordionItem
-            key={exercise.name}
-            value={`exercise-${exercise.name}`}
+            key={exerciseSummary.name}
+            value={`exercise-${exerciseSummary.name}`}
           >
             <AccordionTrigger>
               {/* TODO: Would like this text to cut off with ellipsis rather than wrap */}
-              {exercise.name}
+              {exerciseSummary.name}
             </AccordionTrigger>
             <AccordionContent>
-              <ExerciseItem exercise={exercise}></ExerciseItem>
+              {exerciseSummary.exercises.map((exercise) => (
+                <ExerciseItem exercise={exercise}></ExerciseItem>
+              ))}
             </AccordionContent>
           </AccordionItem>
         ))}
