@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db/drizzle";
 import ExercisesUI from "./ExercisesUI";
-import { DateExercise, Workout } from "@/lib/types";
+import { DateExercise, ExerciseSummary, Workout } from "@/lib/types";
 
 async function getExercises() {
   try {
@@ -39,7 +39,7 @@ async function getExercises() {
   }
 }
 
-async function getExerciseSummary() {
+async function getExerciseSummary(): Promise<ExerciseSummary[]> {
   const workouts = (await getExercises()) as Workout[];
   const exercises = workouts.flatMap((workout) =>
     workout.exercises.map((exercise) => ({
@@ -70,5 +70,7 @@ export default async function ExercisesPage() {
   // TODO: Ideally want to group these exercises by name
   // Then display all excercises with the same name together
   // The sets and notes for each instance of the exercise is displayed under it's date
-  // return <ExercisesUI exercises={exercises}></ExercisesUI>;
+  return (
+    <ExercisesUI exerciseSummaries={await getExerciseSummary()}></ExercisesUI>
+  );
 }
