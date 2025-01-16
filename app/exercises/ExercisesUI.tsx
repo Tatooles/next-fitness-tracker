@@ -7,9 +7,9 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
-import ExerciseItem from "@/components/ExerciseItem";
 import { DateExercise, ExerciseSummary } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
+import ExerciseSummaryItem from "@/components/ExerciseSummaryItem";
 
 export default function ExercisesUI({
   exerciseSummaries,
@@ -66,7 +66,10 @@ export default function ExercisesUI({
             </AccordionTrigger>
             <AccordionContent>
               {exerciseSummary.exercises.map((exercise) => (
-                <ExerciseItem exercise={exercise}></ExerciseItem>
+                <ExerciseSummaryItem
+                  exercise={exercise}
+                  key={exercise.id}
+                ></ExerciseSummaryItem>
               ))}
             </AccordionContent>
           </AccordionItem>
