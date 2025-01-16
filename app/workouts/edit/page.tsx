@@ -50,19 +50,21 @@ export default async function EditWorkoutPage({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const { id } = await searchParams;
-  if (typeof id !== "string" || isNaN(parseInt(id))) return;
+
+  if (typeof id !== "string" || isNaN(parseInt(id)))
+    return <WorkoutNotFound></WorkoutNotFound>;
 
   const workout = await getWorkout(+id);
 
   if (!workout) {
     return <WorkoutNotFound></WorkoutNotFound>;
-  } else {
-    return (
-      <WorkoutForm
-        workoutValue={workout}
-        editMode={true}
-        workoutId={+id}
-      ></WorkoutForm>
-    );
   }
+
+  return (
+    <WorkoutForm
+      workoutValue={workout}
+      editMode={true}
+      workoutId={+id}
+    ></WorkoutForm>
+  );
 }
