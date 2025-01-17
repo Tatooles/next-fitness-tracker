@@ -6,21 +6,40 @@ export default function ExerciseSummaryComponent({
 }: {
   exerciseSummary: ExerciseSummary;
 }) {
-  const calculateWeightLifted = (): number => {
-    let maxWeight = 0;
+  // Page is hit when the accordion is opened which ideal
+  // Means we are only running these calculations when the user wants them
+
+  const getHeaviestRep = (): number => {
+    let heaviest = 0;
 
     exerciseSummary.exercises.forEach((exercise) => {
       exercise.sets.forEach((set) => {
-        if (+set.weight > maxWeight) maxWeight = +set.weight;
+        if (+set.weight > heaviest) heaviest = +set.weight;
       });
     });
 
-    return maxWeight;
+    return heaviest;
   };
 
-  const calculateOneRepMax = (): number => {
+  const getMax = (): number => {
+    let max = 0;
     // Calculating max of every possible set seems excessive
     // But can't think of another way
+
+    exerciseSummary.exercises.forEach((exercise) => {
+      exercise.sets.forEach((set) => {
+        const setMax = calculateOneRepMax(set);
+        if (setMax > max) max = setMax;
+      });
+    });
+
+    return 0;
+  };
+
+  const calculateOneRepMax = (set: Set): number => {
+    // TODO: Implement this
+
+    // Could show result of all 3 formulas if I wanted to be really excessive lol
     return 0;
   };
 
@@ -30,14 +49,12 @@ export default function ExerciseSummaryComponent({
       <div className="self-start text-xl mb-4">
         <span className="mr-4">Heaviest rep</span>
         <span className="p-2 rounded-md  bg-amber-300">
-          {calculateWeightLifted()} lb
+          {getHeaviestRep()} lb
         </span>
       </div>
       <div className="self-start text-xl">
         <span className="mr-4">Calculated 1RM</span>
-        <span className="p-2 rounded-md  bg-amber-300">
-          {calculateOneRepMax()} lb
-        </span>
+        <span className="p-2 rounded-md  bg-amber-300">{getMax()} lb</span>
       </div>
     </div>
   );
