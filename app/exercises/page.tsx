@@ -6,6 +6,7 @@ import { DateExercise, ExerciseSummary, Workout } from "@/lib/types";
 async function getExercises() {
   try {
     const { userId, redirectToSignIn } = await auth();
+    console.log(userId);
     if (!userId) redirectToSignIn();
 
     // Prob update this query to use a group by name
