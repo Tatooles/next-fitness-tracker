@@ -23,8 +23,6 @@ export default function ExerciseSummaryComponent({
 
   const getMax = (): number => {
     let max = 0;
-    // Calculating max of every possible set seems excessive
-    // But can't think of another way
 
     exerciseSummary.exercises.forEach((exercise) => {
       exercise.sets.forEach((set) => {
@@ -37,7 +35,26 @@ export default function ExerciseSummaryComponent({
   };
 
   const calculateOneRepMax = (set: Set): number => {
+    // Can't calculate
+    let reps = +set.reps;
+    let weight = +set.weight;
+    if (isNaN(reps) || isNaN(weight)) {
+      return 0;
+    }
+
     // TODO: Implement this
+    if (reps === 1) {
+      return weight;
+    } else if (reps < 6) {
+      // Use Brzycki
+      return weight / (1.0278 - 0.0278 * reps);
+    } else if (reps < 11) {
+      // Use Epley
+      return weight * (1 + reps / 30);
+    } else {
+      // Use lombardi
+      return weight * Math.pow(reps, 0.1);
+    }
 
     // Could show result of all 3 formulas if I wanted to be really excessive lol
     return 0;
