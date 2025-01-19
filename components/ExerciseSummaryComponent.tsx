@@ -31,7 +31,7 @@ export default function ExerciseSummaryComponent({
       });
     });
 
-    return 0;
+    return Math.round(max);
   };
 
   const calculateOneRepMax = (set: Set): number => {
