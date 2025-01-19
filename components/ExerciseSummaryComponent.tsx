@@ -1,4 +1,12 @@
 import { DateExercise, ExerciseSummary, Set } from "@/lib/types";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "./ui/button";
 
 export default function ExerciseSummaryComponent({
@@ -62,7 +70,22 @@ export default function ExerciseSummaryComponent({
 
   return (
     <div className="flex flex-col gap-2">
-      <Button className="self-start text-lg">History</Button>
+      <div className="self-start">
+        <Dialog>
+          <DialogTrigger>
+            <Button className="text-lg">History</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{exerciseSummary.name} History</DialogTitle>
+              <DialogDescription>
+                This action cannot be undone. This will permanently delete your
+                account and remove your data from our servers.
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+      </div>
       <div className="self-start text-xl mb-4">
         <span className="mr-4">Heaviest rep</span>
         <span className="p-2 rounded-md  bg-amber-300">
