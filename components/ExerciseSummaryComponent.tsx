@@ -8,6 +8,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "./ui/button";
+import ExerciseInstanceItem from "./ExerciseInstanceItem";
 
 export default function ExerciseSummaryComponent({
   exerciseSummary,
@@ -78,11 +79,14 @@ export default function ExerciseSummaryComponent({
           <DialogContent>
             <DialogHeader>
               <DialogTitle>{exerciseSummary.name} History</DialogTitle>
-              <DialogDescription>
-                This action cannot be undone. This will permanently delete your
-                account and remove your data from our servers.
-              </DialogDescription>
             </DialogHeader>
+            {exerciseSummary.exercises.map((exercise: DateExercise) => (
+              <div className="p-2" key={exercise.id}>
+                <ExerciseInstanceItem
+                  exercise={exercise}
+                ></ExerciseInstanceItem>
+              </div>
+            ))}
           </DialogContent>
         </Dialog>
       </div>
