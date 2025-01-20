@@ -78,10 +78,17 @@ export default function ExerciseSummaryComponent({
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>{exerciseSummary.name} History</DialogTitle>
+              <DialogTitle className="text-xl">
+                {exerciseSummary.name} History
+              </DialogTitle>
             </DialogHeader>
             {exerciseSummary.exercises.map((exercise: DateExercise) => (
-              <ExerciseInstanceItem exercise={exercise}></ExerciseInstanceItem>
+              <div>
+                <h3 className="text-lg">{exercise.date}</h3>
+                <ExerciseInstanceItem
+                  exercise={exercise}
+                ></ExerciseInstanceItem>
+              </div>
             ))}
           </DialogContent>
         </Dialog>
