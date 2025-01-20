@@ -21,8 +21,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
-import ExerciseItem from "@/components/ExerciseItem";
-import { Workout, Exercise } from "@/lib/types";
+import ExerciseInstanceItem from "@/components/ExerciseInstanceItem";
+import { Workout, ExerciseInstance } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 
 export default function Workouts({ workouts }: { workouts: Workout[] }) {
@@ -107,11 +107,11 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
             </div>
             <div className="text-center">
               <div className="divide-y-2 px-2">
-                {workout.exercises.map((exercise: Exercise) => (
-                  <div className="p-2" key={exercise.id}>
-                    <h3 className="text-lg font-bold">{exercise.name}</h3>
-                    <ExerciseItem exercise={exercise}></ExerciseItem>
-                  </div>
+                {workout.exercises.map((exercise: ExerciseInstance) => (
+                  <ExerciseInstanceItem
+                    exercise={exercise}
+                    key={exercise.id}
+                  ></ExerciseInstanceItem>
                 ))}
               </div>
             </div>

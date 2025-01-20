@@ -51,7 +51,7 @@ export default async function EditWorkoutPage({
 }) {
   const { id } = await searchParams;
 
-  if (typeof id !== "string" || isNaN(parseInt(id)))
+  if (typeof id !== "string" || isNaN(+id))
     return <WorkoutNotFound></WorkoutNotFound>;
 
   const workout = await getWorkout(+id);

@@ -7,24 +7,23 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
-import ExerciseItem from "@/components/ExerciseItem";
-import { DateExercise } from "@/lib/types";
-import { formatDate } from "@/lib/utils";
+import { ExerciseSummary } from "@/lib/types";
+import ExerciseSummaryComponent from "@/app/exercises/ExerciseSummary";
 
 export default function ExercisesUI({
-  exercises,
+  exerciseSummaries,
 }: {
-  exercises: DateExercise[];
+  exerciseSummaries: ExerciseSummary[];
 }) {
-  // TODO: Rework this page so each exercise only shows once in the list
-  // Expanding dropdown shows each time it was logged with the date
   const [inputValue, setInputValue] = useState("");
-  const [initialList] = useState(exercises);
-  const [filteredList, setFilteredList] = useState(exercises);
+  const [initialList] = useState(exerciseSummaries);
+  const [filteredList, setFilteredList] = useState(exerciseSummaries);
 
   const searchHandler = useCallback(() => {
-    const filteredData = initialList.filter((exercise) => {
-      return exercise.name.toLowerCase().includes(inputValue.toLowerCase());
+    const filteredData = initialList.filter((exerciseSummary) => {
+      return exerciseSummary.name
+        .toLowerCase()
+        .includes(inputValue.toLowerCase());
     });
     setFilteredList(filteredData);
   }, [initialList, inputValue]);
@@ -53,14 +52,19 @@ export default function ExercisesUI({
         }}
       />
       <Accordion type="single" collapsible className="mb-5">
-        {filteredList.map((exercise) => (
-          <AccordionItem key={exercise.id} value={`exercise-${exercise.id}`}>
-            <AccordionTrigger>
-              {/* TODO: Would like this text to cut off with ellipsis rather than wrap */}
-              {formatDate(exercise.date)} - {exercise.name}
+        {filteredList.map((exerciseSummary) => (
+          <AccordionItem
+            key={exerciseSummary.name}
+            value={`exercise-${exerciseSummary.name}`}
+          >
+            <AccordionTrigger className="w-full">
+              <span className="mr-4 truncate">{exerciseSummary.name}</span>
             </AccordionTrigger>
             <AccordionContent>
-              <ExerciseItem exercise={exercise}></ExerciseItem>
+              <ExerciseSummaryComponent
+                exerciseSummary={exerciseSummary}
+                key={exerciseSummary.name}
+              ></ExerciseSummaryComponent>
             </AccordionContent>
           </AccordionItem>
         ))}
