@@ -57,7 +57,7 @@ export default function ExercisesUI({
             key={exerciseSummary.name}
             value={`exercise-${exerciseSummary.name}`}
           >
-            <AccordionTrigger className="flex w-full items-center justify-between">
+            <AccordionTrigger className="w-full">
               <span className="mr-4 truncate">{exerciseSummary.name}</span>
             </AccordionTrigger>
             <AccordionContent>
