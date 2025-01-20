@@ -70,7 +70,7 @@ export default function ExerciseSummaryComponent({
           <DialogContent>
             <DialogHeader>
               <DialogTitle className="text-xl">
-                {exerciseSummary.name} History
+                {exerciseSummary.name}
               </DialogTitle>
             </DialogHeader>
             {exerciseSummary.exercises.map((exercise: DateExercise) => (

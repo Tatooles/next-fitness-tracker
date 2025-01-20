@@ -15,8 +15,6 @@ export default function ExercisesUI({
 }: {
   exerciseSummaries: ExerciseSummary[];
 }) {
-  // TODO: Rework this page so each exercise only shows once in the list
-  // Expanding dropdown shows each time it was logged with the date
   const [inputValue, setInputValue] = useState("");
   const [initialList] = useState(exerciseSummaries);
   const [filteredList, setFilteredList] = useState(exerciseSummaries);
@@ -59,9 +57,8 @@ export default function ExercisesUI({
             key={exerciseSummary.name}
             value={`exercise-${exerciseSummary.name}`}
           >
-            <AccordionTrigger>
-              {/* TODO: Would like this text to cut off with ellipsis rather than wrap */}
-              {exerciseSummary.name}
+            <AccordionTrigger className="flex w-full items-center justify-between">
+              <span className="mr-4 truncate">{exerciseSummary.name}</span>
             </AccordionTrigger>
             <AccordionContent>
               <ExerciseSummaryComponent
