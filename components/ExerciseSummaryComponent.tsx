@@ -81,11 +81,7 @@ export default function ExerciseSummaryComponent({
               <DialogTitle>{exerciseSummary.name} History</DialogTitle>
             </DialogHeader>
             {exerciseSummary.exercises.map((exercise: DateExercise) => (
-              <div className="p-2" key={exercise.id}>
-                <ExerciseInstanceItem
-                  exercise={exercise}
-                ></ExerciseInstanceItem>
-              </div>
+              <ExerciseInstanceItem exercise={exercise}></ExerciseInstanceItem>
             ))}
           </DialogContent>
         </Dialog>
