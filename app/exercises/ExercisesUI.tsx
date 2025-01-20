@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
 import { ExerciseSummary } from "@/lib/types";
-import ExerciseSummaryComponent from "@/components/ExerciseSummaryComponent";
+import ExerciseSummaryComponent from "@/app/exercises/ExerciseSummary";
 
 export default function ExercisesUI({
   exerciseSummaries,

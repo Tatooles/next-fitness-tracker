@@ -1,11 +1,5 @@
-import { eq, relations } from "drizzle-orm";
-import { QueryBuilder } from "drizzle-orm/mysql-core";
-import {
-  text,
-  integer,
-  sqliteTable,
-  sqliteView,
-} from "drizzle-orm/sqlite-core";
+import { relations } from "drizzle-orm";
+import { text, integer, sqliteTable } from "drizzle-orm/sqlite-core";
 
 export const workouts = sqliteTable("workouts", {
   id: integer("id").primaryKey(),
@@ -32,21 +26,6 @@ export const exercisesRelations = relations(exercises, ({ one, many }) => ({
     references: [workouts.id],
   }),
 }));
-
-const qb = new QueryBuilder();
-
-export const exerciseView = sqliteView("exercise_view").as((qb) =>
-  qb
-    .select({
-      id: exercises.id,
-      name: exercises.name,
-      notes: exercises.notes,
-      date: workouts.date,
-      user_id: workouts.userId,
-    })
-    .from(exercises)
-    .innerJoin(workouts, eq(workouts.id, exercises.workoutId))
-);
 
 export const sets = sqliteTable("sets", {
   id: integer("id").primaryKey(),

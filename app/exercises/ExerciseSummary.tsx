@@ -2,22 +2,18 @@ import { DateExercise, ExerciseSummary, Set } from "@/lib/types";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "./ui/button";
-import ExerciseInstanceItem from "./ExerciseInstanceItem";
+import { Button } from "../../components/ui/button";
+import ExerciseInstanceItem from "../../components/ExerciseInstanceItem";
 
 export default function ExerciseSummaryComponent({
   exerciseSummary,
 }: {
   exerciseSummary: ExerciseSummary;
 }) {
-  // Page is hit when the accordion is opened which ideal
-  // Means we are only running these calculations when the user wants them
-
   const getHeaviestRep = (): number => {
     let heaviest = 0;
 
@@ -44,14 +40,12 @@ export default function ExerciseSummaryComponent({
   };
 
   const calculateOneRepMax = (set: Set): number => {
-    // Can't calculate
     let reps = +set.reps;
     let weight = +set.weight;
     if (isNaN(reps) || isNaN(weight)) {
       return 0;
     }
 
-    // TODO: Implement this
     if (reps === 1) {
       return weight;
     } else if (reps < 6) {
@@ -64,9 +58,6 @@ export default function ExerciseSummaryComponent({
       // Use lombardi
       return weight * Math.pow(reps, 0.1);
     }
-
-    // Could show result of all 3 formulas if I wanted to be really excessive lol
-    return 0;
   };
 
   return (
