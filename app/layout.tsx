@@ -1,6 +1,7 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import "../styles/globals.css";
 import Navbar from "@/components/Navbar";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata = {
   title: "Lifting Log",
@@ -38,15 +39,22 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body>
-          <div id="modal"></div>
-          <Navbar sidebarItems={sidebarItems}></Navbar>
-          <div id="root" className="flex h-screen flex-col">
-            {/* TODO: Put main in a container so it doesn't span the whole screen on desktop */}
-            <main className="grow">{children}</main>
-            <footer className="py-2 text-center text-slate-700">
-              Created by Kevin Tatooles
-            </footer>
-          </div>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <div id="modal"></div>
+            <Navbar sidebarItems={sidebarItems}></Navbar>
+            <div id="root" className="flex h-screen flex-col">
+              {/* TODO: Put main in a container so it doesn't span the whole screen on desktop */}
+              <main className="grow">{children}</main>
+              <footer className="py-2 text-center text-slate-700">
+                Created by Kevin Tatooles
+              </footer>
+            </div>
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>
