@@ -6,6 +6,7 @@ import { UserButton } from "@clerk/nextjs";
 
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { ThemeToggle } from "./theme-toggle";
 
 interface SidebarItem {
   title: string;
@@ -21,7 +22,7 @@ export default function Navbar({
   const pathName = usePathname();
 
   return (
-    <header className="flex items-center justify-between border-b-2 text-lg text-black">
+    <header className="flex items-center justify-between border-b-2 text-lg">
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
         <SheetTrigger>
           <div className="p-5">
@@ -54,7 +55,8 @@ export default function Navbar({
           </nav>
         </SheetContent>
       </Sheet>
-      <div className="p-5">
+      <div className="flex p-5 gap-4">
+        <ThemeToggle></ThemeToggle>
         <UserButton></UserButton>
       </div>
     </header>

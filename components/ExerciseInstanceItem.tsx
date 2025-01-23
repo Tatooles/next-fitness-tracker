@@ -25,7 +25,9 @@ export default function ExerciseInstanceItem({
           )
       )}
       {exercise.notes && (
-        <p className="mt-2 rounded-md bg-slate-300 p-2">{exercise.notes}</p>
+        <p className="mt-2 rounded-md dark:text-black bg-slate-300 p-2">
+          {exercise.notes}
+        </p>
       )}
     </div>
   );
