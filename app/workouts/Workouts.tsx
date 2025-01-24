@@ -59,24 +59,32 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
           </AccordionTrigger>
           <AccordionContent>
             <div className="flex justify-start gap-4 pt-2">
-              <Link
-                href={{
-                  pathname: "/workouts/edit",
-                  query: { id: workout.id },
-                }}
-                className="flex w-16 flex-col justify-center rounded-md bg-green-500 text-white hover:bg-green-500/70"
+              <Button
+                asChild
+                className="bg-green-500 text-white hover:bg-green-500/70"
               >
-                Edit
-              </Link>
-              <Link
-                href={{
-                  pathname: "/workouts/duplicate",
-                  query: { id: workout.id },
-                }}
-                className="flex w-24 flex-col justify-center rounded-md bg-blue-600 text-white hover:bg-blue-600/70"
+                <Link
+                  href={{
+                    pathname: "/workouts/edit",
+                    query: { id: workout.id },
+                  }}
+                >
+                  Edit
+                </Link>
+              </Button>
+              <Button
+                asChild
+                className="bg-blue-600 text-white hover:bg-blue-600/70"
               >
-                Duplicate
-              </Link>
+                <Link
+                  href={{
+                    pathname: "/workouts/duplicate",
+                    query: { id: workout.id },
+                  }}
+                >
+                  Duplicate
+                </Link>
+              </Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="destructive">Delete</Button>

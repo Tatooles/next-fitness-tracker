@@ -12,7 +12,7 @@ export default function Home() {
             Create, view and edit your workouts. Log all your sets and reps, as
             well as any notes you have about your workout.
           </p>
-          <Button>
+          <Button asChild>
             <Link href="/workouts">View Workouts</Link>
           </Button>
         </div>
@@ -22,7 +22,7 @@ export default function Home() {
             See all your exercises in one place, compare the same exercise
             across different days to see your progress.
           </p>
-          <Button>
+          <Button asChild>
             <Link href="/exercises">View Exercises</Link>
           </Button>
         </div>
