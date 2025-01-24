@@ -45,22 +45,26 @@ const convertToFormType = (
 };
 
 export default async function DuplicateWorkoutPage({
-  params,
+  searchParams,
 }: {
-  params: Promise<{ id: number }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const workoutId = (await params).id;
-  const workout = await getWorkout(workoutId);
+  const { id } = await searchParams;
+
+  if (typeof id !== "string" || isNaN(+id))
+    return <WorkoutNotFound></WorkoutNotFound>;
+
+  const workout = await getWorkout(+id);
 
   if (!workout) {
     return <WorkoutNotFound></WorkoutNotFound>;
-  } else {
-    return (
-      <WorkoutForm
-        workoutValue={workout}
-        editMode={false}
-        workoutId={-1}
-      ></WorkoutForm>
-    );
   }
+
+  return (
+    <WorkoutForm
+      workoutValue={workout}
+      editMode={false}
+      workoutId={-1}
+    ></WorkoutForm>
+  );
 }
