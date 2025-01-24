@@ -64,7 +64,7 @@ export default function ExerciseSummaryComponent({
     <div className="flex flex-col gap-2">
       <div className="self-start">
         <Dialog>
-          <DialogTrigger>
+          <DialogTrigger asChild>
             <Button className="text-lg">History</Button>
           </DialogTrigger>
           <DialogContent>

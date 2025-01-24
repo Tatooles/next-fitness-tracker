@@ -7,7 +7,7 @@ export default function WorkoutNotFound() {
       <p className="text-left mb-4">
         Workout not found, please return to the Workouts page
       </p>
-      <Button>
+      <Button asChild>
         <Link href="/workouts">Workouts</Link>
       </Button>
     </div>
