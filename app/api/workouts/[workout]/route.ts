@@ -4,10 +4,10 @@ import { workouts } from "@/db/schema";
 
 export async function DELETE(
   request: Request,
-  { params }: { params: Promise<{ id: number }> }
+  { params }: { params: Promise<{ workout: number }> }
 ) {
   try {
-    await db.delete(workouts).where(eq(workouts.id, (await params).id));
+    await db.delete(workouts).where(eq(workouts.id, (await params).workout));
     return new Response("Workout successfully deleted");
   } catch (error) {
     console.log("An error ocurred!");
