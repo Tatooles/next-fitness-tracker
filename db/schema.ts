@@ -3,7 +3,7 @@ import { text, integer, sqliteTable } from "drizzle-orm/sqlite-core";
 
 export const workouts = sqliteTable("workouts", {
   id: integer("id").primaryKey(),
-  userId: text("userId", { length: 64 }),
+  userId: text("user_id", { length: 64 }),
   name: text("name", { length: 256 }).notNull(),
   date: text("date").notNull(),
 });
