@@ -3,7 +3,7 @@ import { text, integer, sqliteTable } from "drizzle-orm/sqlite-core";
 
 export const workouts = sqliteTable("workouts", {
   id: integer("id").primaryKey(),
-  userId: text("userId", { length: 64 }),
+  userId: text("user_id", { length: 64 }),
   name: text("name", { length: 256 }).notNull(),
   date: text("date").notNull(),
 });
@@ -16,7 +16,9 @@ export const exercises = sqliteTable("exercises", {
   id: integer("id").primaryKey(),
   name: text("name", { length: 256 }).notNull(),
   notes: text("notes").notNull(),
-  workoutId: integer("workout_id").notNull(),
+  workoutId: integer("workout_id")
+    .references(() => workouts.id, { onDelete: "cascade" })
+    .notNull(),
 });
 
 export const exercisesRelations = relations(exercises, ({ one, many }) => ({
@@ -31,7 +33,9 @@ export const sets = sqliteTable("sets", {
   id: integer("id").primaryKey(),
   reps: text("reps", { length: 16 }).notNull(),
   weight: text("weight", { length: 16 }).notNull(),
-  exerciseId: integer("exercise_id").notNull(),
+  exerciseId: integer("exercise_id")
+    .references(() => exercises.id, { onDelete: "cascade" })
+    .notNull(),
 });
 
 export const setsRelations = relations(sets, ({ one }) => ({
