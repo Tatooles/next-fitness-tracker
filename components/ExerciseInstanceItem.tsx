@@ -1,9 +1,9 @@
-import { ExerciseInstance, Set } from "@/lib/types";
+import { DateExercise, Set } from "@/lib/types";
 
 export default function ExerciseInstanceItem({
   exercise,
 }: {
-  exercise: ExerciseInstance;
+  exercise: DateExercise;
 }) {
   return (
     <div className="p-2">

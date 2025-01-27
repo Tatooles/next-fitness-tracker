@@ -18,8 +18,14 @@ export interface ExerciseInstance {
   // It would make sense for ExerciseInstance to contain date :/
 }
 
-export interface DateExercise extends ExerciseInstance {
-  date: string;
+export interface DateExercise {
+  userId?: string | null;
+  date?: string | null;
+  id?: number | null;
+  name?: string | null;
+  notes?: string | null;
+  workoutId?: number | null;
+  sets: Set[];
 }
 
 export interface ExerciseSummary {
