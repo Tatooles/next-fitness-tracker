@@ -47,9 +47,9 @@ export const exerciseView = sqliteView("exercise_view", {
       e.id AS id,
       e.name AS name,
       e.notes AS notes,
-      e.workout_id AS workoutId,
+      e.workout_id AS workout_id,
       w.date AS date,
-      w.user_id AS userId
+      w.user_id AS user_id
     FROM exercises e
     JOIN workouts w ON e.workout_id = w.id
   `
