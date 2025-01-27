@@ -2,11 +2,17 @@ import { DateExercise, Set } from "@/lib/types";
 
 export default function ExerciseInstanceItem({
   exercise,
+  showName,
+  showDate,
 }: {
   exercise: DateExercise;
+  showName: boolean;
+  showDate: boolean;
 }) {
   return (
     <div className="p-2">
+      {showName && <h3 className="text-lg font-bold">{exercise.name}</h3>}
+      {showDate && <h3 className="text-lg text-center">{exercise.date}</h3>}
       {exercise.sets.length > 0 && (
         // Could have global state (set in settings) to determine if this
         // has other columns like RPE, would need changes in the input modal too
