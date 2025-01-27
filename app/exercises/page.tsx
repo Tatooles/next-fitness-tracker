@@ -54,6 +54,11 @@ async function getExerciseSummary() {
     }
   });
 
+  // Sort exercises by frequency
+  summaries.sort((a, b) => {
+    return b.exercises.length - a.exercises.length;
+  });
+
   return summaries;
 }
 
