@@ -27,37 +27,34 @@ async function getExercises() {
 async function getExerciseSummary() {
   const exercises = await getExercises();
 
-  const groupedResults = exercises.reduce<ExerciseSummary[]>(
-    (acc, { exercise_view, sets }) => {
-      // Find an existing group by exercise name
-      let group = acc.find((g) => g.name === exercise_view?.name);
+  const summaries: ExerciseSummary[] = [];
 
-      if (!group) {
-        // Create a new group if it doesn't exist
-        group = { name: exercise_view?.name!, exercises: [] };
-        acc.push(group);
-      }
+  exercises.forEach(({ exercise_view, sets }) => {
+    let exerciseSummary = summaries.find((g) => g.name === exercise_view?.name);
 
-      // Find an existing exercise in the group (by ID)
-      let existingExercise = group.exercises.find(
-        (e) => e.id === exercise_view?.id
-      );
+    if (!exerciseSummary) {
+      // Create new exercise summary if it doesn't exist
+      exerciseSummary = { name: exercise_view?.name!, exercises: [] };
+      summaries.push(exerciseSummary);
+    }
 
-      if (!existingExercise) {
-        // Add the exercise to the group with its initial set
-        existingExercise = { ...exercise_view, sets: sets ? [sets] : [] };
-        group.exercises.push(existingExercise);
-      } else if (sets) {
-        // Add the set to the existing exercise
-        existingExercise.sets.push(sets);
-      }
+    const exerciseInstance = exerciseSummary.exercises.find(
+      (e) => e.id === exercise_view?.id
+    );
 
-      return acc;
-    },
-    []
-  );
+    if (!exerciseInstance) {
+      // Create new exercise instance if it doesn't exist
+      exerciseSummary.exercises.push({
+        ...exercise_view,
+        sets: sets ? [sets] : [],
+      });
+    } else if (sets) {
+      // If it does exist, add the set
+      exerciseInstance.sets.push(sets);
+    }
+  });
 
-  return groupedResults;
+  return summaries;
 }
 
 export default async function ExercisesPage() {
