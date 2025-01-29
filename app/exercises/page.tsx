@@ -10,16 +10,15 @@ async function getExercises() {
     const { userId, redirectToSignIn } = await auth();
     if (!userId) redirectToSignIn();
 
-    // Maybe add type for data so everything can't be null
-    const data = await db
+    const exerciseData = await db
       .select()
       .from(exerciseView)
       .fullJoin(sets, eq(sets.exerciseId, exerciseView.id))
       .where(eq(exerciseView.userId, userId!));
 
-    return data;
+    return exerciseData;
   } catch (error) {
-    console.log("An error ocurred while fetching workout data", error);
+    console.log("An error ocurred while fetching workout data");
     return [];
   }
 }
