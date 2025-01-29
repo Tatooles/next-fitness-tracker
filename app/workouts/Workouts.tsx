@@ -113,15 +113,15 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                 </AlertDialogContent>
               </AlertDialog>
             </div>
-            <div className="text-center">
-              <div className="divide-y-2 px-2">
-                {workout.exercises.map((exercise: ExerciseInstance) => (
-                  <ExerciseInstanceItem
-                    exercise={exercise}
-                    key={exercise.id}
-                  ></ExerciseInstanceItem>
-                ))}
-              </div>
+            <div className="divide-y-2 px-2">
+              {workout.exercises.map((exercise: ExerciseInstance) => (
+                <ExerciseInstanceItem
+                  exercise={exercise}
+                  showName={true}
+                  showDate={false}
+                  key={exercise.id}
+                ></ExerciseInstanceItem>
+              ))}
             </div>
           </AccordionContent>
         </AccordionItem>

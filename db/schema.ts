@@ -1,5 +1,10 @@
-import { relations } from "drizzle-orm";
-import { text, integer, sqliteTable } from "drizzle-orm/sqlite-core";
+import { relations, sql } from "drizzle-orm";
+import {
+  text,
+  integer,
+  sqliteTable,
+  sqliteView,
+} from "drizzle-orm/sqlite-core";
 
 export const workouts = sqliteTable("workouts", {
   id: integer("id").primaryKey(),
@@ -28,6 +33,27 @@ export const exercisesRelations = relations(exercises, ({ one, many }) => ({
     references: [workouts.id],
   }),
 }));
+
+export const exerciseView = sqliteView("exercise_view", {
+  id: integer("id"),
+  name: text("name"),
+  notes: text("notes"),
+  workoutId: integer("workout_id"),
+  date: text("date"),
+  userId: text("user_id"),
+}).as(
+  sql`
+    SELECT 
+      e.id AS id,
+      e.name AS name,
+      e.notes AS notes,
+      e.workout_id AS workout_id,
+      w.date AS date,
+      w.user_id AS user_id
+    FROM exercises e
+    JOIN workouts w ON e.workout_id = w.id
+  `
+);
 
 export const sets = sqliteTable("sets", {
   id: integer("id").primaryKey(),

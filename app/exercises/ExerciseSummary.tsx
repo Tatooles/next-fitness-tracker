@@ -73,14 +73,16 @@ export default function ExerciseSummaryComponent({
                 {exerciseSummary.name}
               </DialogTitle>
             </DialogHeader>
-            {exerciseSummary.exercises.map((exercise: DateExercise) => (
-              <div key={exercise.id}>
-                <h3 className="text-lg">{exercise.date}</h3>
+            <div className="divide-y-2">
+              {exerciseSummary.exercises.map((exercise: DateExercise) => (
                 <ExerciseInstanceItem
                   exercise={exercise}
+                  key={exercise.id}
+                  showName={false}
+                  showDate={true}
                 ></ExerciseInstanceItem>
-              </div>
-            ))}
+              ))}
+            </div>
           </DialogContent>
         </Dialog>
       </div>

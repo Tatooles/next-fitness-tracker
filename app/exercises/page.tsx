@@ -1,59 +1,64 @@
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db/drizzle";
 import ExercisesUI from "./ExercisesUI";
-import { DateExercise, ExerciseSummary, Workout } from "@/lib/types";
+import { ExerciseSummary } from "@/lib/types";
+import { exerciseView, sets } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 async function getExercises() {
   try {
     const { userId, redirectToSignIn } = await auth();
     if (!userId) redirectToSignIn();
 
-    const data = await db.query.workouts.findMany({
-      where: (workouts, { eq }) => eq(workouts.userId, userId!),
-      orderBy: (workouts, { desc }) => [desc(workouts.date)],
-      columns: {
-        date: true,
-      },
-      with: {
-        exercises: {
-          with: {
-            sets: {
-              orderBy: (sets, { asc }) => [asc(sets.id)],
-            },
-          },
-        },
-      },
-    });
+    const exerciseData = await db
+      .select()
+      .from(exerciseView)
+      .fullJoin(sets, eq(sets.exerciseId, exerciseView.id))
+      .where(eq(exerciseView.userId, userId!));
 
-    return data;
+    return exerciseData;
   } catch (error) {
     console.log("An error ocurred while fetching workout data");
     return [];
   }
 }
 
-async function getExerciseSummary(): Promise<ExerciseSummary[]> {
-  const workouts = (await getExercises()) as Workout[];
+async function getExerciseSummary() {
+  const exercises = await getExercises();
 
-  const exercises = workouts.flatMap((workout) =>
-    workout.exercises.map((exercise) => ({
-      ...exercise,
-      date: workout.date,
-    }))
-  ) as DateExercise[];
+  const summaries: ExerciseSummary[] = [];
 
-  const grouped = exercises.reduce((acc, exercise) => {
-    if (!acc[exercise.name]) {
-      acc[exercise.name] = [];
+  exercises.forEach(({ exercise_view, sets }) => {
+    let exerciseSummary = summaries.find((g) => g.name === exercise_view?.name);
+
+    if (!exerciseSummary) {
+      // Create new exercise summary if it doesn't exist
+      exerciseSummary = { name: exercise_view?.name!, exercises: [] };
+      summaries.push(exerciseSummary);
     }
-    acc[exercise.name].push(exercise);
-    return acc;
-  }, {} as Record<string, DateExercise[]>);
 
-  return Object.entries(grouped).map(([name, exerciseGroup]) => ({
-    name,
-    exercises: exerciseGroup,
-  }));
+    const exerciseInstance = exerciseSummary.exercises.find(
+      (e) => e.id === exercise_view?.id
+    );
+
+    if (!exerciseInstance) {
+      // Create new exercise instance if it doesn't exist
+      exerciseSummary.exercises.push({
+        ...exercise_view,
+        sets: sets ? [sets] : [],
+      });
+    } else if (sets) {
+      // If it does exist, add the set
+      exerciseInstance.sets.push(sets);
+    }
+  });
+
+  // Sort exercises by frequency
+  summaries.sort((a, b) => {
+    return b.exercises.length - a.exercises.length;
+  });
+
+  return summaries;
 }
 
 export default async function ExercisesPage() {
