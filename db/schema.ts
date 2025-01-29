@@ -6,31 +6,31 @@ import {
   sqliteView,
 } from "drizzle-orm/sqlite-core";
 
-export const workouts = sqliteTable("workouts", {
+export const workout = sqliteTable("workout", {
   id: integer("id").primaryKey(),
   userId: text("user_id", { length: 64 }),
   name: text("name", { length: 256 }).notNull(),
   date: text("date").notNull(),
 });
 
-export const workoutsRelations = relations(workouts, ({ many }) => ({
-  exercises: many(exercises),
+export const workoutRelations = relations(workout, ({ many }) => ({
+  exercises: many(exercise),
 }));
 
-export const exercises = sqliteTable("exercises", {
+export const exercise = sqliteTable("exercise", {
   id: integer("id").primaryKey(),
   name: text("name", { length: 256 }).notNull(),
   notes: text("notes").notNull(),
   workoutId: integer("workout_id")
-    .references(() => workouts.id, { onDelete: "cascade" })
+    .references(() => workout.id, { onDelete: "cascade" })
     .notNull(),
 });
 
-export const exercisesRelations = relations(exercises, ({ one, many }) => ({
-  sets: many(sets),
-  workout: one(workouts, {
-    fields: [exercises.workoutId],
-    references: [workouts.id],
+export const exerciseRelations = relations(exercise, ({ one, many }) => ({
+  sets: many(set),
+  workout: one(workout, {
+    fields: [exercise.workoutId],
+    references: [workout.id],
   }),
 }));
 
@@ -43,30 +43,30 @@ export const exerciseView = sqliteView("exercise_view", {
   userId: text("user_id"),
 }).as(
   sql`
-    SELECT 
+    SELECT
       e.id AS id,
       e.name AS name,
       e.notes AS notes,
       e.workout_id AS workout_id,
       w.date AS date,
       w.user_id AS user_id
-    FROM exercises e
-    JOIN workouts w ON e.workout_id = w.id
+    FROM exercise e
+    JOIN workout w ON e.workout_id = w.id
   `
 );
 
-export const sets = sqliteTable("sets", {
+export const set = sqliteTable("set", {
   id: integer("id").primaryKey(),
   reps: text("reps", { length: 16 }).notNull(),
   weight: text("weight", { length: 16 }).notNull(),
   exerciseId: integer("exercise_id")
-    .references(() => exercises.id, { onDelete: "cascade" })
+    .references(() => exercise.id, { onDelete: "cascade" })
     .notNull(),
 });
 
-export const setsRelations = relations(sets, ({ one }) => ({
-  exercise: one(exercises, {
-    fields: [sets.exerciseId],
-    references: [exercises.id],
+export const setRelations = relations(set, ({ one }) => ({
+  exercise: one(exercise, {
+    fields: [set.exerciseId],
+    references: [exercise.id],
   }),
 }));

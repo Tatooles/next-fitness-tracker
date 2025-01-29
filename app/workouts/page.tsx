@@ -10,8 +10,8 @@ async function getWorkouts() {
     const { userId, redirectToSignIn } = await auth();
     if (!userId) redirectToSignIn();
 
-    const data: Workout[] = await db.query.workouts.findMany({
-      where: (workouts, { eq }) => eq(workouts.userId, userId!),
+    const data: Workout[] = await db.query.workout.findMany({
+      where: (workout, { eq }) => eq(workout.userId, userId!),
       with: {
         exercises: {
           with: {
