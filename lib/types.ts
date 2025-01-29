@@ -37,6 +37,7 @@ export interface Set {
   id: number;
   reps: string;
   weight: string;
+  rpe: number;
   exerciseId: number;
 }
 

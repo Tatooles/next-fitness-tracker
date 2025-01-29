@@ -4,6 +4,7 @@ import {
   integer,
   sqliteTable,
   sqliteView,
+  real,
 } from "drizzle-orm/sqlite-core";
 
 export const workout = sqliteTable("workout", {
@@ -34,6 +35,7 @@ export const exerciseRelations = relations(exercise, ({ one, many }) => ({
   }),
 }));
 
+// TODO: Probably need to rewrite this because it only works the first time
 export const exerciseView = sqliteView("exercise_view", {
   id: integer("id"),
   name: text("name"),
@@ -59,6 +61,7 @@ export const set = sqliteTable("set", {
   id: integer("id").primaryKey(),
   reps: text("reps", { length: 16 }).notNull(),
   weight: text("weight", { length: 16 }).notNull(),
+  rpe: real("rpe"),
   exerciseId: integer("exercise_id")
     .references(() => exercise.id, { onDelete: "cascade" })
     .notNull(),
