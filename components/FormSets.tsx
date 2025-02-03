@@ -26,19 +26,19 @@ export default function FormSets({
           <Label>Set {index + 1}</Label>
           <Input
             {...register(
-              `exercises.${exerciseIndex}.sets.${index}.reps` as const
-            )}
-            placeholder="Reps"
-            inputMode="numeric"
-            className="w-16 text-[16px]"
-          ></Input>
-          <Input
-            {...register(
               `exercises.${exerciseIndex}.sets.${index}.weight` as const
             )}
             placeholder="Weight"
             inputMode="numeric"
             className="w-20 text-[16px]"
+          ></Input>
+          <Input
+            {...register(
+              `exercises.${exerciseIndex}.sets.${index}.reps` as const
+            )}
+            placeholder="Reps"
+            inputMode="numeric"
+            className="w-16 text-[16px]"
           ></Input>
           <Input
             {...register(
@@ -63,8 +63,8 @@ export default function FormSets({
           className="w-20 rounded-md bg-green-500 py-1 text-sm text-white"
           onClick={() =>
             append({
-              reps: "",
               weight: "",
+              reps: "",
               rpe: null,
             })
           }
@@ -77,11 +77,11 @@ export default function FormSets({
             className="w-20 rounded-md bg-blue-600 py-1 text-sm text-white"
             onClick={() =>
               append({
-                reps: getValues(
-                  `exercises.${exerciseIndex}.sets.${fields.length - 1}.reps`
-                ),
                 weight: getValues(
                   `exercises.${exerciseIndex}.sets.${fields.length - 1}.weight`
+                ),
+                reps: getValues(
+                  `exercises.${exerciseIndex}.sets.${fields.length - 1}.reps`
                 ),
                 rpe: getValues(
                   `exercises.${exerciseIndex}.sets.${fields.length - 1}.rpe`
