@@ -41,6 +41,7 @@ export async function POST(request: Request) {
             exerciseId: Number(exerciseResult.lastInsertRowid),
             reps: setData.reps,
             weight: setData.weight,
+            rpe: setData.rpe ? +setData.rpe : null,
           });
         }
       }

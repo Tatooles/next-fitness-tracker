@@ -40,6 +40,16 @@ export default function FormSets({
             inputMode="numeric"
             className="w-20 text-[16px]"
           ></Input>
+          <Input
+            {...register(
+              `exercises.${exerciseIndex}.sets.${index}.rpe` as const,
+              { valueAsNumber: true }
+            )}
+            placeholder="RPE"
+            defaultValue={""}
+            inputMode="numeric"
+            className="w-20 text-[16px]"
+          ></Input>
           <div onClick={() => remove(index)} className="p-2">
             <div className="h-4 w-4 cursor-pointer rounded-full bg-red-600 p-2 text-center text-white">
               <div className="-translate-y-[13px] -translate-x-[4px]">-</div>
@@ -55,6 +65,7 @@ export default function FormSets({
             append({
               reps: "",
               weight: "",
+              rpe: null,
             })
           }
         >
@@ -71,6 +82,9 @@ export default function FormSets({
                 ),
                 weight: getValues(
                   `exercises.${exerciseIndex}.sets.${fields.length - 1}.weight`
+                ),
+                rpe: getValues(
+                  `exercises.${exerciseIndex}.sets.${fields.length - 1}.rpe`
                 ),
               })
             }
