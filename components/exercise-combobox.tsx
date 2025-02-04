@@ -1,7 +1,7 @@
 "use client";
 
-import * as React from "react";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { useState } from "react";
+import { Check, ChevronDown, ChevronsUpDown } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -38,8 +38,9 @@ const frameworks = [
 ];
 
 export function ComboboxDemo() {
-  const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("");
+  const [inputValue, setInputValue] = useState("");
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -50,17 +51,28 @@ export function ComboboxDemo() {
           aria-expanded={open}
           className="w-[200px] justify-between"
         >
-          {value
-            ? frameworks.find((framework) => framework.value === value)?.value
-            : "Select framework..."}
-          <ChevronsUpDown className="opacity-50" />
+          {value}
+          <ChevronDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search framework..." className="h-9" />
+          <CommandInput
+            placeholder="Search framework..."
+            className="h-9"
+            onInput={(e) => setInputValue(e.currentTarget.value)} // Save input value to ref
+          />
           <CommandList>
-            <CommandEmpty>No framework found.</CommandEmpty>
+            <CommandEmpty
+              onClick={() => {
+                // Somehow need to get the input value in her
+                // And save it with setValue
+                setValue(inputValue);
+                setOpen(false);
+              }}
+            >
+              + Add new exercise
+            </CommandEmpty>
             <CommandGroup>
               {frameworks.map((framework) => (
                 <CommandItem
