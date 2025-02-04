@@ -15,21 +15,19 @@ export default function ExerciseInstanceItem({
       {showDate && <h3 className="text-lg text-center">{exercise.date}</h3>}
       <div className="mt-4">
         {exercise.sets.length > 0 && (
-          // Could have global state (set in settings) to determine if this
-          // has other columns like RPE, would need changes in the input modal too
           <div className="flex justify-around">
-            <div>Reps</div>
-            <div>Weight</div>
-            <div>RPE</div>
+            <div className="flex-1">Reps</div>
+            <div className="flex-1">Weight</div>
+            <div className="flex-1">RPE</div>
           </div>
         )}
         {exercise.sets.map(
           (set: Set, index) =>
             (set.reps || set.weight) && (
               <div key={index} className="flex justify-around">
-                <div>{set.reps}</div>
-                <div>{set.weight}</div>
-                <div>{set.rpe}</div>
+                <div className="flex-1">{set.reps}</div>
+                <div className="flex-1">{set.weight}</div>
+                <div className="flex-1">{set.rpe}</div>
               </div>
             )
         )}
