@@ -37,7 +37,7 @@ export interface Set {
   id: number;
   weight: string;
   reps: string;
-  rpe: number | null;
+  rpe: string;
   exerciseId: number;
 }
 
@@ -57,7 +57,7 @@ export const workoutFormSchema = z.object({
         .object({
           weight: z.string(),
           reps: z.string(),
-          rpe: z.number().optional().nullable(),
+          rpe: z.string(),
         })
         .array(),
     })

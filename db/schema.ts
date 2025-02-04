@@ -61,7 +61,7 @@ export const set = sqliteTable("set", {
   id: integer("id").primaryKey(),
   reps: text("reps", { length: 16 }).notNull(),
   weight: text("weight", { length: 16 }).notNull(),
-  rpe: real("rpe"),
+  rpe: text("rpe", { length: 16 }).notNull().default(""),
   exerciseId: integer("exercise_id")
     .references(() => exercise.id, { onDelete: "cascade" })
     .notNull(),

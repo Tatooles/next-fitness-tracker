@@ -42,11 +42,9 @@ export default function FormSets({
           ></Input>
           <Input
             {...register(
-              `exercises.${exerciseIndex}.sets.${index}.rpe` as const,
-              { valueAsNumber: true }
+              `exercises.${exerciseIndex}.sets.${index}.rpe` as const
             )}
             placeholder="RPE"
-            defaultValue={""}
             inputMode="numeric"
             className="w-20 text-[16px]"
           ></Input>
@@ -65,7 +63,7 @@ export default function FormSets({
             append({
               weight: "",
               reps: "",
-              rpe: null,
+              rpe: "",
             })
           }
         >

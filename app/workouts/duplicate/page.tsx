@@ -37,7 +37,7 @@ const convertToFormType = (
       sets: exercise.sets.map((set) => ({
         reps: set.reps,
         weight: "",
-        rpe: null,
+        rpe: "",
       })),
     })),
   };

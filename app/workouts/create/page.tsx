@@ -9,7 +9,7 @@ export default async function CreateWorkoutPage() {
         date: new Date().toLocaleDateString("en-CA"),
         name: "",
         exercises: [
-          { name: "", notes: "", sets: [{ weight: "", reps: "", rpe: null }] },
+          { name: "", notes: "", sets: [{ weight: "", reps: "", rpe: "" }] },
         ],
       }}
     ></WorkoutForm>
