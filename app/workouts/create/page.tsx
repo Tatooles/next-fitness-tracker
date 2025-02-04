@@ -8,7 +8,9 @@ export default async function CreateWorkoutPage() {
       workoutValue={{
         date: new Date().toLocaleDateString("en-CA"),
         name: "",
-        exercises: [{ name: "", notes: "", sets: [{ reps: "", weight: "" }] }],
+        exercises: [
+          { name: "", notes: "", sets: [{ weight: "", reps: "", rpe: null }] },
+        ],
       }}
     ></WorkoutForm>
   );

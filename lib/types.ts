@@ -57,7 +57,7 @@ export const workoutFormSchema = z.object({
         .object({
           weight: z.string(),
           reps: z.string(),
-          rpe: z.number().nullable(),
+          rpe: z.number().optional().nullable(),
         })
         .array(),
     })
