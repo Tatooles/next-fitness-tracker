@@ -9,19 +9,21 @@ export default function ExerciseInstanceItem({
   showName: boolean;
   showDate: boolean;
 }) {
+  const { name, date, sets, notes } = exercise;
+
   return (
     <div className="p-2 mt-4">
-      {showName && <h3 className="text-lg font-bold">{exercise.name}</h3>}
-      {showDate && <h3 className="text-lg text-center">{exercise.date}</h3>}
+      {showName && <h3 className="text-lg font-bold">{name}</h3>}
+      {showDate && <h3 className="text-lg text-center">{date}</h3>}
       <div className="mt-4">
-        {exercise.sets.length > 0 && (
+        {sets.length > 0 && (
           <div className="flex justify-around">
             <div className="flex-1">Reps</div>
             <div className="flex-1">Weight</div>
             <div className="flex-1">RPE</div>
           </div>
         )}
-        {exercise.sets.map(
+        {sets.map(
           (set: Set, index) =>
             (set.reps || set.weight) && (
               <div key={index} className="flex justify-around">
@@ -31,12 +33,12 @@ export default function ExerciseInstanceItem({
               </div>
             )
         )}
-        {exercise.notes && (
-          <p className="mt-2 rounded-md dark:text-black bg-slate-300 p-2">
-            {exercise.notes}
-          </p>
-        )}
       </div>
+      {notes && (
+        <p className="mt-2 rounded-md dark:text-black bg-slate-300 p-2">
+          {notes}
+        </p>
+      )}
     </div>
   );
 }
