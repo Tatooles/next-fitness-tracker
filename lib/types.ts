@@ -35,8 +35,9 @@ export interface ExerciseSummary {
 
 export interface Set {
   id: number;
-  reps: string;
   weight: string;
+  reps: string;
+  rpe: string;
   exerciseId: number;
 }
 
@@ -54,8 +55,9 @@ export const workoutFormSchema = z.object({
       notes: z.string(),
       sets: z
         .object({
-          reps: z.string(),
           weight: z.string(),
+          reps: z.string(),
+          rpe: z.string(),
         })
         .array(),
     })

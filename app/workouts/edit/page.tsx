@@ -8,9 +8,9 @@ async function getWorkout(id: number) {
   const { userId, redirectToSignIn } = await auth();
   if (!userId) redirectToSignIn();
 
-  const data: Workout | undefined = await db.query.workouts.findFirst({
-    where: (workouts, { eq, and }) =>
-      and(eq(workouts.id, id), eq(workouts.userId, userId!)),
+  const data: Workout | undefined = await db.query.workout.findFirst({
+    where: (workout, { eq, and }) =>
+      and(eq(workout.id, id), eq(workout.userId, userId!)),
     with: {
       exercises: {
         with: {
@@ -37,6 +37,7 @@ const convertToFormType = (
       sets: exercise.sets.map((set) => ({
         reps: set.reps,
         weight: set.weight,
+        rpe: set.rpe,
       })),
     })),
   };

@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db/drizzle";
 import ExercisesUI from "./ExercisesUI";
 import { ExerciseSummary } from "@/lib/types";
-import { exerciseView, sets } from "@/db/schema";
+import { exerciseView, set } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 async function getExercises() {
@@ -13,7 +13,7 @@ async function getExercises() {
     const exerciseData = await db
       .select()
       .from(exerciseView)
-      .fullJoin(sets, eq(sets.exerciseId, exerciseView.id))
+      .fullJoin(set, eq(set.exerciseId, exerciseView.id))
       .where(eq(exerciseView.userId, userId!));
 
     return exerciseData;
@@ -28,7 +28,7 @@ async function getExerciseSummary() {
 
   const summaries: ExerciseSummary[] = [];
 
-  exercises.forEach(({ exercise_view, sets }) => {
+  exercises.forEach(({ exercise_view, set }) => {
     let exerciseSummary = summaries.find((g) => g.name === exercise_view?.name);
 
     if (!exerciseSummary) {
@@ -45,11 +45,11 @@ async function getExerciseSummary() {
       // Create new exercise instance if it doesn't exist
       exerciseSummary.exercises.push({
         ...exercise_view,
-        sets: sets ? [sets] : [],
+        sets: set ? [set] : [],
       });
-    } else if (sets) {
+    } else if (set) {
       // If it does exist, add the set
-      exerciseInstance.sets.push(sets);
+      exerciseInstance.sets.push(set);
     }
   });
 

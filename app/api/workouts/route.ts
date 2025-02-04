@@ -1,8 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db/drizzle";
-import { workouts } from "@/db/schema";
-import { exercises } from "@/db/schema";
-import { sets } from "@/db/schema";
+import { workout } from "@/db/schema";
+import { exercise } from "@/db/schema";
+import { set } from "@/db/schema";
 import { TWorkoutFormSchema, workoutFormSchema } from "@/lib/types";
 import { NextResponse } from "next/server";
 
@@ -20,27 +20,28 @@ export async function POST(request: Request) {
   }
 
   const { userId } = await auth();
-  const workout = body as TWorkoutFormSchema;
+  const workoutData = body as TWorkoutFormSchema;
   try {
     await db.transaction(async () => {
-      const workoutResult = await db.insert(workouts).values({
-        name: workout.name,
-        date: workout.date,
+      const workoutResult = await db.insert(workout).values({
+        name: workoutData.name,
+        date: workoutData.date,
         userId: userId,
       });
 
-      for (const exercise of workout.exercises) {
-        const exerciseResult = await db.insert(exercises).values({
+      for (const exerciseData of workoutData.exercises) {
+        const exerciseResult = await db.insert(exercise).values({
           workoutId: Number(workoutResult.lastInsertRowid),
-          name: exercise.name,
-          notes: exercise.notes,
+          name: exerciseData.name,
+          notes: exerciseData.notes,
         });
 
-        for (const set of exercise.sets) {
-          await db.insert(sets).values({
+        for (const setData of exerciseData.sets) {
+          await db.insert(set).values({
             exerciseId: Number(exerciseResult.lastInsertRowid),
-            reps: set.reps,
-            weight: set.weight,
+            reps: setData.reps,
+            weight: setData.weight,
+            rpe: setData.rpe,
           });
         }
       }

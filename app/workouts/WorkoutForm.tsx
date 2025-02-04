@@ -153,7 +153,7 @@ export default function WorkoutForm({
               append({
                 name: "",
                 notes: "",
-                sets: [{ reps: "", weight: "" }],
+                sets: [{ weight: "", reps: "", rpe: "" }],
               })
             }
           >

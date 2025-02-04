@@ -15,8 +15,8 @@ export async function GET(request: NextRequest) {
     return Response.error();
   }
 
-  const data: Workout[] = await db.query.workouts.findMany({
-    where: (workouts, { eq }) => eq(workouts.userId, userId),
+  const data: Workout[] = await db.query.workout.findMany({
+    where: (workout, { eq }) => eq(workout.userId, userId),
     with: {
       exercises: {
         with: {
