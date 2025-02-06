@@ -19,25 +19,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-const frameworks = [
-  {
-    value: "next.js",
-  },
-  {
-    value: "sveltekit",
-  },
-  {
-    value: "nuxt.js",
-  },
-  {
-    value: "remix",
-  },
-  {
-    value: "astro",
-  },
-];
-
-export function ComboboxDemo() {
+export function ComboboxDemo({ exercises }: { exercises: string[] }) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
   const [inputValue, setInputValue] = useState("");
@@ -74,20 +56,20 @@ export function ComboboxDemo() {
               + Add new exercise
             </CommandEmpty>
             <CommandGroup>
-              {frameworks.map((framework) => (
+              {exercises.map((exercise) => (
                 <CommandItem
-                  key={framework.value}
-                  value={framework.value}
+                  key={exercise}
+                  value={exercise}
                   onSelect={(currentValue) => {
                     setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
                   }}
                 >
-                  {framework.value}
+                  {exercise}
                   <Check
                     className={cn(
                       "ml-auto",
-                      value === framework.value ? "opacity-100" : "opacity-0"
+                      value === exercise ? "opacity-100" : "opacity-0"
                     )}
                   />
                 </CommandItem>
