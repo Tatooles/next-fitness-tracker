@@ -19,10 +19,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-export function ComboboxDemo({ exercises }: { exercises: string[] }) {
+export function Combobox({ exercises }: { exercises: string[] }) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
   const [inputValue, setInputValue] = useState("");
+
+  console.log(exercises);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

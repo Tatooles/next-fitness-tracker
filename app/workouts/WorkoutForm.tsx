@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import FormSets from "@/components/FormSets";
 import Spinner from "@/components/Spinner";
 import { workoutFormSchema, TWorkoutFormSchema } from "@/lib/types";
+import { Combobox } from "@/components/combobox";
 
 export default function WorkoutForm({
   editMode,
@@ -21,7 +22,18 @@ export default function WorkoutForm({
   workoutId: number;
 }) {
   const [showSpinner, setShowSpinner] = useState(false);
+  const [options, setOptions] = useState([]);
+
   const router = useRouter();
+
+  useEffect(() => {
+    async function fetchExercises() {
+      const response = await fetch("/api/exercises");
+      const data = await response.json();
+      setOptions(data);
+    }
+    fetchExercises();
+  }, []);
 
   const onSubmit = async (values: TWorkoutFormSchema) => {
     setShowSpinner(true);
@@ -122,11 +134,12 @@ export default function WorkoutForm({
               key={field.id}
             >
               <div className="flex items-center">
-                <Input
+                <Combobox exercises={options}></Combobox>
+                {/* <Input
                   {...register(`exercises.${index}.name` as const)}
                   placeholder="Exercise name"
                   className="text-[16px]"
-                />
+                /> */}
                 <div
                   onClick={() => remove(index)}
                   className="ml-5 h-6 w-7 cursor-pointer rounded-full bg-red-600 text-center text-white"
