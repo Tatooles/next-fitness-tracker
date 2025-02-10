@@ -98,6 +98,9 @@ export default function WorkoutForm({
     control,
   });
 
+  // TODO: May have to rewrite whole thing with shadcn ui form
+  // Which isn't necessarily a bad thing
+
   return (
     <div className="mx-auto p-4 sm:max-w-md">
       <h2 className="text-center text-2xl">
