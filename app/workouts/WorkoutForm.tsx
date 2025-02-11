@@ -1,13 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import FormSets from "@/components/FormSets";
+import FormSets from "@/app/workouts/FormSets";
 import Spinner from "@/components/Spinner";
 import { workoutFormSchema, TWorkoutFormSchema } from "@/lib/types";
 import { Combobox } from "@/components/combobox";

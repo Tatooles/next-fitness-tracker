@@ -2,7 +2,12 @@ import { Input } from "@/components/ui/input";
 import { useFieldArray } from "react-hook-form";
 import { Control, UseFormGetValues } from "react-hook-form";
 import { TWorkoutFormSchema } from "@/lib/types";
-import { FormControl, FormField, FormItem, FormLabel } from "./ui/form";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "../../components/ui/form";
 
 export default function FormSets({
   exerciseIndex,
@@ -17,6 +22,7 @@ export default function FormSets({
     name: `exercises.${exerciseIndex}.sets`,
     control,
   });
+
   return (
     <div className="flex flex-col gap-2">
       {fields.map((field, index) => (
