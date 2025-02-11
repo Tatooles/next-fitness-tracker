@@ -205,7 +205,6 @@ export default function WorkoutForm({
                 <FormSets
                   exerciseIndex={index}
                   control={form.control}
-                  register={form.register}
                   getValues={form.getValues}
                 />
                 <FormField
