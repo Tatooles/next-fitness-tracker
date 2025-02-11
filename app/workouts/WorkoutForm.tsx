@@ -124,10 +124,10 @@ export default function WorkoutForm({
     values: workoutValue,
   });
 
-  // const { fields, append, remove } = useFieldArray({
-  //   name: "exercises",
-  //   control,
-  // });
+  const { fields, append, remove } = useFieldArray({
+    name: "exercises",
+    control: form.control,
+  });
 
   // TODO: May have to rewrite whole thing with shadcn ui form
   // Which isn't necessarily a bad thing
@@ -172,9 +172,59 @@ export default function WorkoutForm({
               </FormItem>
             )}
           />
-
-          {/* <div>
+          <div>
             <Label>Exercises</Label>
+            {fields.map((field, index) => (
+              <div
+                className="form-control flex flex-col gap-4 border-b-2 border-slate-700 px-2 py-4"
+                key={field.id}
+              >
+                <div className="flex items-center">
+                  <FormField
+                    control={form.control}
+                    name={`exercises.${index}.name`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            placeholder="Exercise name"
+                            className="text-[16px]"
+                            {...field}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <div
+                    onClick={() => remove(index)}
+                    className="ml-5 h-6 w-7 cursor-pointer rounded-full bg-red-600 text-center text-white"
+                  >
+                    <div className="-translate-y-[1px]">-</div>
+                  </div>
+                </div>
+                <FormSets
+                  exerciseIndex={index}
+                  control={form.control}
+                  register={form.register}
+                  getValues={form.getValues}
+                />
+                <FormField
+                  control={form.control}
+                  name={`exercises.${index}.notes`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Notes"
+                          className="text-[16px]"
+                          {...field}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
+            ))}
             <Button
               variant="secondary"
               className="mt-4 w-full"
@@ -189,7 +239,7 @@ export default function WorkoutForm({
             >
               Add Exercise
             </Button>
-          </div> */}
+          </div>
           <Button type="submit" className="mt-4 self-center">
             Submit
           </Button>
