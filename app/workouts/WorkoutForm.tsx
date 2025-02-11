@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -11,6 +11,43 @@ import FormSets from "@/components/FormSets";
 import Spinner from "@/components/Spinner";
 import { workoutFormSchema, TWorkoutFormSchema } from "@/lib/types";
 import { Combobox } from "@/components/combobox";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { z } from "zod";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Check, ChevronDown, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const languages = [
+  { label: "English", value: "en" },
+  { label: "French", value: "fr" },
+  { label: "German", value: "de" },
+  { label: "Spanish", value: "es" },
+  { label: "Portuguese", value: "pt" },
+  { label: "Russian", value: "ru" },
+  { label: "Japanese", value: "ja" },
+  { label: "Korean", value: "ko" },
+  { label: "Chinese", value: "zh" },
+] as const;
 
 export default function WorkoutForm({
   editMode,
@@ -22,7 +59,7 @@ export default function WorkoutForm({
   workoutId: number;
 }) {
   const [showSpinner, setShowSpinner] = useState(false);
-  const [options, setOptions] = useState([]);
+  const [exercises, setExercises] = useState([]);
 
   const router = useRouter();
 
@@ -30,7 +67,7 @@ export default function WorkoutForm({
     async function fetchExercises() {
       const response = await fetch("/api/exercises");
       const data = await response.json();
-      setOptions(data);
+      // setOptions(data);
     }
     fetchExercises();
   }, []);
@@ -82,21 +119,15 @@ export default function WorkoutForm({
       });
   };
 
-  const {
-    handleSubmit,
-    control,
-    register,
-    formState: { errors },
-    getValues,
-  } = useForm<TWorkoutFormSchema>({
+  const form = useForm<z.infer<typeof workoutFormSchema>>({
     resolver: zodResolver(workoutFormSchema),
     values: workoutValue,
   });
 
-  const { fields, append, remove } = useFieldArray({
-    name: "exercises",
-    control,
-  });
+  // const { fields, append, remove } = useFieldArray({
+  //   name: "exercises",
+  //   control,
+  // });
 
   // TODO: May have to rewrite whole thing with shadcn ui form
   // Which isn't necessarily a bad thing
@@ -106,80 +137,64 @@ export default function WorkoutForm({
       <h2 className="text-center text-2xl">
         {workoutId !== -1 ? "Edit Workout" : "Create Workout"}
       </h2>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col text-left"
-      >
-        <Label htmlFor="date">Date:</Label>
-        <Input
-          type="date"
-          id="date"
-          className="mt-2 mb-4 text-[16px]"
-          {...register("date")}
-        ></Input>
-        <Label htmlFor="name">Workout Name:</Label>
-        <div className="mt-2 mb-4">
-          <Input
-            type="text"
-            id="name"
-            className="text-[16px]"
-            {...register("name")}
-          ></Input>
-          {errors.name && (
-            <p className="mt-2 text-sm font-medium text-destructive">{`${errors.name.message}`}</p>
-          )}
-        </div>
-        <div>
-          <Label>Exercises</Label>
-          {fields.map((field, index) => (
-            <div
-              className="form-control flex flex-col gap-4 border-b-2 border-slate-700 px-2 py-4"
-              key={field.id}
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col text-left"
+        >
+          <FormField
+            control={form.control}
+            name="date"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Date:</FormLabel>
+                <FormControl>
+                  <Input
+                    type="date"
+                    className="mt-2 mb-4 text-[16px]"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Workout Name:</FormLabel>
+                <FormControl>
+                  <Input className="text-[16px]" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* <div>
+            <Label>Exercises</Label>
+            <Button
+              variant="secondary"
+              className="mt-4 w-full"
+              type="button"
+              onClick={() =>
+                append({
+                  name: "",
+                  notes: "",
+                  sets: [{ weight: "", reps: "", rpe: "" }],
+                })
+              }
             >
-              <div className="flex items-center">
-                <Combobox exercises={options}></Combobox>
-                {/* <Input
-                  {...register(`exercises.${index}.name` as const)}
-                  placeholder="Exercise name"
-                  className="text-[16px]"
-                /> */}
-                <div
-                  onClick={() => remove(index)}
-                  className="ml-5 h-6 w-7 cursor-pointer rounded-full bg-red-600 text-center text-white"
-                >
-                  <div className="-translate-y-[1px]">-</div>
-                </div>
-              </div>
-              <FormSets
-                exerciseIndex={index}
-                {...{ control, register, getValues }}
-              />
-              <Textarea
-                {...register(`exercises.${index}.notes` as const)}
-                placeholder="Notes"
-                className="text-[16px]"
-              ></Textarea>
-            </div>
-          ))}
-          <Button
-            variant="secondary"
-            className="mt-4 w-full"
-            type="button"
-            onClick={() =>
-              append({
-                name: "",
-                notes: "",
-                sets: [{ weight: "", reps: "", rpe: "" }],
-              })
-            }
-          >
-            Add Exercise
+              Add Exercise
+            </Button>
+          </div> */}
+          <Button type="submit" className="mt-4 self-center">
+            Submit
           </Button>
-        </div>
-        <Button type="submit" className="mt-4 self-center">
-          Submit
-        </Button>
-      </form>
+        </form>
+      </Form>
       <Spinner show={showSpinner}></Spinner>
     </div>
   );
