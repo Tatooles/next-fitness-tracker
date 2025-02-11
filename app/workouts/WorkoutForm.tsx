@@ -10,11 +10,9 @@ import { Button } from "@/components/ui/button";
 import FormSets from "@/app/workouts/FormSets";
 import Spinner from "@/components/Spinner";
 import { workoutFormSchema, TWorkoutFormSchema } from "@/lib/types";
-import { Combobox } from "@/components/combobox";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -34,20 +32,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Check, ChevronDown, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const languages = [
-  { label: "English", value: "en" },
-  { label: "French", value: "fr" },
-  { label: "German", value: "de" },
-  { label: "Spanish", value: "es" },
-  { label: "Portuguese", value: "pt" },
-  { label: "Russian", value: "ru" },
-  { label: "Japanese", value: "ja" },
-  { label: "Korean", value: "ko" },
-  { label: "Chinese", value: "zh" },
-] as const;
 
 export default function WorkoutForm({
   editMode,
@@ -67,7 +53,8 @@ export default function WorkoutForm({
     async function fetchExercises() {
       const response = await fetch("/api/exercises");
       const data = await response.json();
-      // setOptions(data);
+      // FIXME: Filter out empty??
+      setExercises(data);
     }
     fetchExercises();
   }, []);
@@ -184,14 +171,64 @@ export default function WorkoutForm({
                     control={form.control}
                     name={`exercises.${index}.name`}
                     render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            placeholder="Exercise name"
-                            className="text-[16px]"
-                            {...field}
-                          />
-                        </FormControl>
+                      <FormItem className="flex flex-col">
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant="outline"
+                                role="combobox"
+                                className={cn(
+                                  "w-[200px] justify-between",
+                                  !field.value && "text-muted-foreground"
+                                )}
+                              >
+                                {field.value
+                                  ? exercises.find(
+                                      (exercise) => exercise === field.value
+                                    )
+                                  : "Select exercise"}
+                                <ChevronsUpDown className="opacity-50" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-[200px] p-0">
+                            <Command>
+                              <CommandInput
+                                placeholder="Search exercise..."
+                                className="h-9"
+                              />
+                              <CommandList>
+                                {/* TODO: Update this so I can add a new exercise */}
+                                <CommandEmpty>No exercise found.</CommandEmpty>
+                                <CommandGroup>
+                                  {exercises.map((exercise) => (
+                                    <CommandItem
+                                      value={exercise}
+                                      key={exercise}
+                                      onSelect={() => {
+                                        form.setValue(
+                                          `exercises.${index}.name`,
+                                          exercise
+                                        );
+                                      }}
+                                    >
+                                      {exercise}
+                                      <Check
+                                        className={cn(
+                                          "ml-auto",
+                                          exercise === field.value
+                                            ? "opacity-100"
+                                            : "opacity-0"
+                                        )}
+                                      />
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
                       </FormItem>
                     )}
                   />
