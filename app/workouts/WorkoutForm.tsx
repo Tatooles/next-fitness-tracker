@@ -200,7 +200,20 @@ export default function WorkoutForm({
                               />
                               <CommandList>
                                 {/* TODO: Update this so I can add a new exercise */}
-                                <CommandEmpty>No exercise found.</CommandEmpty>
+                                <CommandEmpty
+                                  onClick={() => {
+                                    console.log(
+                                      "adding new exercise, exercise field.value",
+                                      field.value
+                                    );
+                                    form.setValue(
+                                      `exercises.${index}.name`,
+                                      field.value
+                                    );
+                                  }}
+                                >
+                                  Add new exercise +
+                                </CommandEmpty>
                                 <CommandGroup>
                                   {exercises.map((exercise) => (
                                     <CommandItem
