@@ -181,7 +181,7 @@ export default function WorkoutForm({
                                 variant="outline"
                                 role="combobox"
                                 className={cn(
-                                  "w-[200px] justify-between",
+                                  "w-[270px] justify-between",
                                   !field.value && "text-muted-foreground"
                                 )}
                               >
@@ -190,7 +190,7 @@ export default function WorkoutForm({
                               </Button>
                             </FormControl>
                           </PopoverTrigger>
-                          <PopoverContent className="w-[200px] p-0">
+                          <PopoverContent className="w-[270px] p-0">
                             <Command>
                               <CommandInput
                                 placeholder="Search exercise..."
@@ -214,16 +214,7 @@ export default function WorkoutForm({
                                 }}
                               />
                               <CommandList>
-                                <CommandEmpty
-                                  onClick={() => {
-                                    form.setValue(
-                                      `exercises.${index}.name`,
-                                      exerciseNameValue
-                                    );
-                                  }}
-                                >
-                                  No exercise found.
-                                </CommandEmpty>
+                                <CommandEmpty>No exercise found.</CommandEmpty>
                                 <CommandGroup>
                                   {exercises.map((exercise) => (
                                     <CommandItem
