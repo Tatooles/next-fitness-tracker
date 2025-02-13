@@ -47,6 +47,8 @@ export default function WorkoutForm({
   const [showSpinner, setShowSpinner] = useState(false);
   const [exercises, setExercises] = useState([]);
 
+  const [exerciseNameValue, setExerciseNameValue] = useState("");
+
   const router = useRouter();
 
   useEffect(() => {
@@ -183,11 +185,7 @@ export default function WorkoutForm({
                                   !field.value && "text-muted-foreground"
                                 )}
                               >
-                                {field.value
-                                  ? exercises.find(
-                                      (exercise) => exercise === field.value
-                                    )
-                                  : "Select exercise"}
+                                {field.value ? field.value : "Select exercise"}
                                 <ChevronsUpDown className="opacity-50" />
                               </Button>
                             </FormControl>
@@ -197,18 +195,16 @@ export default function WorkoutForm({
                               <CommandInput
                                 placeholder="Search exercise..."
                                 className="h-9"
+                                onInput={(e) =>
+                                  setExerciseNameValue(e.currentTarget.value)
+                                } // Save live value to state
                               />
                               <CommandList>
-                                {/* TODO: Update this so I can add a new exercise */}
                                 <CommandEmpty
                                   onClick={() => {
-                                    console.log(
-                                      "adding new exercise, exercise field.value",
-                                      field.value
-                                    );
                                     form.setValue(
                                       `exercises.${index}.name`,
-                                      field.value
+                                      exerciseNameValue
                                     );
                                   }}
                                 >
