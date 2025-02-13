@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,9 +7,33 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import FormSets from "@/components/FormSets";
+import FormSets from "@/app/workouts/FormSets";
 import Spinner from "@/components/Spinner";
 import { workoutFormSchema, TWorkoutFormSchema } from "@/lib/types";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { z } from "zod";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function WorkoutForm({
   editMode,
@@ -21,7 +45,21 @@ export default function WorkoutForm({
   workoutId: number;
 }) {
   const [showSpinner, setShowSpinner] = useState(false);
+  const [exercises, setExercises] = useState([]);
+
+  const [exerciseNameValue, setExerciseNameValue] = useState("");
+
   const router = useRouter();
+
+  useEffect(() => {
+    async function fetchExercises() {
+      const response = await fetch("/api/exercises");
+      const data = await response.json();
+      // FIXME: Filter out empty??
+      setExercises(data);
+    }
+    fetchExercises();
+  }, []);
 
   const onSubmit = async (values: TWorkoutFormSchema) => {
     setShowSpinner(true);
@@ -70,20 +108,14 @@ export default function WorkoutForm({
       });
   };
 
-  const {
-    handleSubmit,
-    control,
-    register,
-    formState: { errors },
-    getValues,
-  } = useForm<TWorkoutFormSchema>({
+  const form = useForm<TWorkoutFormSchema>({
     resolver: zodResolver(workoutFormSchema),
     values: workoutValue,
   });
 
   const { fields, append, remove } = useFieldArray({
     name: "exercises",
-    control,
+    control: form.control,
   });
 
   return (
@@ -91,79 +123,175 @@ export default function WorkoutForm({
       <h2 className="text-center text-2xl">
         {workoutId !== -1 ? "Edit Workout" : "Create Workout"}
       </h2>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col text-left"
-      >
-        <Label htmlFor="date">Date:</Label>
-        <Input
-          type="date"
-          id="date"
-          className="mt-2 mb-4 text-[16px]"
-          {...register("date")}
-        ></Input>
-        <Label htmlFor="name">Workout Name:</Label>
-        <div className="mt-2 mb-4">
-          <Input
-            type="text"
-            id="name"
-            className="text-[16px]"
-            {...register("name")}
-          ></Input>
-          {errors.name && (
-            <p className="mt-2 text-sm font-medium text-destructive">{`${errors.name.message}`}</p>
-          )}
-        </div>
-        <div>
-          <Label>Exercises</Label>
-          {fields.map((field, index) => (
-            <div
-              className="form-control flex flex-col gap-4 border-b-2 border-slate-700 px-2 py-4"
-              key={field.id}
-            >
-              <div className="flex items-center">
-                <Input
-                  {...register(`exercises.${index}.name` as const)}
-                  placeholder="Exercise name"
-                  className="text-[16px]"
-                />
-                <div
-                  onClick={() => remove(index)}
-                  className="ml-5 h-6 w-7 cursor-pointer rounded-full bg-red-600 text-center text-white"
-                >
-                  <div className="-translate-y-[1px]">-</div>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col text-left"
+        >
+          <FormField
+            control={form.control}
+            name="date"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Date:</FormLabel>
+                <FormControl>
+                  <Input
+                    type="date"
+                    className="mt-2 mb-4 text-[16px]"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Workout Name:</FormLabel>
+                <FormControl>
+                  <Input className="text-[16px]" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div>
+            <Label>Exercises</Label>
+            {fields.map((field, index) => (
+              <div
+                className="flex flex-col gap-4 border-b-2 border-slate-700 px-2 py-4"
+                key={field.id}
+              >
+                <div className="flex items-center">
+                  <FormField
+                    control={form.control}
+                    name={`exercises.${index}.name`}
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col">
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant="outline"
+                                role="combobox"
+                                className={cn(
+                                  "w-[270px] justify-between",
+                                  !field.value && "text-muted-foreground"
+                                )}
+                              >
+                                {field.value ? field.value : "Select exercise"}
+                                <ChevronsUpDown className="opacity-50" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-[270px] p-0">
+                            <Command>
+                              <CommandInput
+                                placeholder="Search exercise..."
+                                className="h-9"
+                                onInput={(
+                                  e // Save live value to state
+                                ) =>
+                                  setExerciseNameValue(e.currentTarget.value)
+                                }
+                                onKeyDown={(e) => {
+                                  if (
+                                    e.key === "Enter" &&
+                                    exerciseNameValue.trim() !== ""
+                                  ) {
+                                    e.preventDefault();
+                                    form.setValue(
+                                      `exercises.${index}.name`,
+                                      exerciseNameValue
+                                    );
+                                  }
+                                }}
+                              />
+                              <CommandList>
+                                <CommandEmpty>No exercise found.</CommandEmpty>
+                                <CommandGroup>
+                                  {exercises.map((exercise) => (
+                                    <CommandItem
+                                      value={exercise}
+                                      key={exercise}
+                                      onSelect={() => {
+                                        form.setValue(
+                                          `exercises.${index}.name`,
+                                          exercise
+                                        );
+                                      }}
+                                    >
+                                      {exercise}
+                                      <Check
+                                        className={cn(
+                                          "ml-auto",
+                                          exercise === field.value
+                                            ? "opacity-100"
+                                            : "opacity-0"
+                                        )}
+                                      />
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
+                      </FormItem>
+                    )}
+                  />
+                  <div
+                    onClick={() => remove(index)}
+                    className="ml-5 h-6 w-7 cursor-pointer rounded-full bg-red-600 text-center text-white"
+                  >
+                    <div className="-translate-y-[1px]">-</div>
+                  </div>
                 </div>
+                <FormSets
+                  exerciseIndex={index}
+                  control={form.control}
+                  getValues={form.getValues}
+                />
+                <FormField
+                  control={form.control}
+                  name={`exercises.${index}.notes`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Notes"
+                          className="text-[16px]"
+                          {...field}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
               </div>
-              <FormSets
-                exerciseIndex={index}
-                {...{ control, register, getValues }}
-              />
-              <Textarea
-                {...register(`exercises.${index}.notes` as const)}
-                placeholder="Notes"
-                className="text-[16px]"
-              ></Textarea>
-            </div>
-          ))}
-          <Button
-            variant="secondary"
-            className="mt-4 w-full"
-            type="button"
-            onClick={() =>
-              append({
-                name: "",
-                notes: "",
-                sets: [{ weight: "", reps: "", rpe: "" }],
-              })
-            }
-          >
-            Add Exercise
+            ))}
+            <Button
+              variant="secondary"
+              className="mt-4 w-full"
+              type="button"
+              onClick={() =>
+                append({
+                  name: "",
+                  notes: "",
+                  sets: [{ weight: "", reps: "", rpe: "" }],
+                })
+              }
+            >
+              Add Exercise
+            </Button>
+          </div>
+          <Button type="submit" className="mt-4 self-center">
+            Submit
           </Button>
-        </div>
-        <Button type="submit" className="mt-4 self-center">
-          Submit
-        </Button>
-      </form>
+        </form>
+      </Form>
       <Spinner show={showSpinner}></Spinner>
     </div>
   );

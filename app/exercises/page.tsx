@@ -28,6 +28,7 @@ async function getExerciseSummary() {
 
   const summaries: ExerciseSummary[] = [];
 
+  // Might be able to use object.group
   exercises.forEach(({ exercise_view, set }) => {
     let exerciseSummary = summaries.find((g) => g.name === exercise_view?.name);
 
