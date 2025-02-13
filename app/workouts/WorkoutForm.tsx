@@ -165,7 +165,7 @@ export default function WorkoutForm({
             <Label>Exercises</Label>
             {fields.map((field, index) => (
               <div
-                className="form-control flex flex-col gap-4 border-b-2 border-slate-700 px-2 py-4"
+                className="flex flex-col gap-4 border-b-2 border-slate-700 px-2 py-4"
                 key={field.id}
               >
                 <div className="flex items-center">
@@ -195,9 +195,23 @@ export default function WorkoutForm({
                               <CommandInput
                                 placeholder="Search exercise..."
                                 className="h-9"
-                                onInput={(e) =>
+                                onInput={(
+                                  e // Save live value to state
+                                ) =>
                                   setExerciseNameValue(e.currentTarget.value)
-                                } // Save live value to state
+                                }
+                                onKeyDown={(e) => {
+                                  if (
+                                    e.key === "Enter" &&
+                                    exerciseNameValue.trim() !== ""
+                                  ) {
+                                    e.preventDefault();
+                                    form.setValue(
+                                      `exercises.${index}.name`,
+                                      exerciseNameValue
+                                    );
+                                  }
+                                }}
                               />
                               <CommandList>
                                 <CommandEmpty
@@ -208,7 +222,7 @@ export default function WorkoutForm({
                                     );
                                   }}
                                 >
-                                  Add new exercise +
+                                  No exercise found.
                                 </CommandEmpty>
                                 <CommandGroup>
                                   {exercises.map((exercise) => (
