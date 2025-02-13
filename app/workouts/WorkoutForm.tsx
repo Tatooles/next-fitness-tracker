@@ -108,7 +108,7 @@ export default function WorkoutForm({
       });
   };
 
-  const form = useForm<z.infer<typeof workoutFormSchema>>({
+  const form = useForm<TWorkoutFormSchema>({
     resolver: zodResolver(workoutFormSchema),
     values: workoutValue,
   });
@@ -117,9 +117,6 @@ export default function WorkoutForm({
     name: "exercises",
     control: form.control,
   });
-
-  // TODO: May have to rewrite whole thing with shadcn ui form
-  // Which isn't necessarily a bad thing
 
   return (
     <div className="mx-auto p-4 sm:max-w-md">
