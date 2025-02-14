@@ -18,7 +18,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { z } from "zod";
 import {
   Command,
   CommandEmpty,
@@ -32,7 +31,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function WorkoutForm({
@@ -192,9 +191,8 @@ export default function WorkoutForm({
                               <CommandInput
                                 placeholder="Search exercise..."
                                 className="h-9"
-                                onInput={(
-                                  e // Save live value to state
-                                ) =>
+                                // Save current value to state
+                                onInput={(e) =>
                                   setExerciseNameValue(e.currentTarget.value)
                                 }
                                 onKeyDown={(e) => {
@@ -210,6 +208,7 @@ export default function WorkoutForm({
                                   }
                                 }}
                               />
+                              {/* TODO: Maybe make this shorter */}
                               <CommandList>
                                 <CommandEmpty>No exercise found.</CommandEmpty>
                                 <CommandGroup>
@@ -222,6 +221,7 @@ export default function WorkoutForm({
                                           `exercises.${index}.name`,
                                           exercise
                                         );
+                                        // TODO: Gotta close command on select
                                       }}
                                     >
                                       {exercise}
@@ -243,12 +243,11 @@ export default function WorkoutForm({
                       </FormItem>
                     )}
                   />
-                  <div
+                  <Trash2
                     onClick={() => remove(index)}
-                    className="ml-5 h-6 w-7 cursor-pointer rounded-full bg-red-600 text-center text-white"
-                  >
-                    <div className="-translate-y-[1px]">-</div>
-                  </div>
+                    size={28}
+                    className="ml-5 text-red-600 cursor-pointer"
+                  ></Trash2>
                 </div>
                 <FormSets
                   exerciseIndex={index}

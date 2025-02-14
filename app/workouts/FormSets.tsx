@@ -8,6 +8,7 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
+import { Trash2 } from "lucide-react";
 
 export default function FormSets({
   exerciseIndex,
@@ -76,11 +77,11 @@ export default function FormSets({
               </FormItem>
             )}
           />
-          <div onClick={() => remove(index)} className="p-2">
-            <div className="h-4 w-4 cursor-pointer rounded-full bg-red-600 p-2 text-center text-white">
-              <div className="-translate-y-[13px] -translate-x-[4px]">-</div>
-            </div>
-          </div>
+          <Trash2
+            onClick={() => remove(index)}
+            size={20}
+            className="text-red-600 cursor-pointer"
+          ></Trash2>
         </div>
       ))}
       <div className="flex gap-2">
