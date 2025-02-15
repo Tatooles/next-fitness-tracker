@@ -45,6 +45,7 @@ export default function WorkoutForm({
 }) {
   const [showSpinner, setShowSpinner] = useState(false);
   const [exercises, setExercises] = useState([]);
+  const [popoverOpenStates, setPopoverOpenStates] = useState<boolean[]>([]);
 
   const [exerciseNameValue, setExerciseNameValue] = useState("");
 
@@ -170,12 +171,22 @@ export default function WorkoutForm({
                     name={`exercises.${index}.name`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
-                        <Popover>
+                        <Popover
+                          open={popoverOpenStates[index]}
+                          onOpenChange={(isOpen) => {
+                            setPopoverOpenStates((prev) => {
+                              const newState = [...prev];
+                              newState[index] = isOpen;
+                              return newState;
+                            });
+                          }}
+                        >
                           <PopoverTrigger asChild>
                             <FormControl>
                               <Button
                                 variant="outline"
                                 role="combobox"
+                                aria-expanded={popoverOpenStates[index]}
                                 className={cn(
                                   "w-[270px] justify-between",
                                   !field.value && "text-muted-foreground"
@@ -191,7 +202,6 @@ export default function WorkoutForm({
                               <CommandInput
                                 placeholder="Search exercise..."
                                 className="h-9"
-                                // Save current value to state
                                 onInput={(e) =>
                                   setExerciseNameValue(e.currentTarget.value)
                                 }
@@ -205,10 +215,14 @@ export default function WorkoutForm({
                                       `exercises.${index}.name`,
                                       exerciseNameValue
                                     );
+                                    setPopoverOpenStates((prev) => {
+                                      const newState = [...prev];
+                                      newState[index] = false;
+                                      return newState;
+                                    });
                                   }
                                 }}
                               />
-                              {/* TODO: Maybe make this shorter */}
                               <CommandList>
                                 <CommandEmpty>No exercise found.</CommandEmpty>
                                 <CommandGroup>
@@ -221,18 +235,14 @@ export default function WorkoutForm({
                                           `exercises.${index}.name`,
                                           exercise
                                         );
-                                        // TODO: Gotta close command on select
+                                        setPopoverOpenStates((prev) => {
+                                          const newState = [...prev];
+                                          newState[index] = false;
+                                          return newState;
+                                        });
                                       }}
                                     >
                                       {exercise}
-                                      <Check
-                                        className={cn(
-                                          "ml-auto",
-                                          exercise === field.value
-                                            ? "opacity-100"
-                                            : "opacity-0"
-                                        )}
-                                      />
                                     </CommandItem>
                                   ))}
                                 </CommandGroup>
@@ -244,7 +254,12 @@ export default function WorkoutForm({
                     )}
                   />
                   <Trash2
-                    onClick={() => remove(index)}
+                    onClick={() => {
+                      remove(index);
+                      setPopoverOpenStates((prev) =>
+                        prev.filter((_, i) => i !== index)
+                      );
+                    }}
                     size={28}
                     className="ml-5 text-red-600 cursor-pointer"
                   ></Trash2>
@@ -275,13 +290,14 @@ export default function WorkoutForm({
               variant="secondary"
               className="mt-4 w-full"
               type="button"
-              onClick={() =>
+              onClick={() => {
                 append({
                   name: "",
                   notes: "",
                   sets: [{ weight: "", reps: "", rpe: "" }],
-                })
-              }
+                });
+                setPopoverOpenStates((prev) => [...prev, false]);
+              }}
             >
               Add Exercise
             </Button>
