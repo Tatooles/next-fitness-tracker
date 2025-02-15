@@ -202,7 +202,6 @@ export default function WorkoutForm({
                               <CommandInput
                                 placeholder="Search exercise..."
                                 className="h-9"
-                                // Save current value to state
                                 onInput={(e) =>
                                   setExerciseNameValue(e.currentTarget.value)
                                 }
@@ -218,13 +217,12 @@ export default function WorkoutForm({
                                     );
                                     setPopoverOpenStates((prev) => {
                                       const newState = [...prev];
-                                      newState[index] = false; // Close the popover for this specific exercise
+                                      newState[index] = false;
                                       return newState;
                                     });
                                   }
                                 }}
                               />
-                              {/* TODO: Maybe make this shorter */}
                               <CommandList>
                                 <CommandEmpty>No exercise found.</CommandEmpty>
                                 <CommandGroup>
@@ -239,7 +237,7 @@ export default function WorkoutForm({
                                         );
                                         setPopoverOpenStates((prev) => {
                                           const newState = [...prev];
-                                          newState[index] = false; // Close the popover for this specific exercise
+                                          newState[index] = false;
                                           return newState;
                                         });
                                       }}
@@ -298,7 +296,7 @@ export default function WorkoutForm({
                   notes: "",
                   sets: [{ weight: "", reps: "", rpe: "" }],
                 });
-                setPopoverOpenStates((prev) => [...prev, false]); // Add new popover state
+                setPopoverOpenStates((prev) => [...prev, false]);
               }}
             >
               Add Exercise
