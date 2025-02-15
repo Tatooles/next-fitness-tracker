@@ -6,7 +6,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "./ui/button";
-import ExerciseInstanceItem from "./ExerciseInstanceItem";
+import ExerciseInstanceItem from "./exercise-instance-item";
 import { DateExercise, ExerciseSummary } from "@/lib/types";
 
 export default function ExerciseHistoryModal({

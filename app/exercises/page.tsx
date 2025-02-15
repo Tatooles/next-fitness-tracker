@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db/drizzle";
-import ExercisesUI from "./ExercisesUI";
+import ExercisesUI from "./exercises-ui";
 import { ExerciseSummary } from "@/lib/types";
 import { exerciseView, set } from "@/db/schema";
 import { eq } from "drizzle-orm";

@@ -1,8 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db/drizzle";
-import WorkoutNotFound from "../WorkoutNotFound";
+import WorkoutNotFound from "../workout-not-found";
 import { Workout, TWorkoutFormSchema } from "@/lib/types";
-import WorkoutForm from "@/app/workouts/WorkoutForm";
+import WorkoutForm from "@/app/workouts/workout-form";
 
 async function getWorkout(id: number) {
   const { userId, redirectToSignIn } = await auth();
