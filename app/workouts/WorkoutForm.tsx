@@ -45,6 +45,7 @@ export default function WorkoutForm({
 }) {
   const [showSpinner, setShowSpinner] = useState(false);
   const [exercises, setExercises] = useState([]);
+  const [popoverOpen, setPopoverOpen] = useState(false);
 
   const [exerciseNameValue, setExerciseNameValue] = useState("");
 
@@ -170,12 +171,16 @@ export default function WorkoutForm({
                     name={`exercises.${index}.name`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
-                        <Popover>
+                        <Popover
+                          open={popoverOpen}
+                          onOpenChange={setPopoverOpen}
+                        >
                           <PopoverTrigger asChild>
                             <FormControl>
                               <Button
                                 variant="outline"
                                 role="combobox"
+                                aria-expanded={popoverOpen}
                                 className={cn(
                                   "w-[270px] justify-between",
                                   !field.value && "text-muted-foreground"
@@ -221,7 +226,7 @@ export default function WorkoutForm({
                                           `exercises.${index}.name`,
                                           exercise
                                         );
-                                        // TODO: Gotta close command on select
+                                        setPopoverOpen(false);
                                       }}
                                     >
                                       {exercise}
