@@ -67,7 +67,7 @@ export default function ExerciseSummaryComponent({
           <DialogTrigger asChild>
             <Button className="text-lg">History</Button>
           </DialogTrigger>
-          <DialogContent className="max-h-[90vh] w-11/12 rounded-md overflow-y-auto">
+          <DialogContent className="max-h-[80vh] w-11/12 rounded-md overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-xl">
                 {exerciseSummary.name}
