@@ -17,11 +17,10 @@ export interface ExerciseData {
   } | null;
 }
 
-export interface ExerciseGroupedByDate {
-  [date: string]: {
-    notes: string | null;
-    sets: { reps: string; weight: string; rpe: string }[];
-  };
+export interface GroupedExercise {
+  date: string;
+  notes: string | null;
+  sets: Set[];
 }
 
 export async function GET(request: NextRequest) {
@@ -29,7 +28,7 @@ export async function GET(request: NextRequest) {
   const exerciseName = request.nextUrl.searchParams.get("name");
 
   try {
-    const exerciseData = await db
+    const data = await db
       .select()
       .from(exerciseView)
       .fullJoin(set, eq(set.exerciseId, exerciseView.id))
@@ -41,24 +40,28 @@ export async function GET(request: NextRequest) {
       );
 
     // Group exercise data by date into an object that is friendly to the front end
-    const groupByDate = (data: ExerciseData[]): ExerciseGroupedByDate => {
-      return data.reduce((acc, { exercise_view, set }) => {
-        const { date, notes } = exercise_view!;
-        if (!acc[date!]) {
-          acc[date!] = { notes, sets: [] };
-        }
-        acc[date!].sets.push({
-          reps: set!.reps,
-          weight: set!.weight,
-          rpe: set!.rpe,
-        });
-        return acc;
-      }, {} as ExerciseGroupedByDate);
-    };
+    const grouped: Record<string, GroupedExercise> = {};
 
-    console.log(groupByDate(exerciseData));
+    data.forEach((exerciseData) => {
+      const { date, notes } = exerciseData.exercise_view! || {};
 
-    return NextResponse.json(groupByDate(exerciseData));
+      // Skip if missing date or set
+      if (!date || !exerciseData.set) return;
+
+      if (!grouped[date]) {
+        grouped[date] = {
+          date,
+          notes,
+          sets: [],
+        };
+      }
+
+      // Add set to the respective date
+      grouped[date].sets.push(exerciseData.set);
+    });
+
+    // Convert back to array and return
+    return NextResponse.json(Object.values(grouped));
   } catch (error) {
     console.log("An error ocurred!");
     if (error instanceof Error) console.log(error.message);
