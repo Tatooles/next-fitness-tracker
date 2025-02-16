@@ -60,8 +60,12 @@ export async function GET(request: NextRequest) {
       grouped[date].sets.push(exerciseData.set);
     });
 
+    const sorted = Object.values(grouped).sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+
     // Convert back to array and return
-    return NextResponse.json(Object.values(grouped));
+    return NextResponse.json(sorted);
   } catch (error) {
     console.log("An error ocurred!");
     if (error instanceof Error) console.log(error.message);
