@@ -54,7 +54,7 @@ export default function ExerciseSummaryComponent({
 
   return (
     <div className="flex flex-col gap-2">
-      <ExerciseHistoryModal exerciseSummary={exerciseSummary} />
+      <ExerciseHistoryModal exerciseName={exerciseSummary.name} />
       <div className="self-start text-xl mb-4">
         <span className="mr-4">Heaviest rep</span>
         <span className="p-2 rounded-md  bg-amber-300">
