@@ -12,8 +12,10 @@ import ExerciseInstanceItem from "./exercise-instance-item";
 
 export default function ExerciseHistoryModal({
   exerciseName,
+  filterOutWorkoutId,
 }: {
   exerciseName: string;
+  filterOutWorkoutId?: number;
 }) {
   const [open, setOpen] = useState(false);
   const [exerciseHistory, setExerciseHistory] = useState<GroupedExercise[]>([]);
@@ -22,8 +24,11 @@ export default function ExerciseHistoryModal({
     if (open) {
       fetch(`/api/exercises/history?name=${encodeURIComponent(exerciseName)}`)
         .then((res) => res.json())
-        .then((data) => {
-          setExerciseHistory(data);
+        .then((data: GroupedExercise[]) => {
+          // Filter out workout based on prop
+          setExerciseHistory(
+            data.filter((data) => data.workoutId !== filterOutWorkoutId)
+          );
         });
     }
   }, [open, exerciseName]);

@@ -20,6 +20,7 @@ export interface ExerciseData {
 export interface GroupedExercise {
   date: string;
   notes: string | null;
+  workoutId: number | null;
   sets: Set[];
 }
 
@@ -43,7 +44,7 @@ export async function GET(request: NextRequest) {
     const grouped: Record<string, GroupedExercise> = {};
 
     data.forEach((exerciseData) => {
-      const { date, notes } = exerciseData.exercise_view! || {};
+      const { date, notes, workoutId } = exerciseData.exercise_view! || {};
 
       // Skip if missing date or set
       if (!date || !exerciseData.set) return;
@@ -52,6 +53,7 @@ export async function GET(request: NextRequest) {
         grouped[date] = {
           date,
           notes,
+          workoutId,
           sets: [],
         };
       }

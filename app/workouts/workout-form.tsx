@@ -31,8 +31,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Check, ChevronsUpDown, Trash2 } from "lucide-react";
+import { ChevronsUpDown, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import ExerciseHistoryModal from "@/components/exercise-history-modal";
 
 export default function WorkoutForm({
   editMode,
@@ -55,7 +56,6 @@ export default function WorkoutForm({
     async function fetchExercises() {
       const response = await fetch("/api/exercises");
       const data = await response.json();
-      // FIXME: Filter out empty??
       setExercises(data);
     }
     fetchExercises();
@@ -264,6 +264,11 @@ export default function WorkoutForm({
                     className="ml-5 text-red-600 cursor-pointer"
                   ></Trash2>
                 </div>
+                <ExerciseHistoryModal
+                  exerciseName={form.watch(`exercises.${index}.name`)}
+                  // Filter out current workout if in edit mode
+                  filterOutWorkoutId={workoutId}
+                />
                 <FormSets
                   exerciseIndex={index}
                   control={form.control}
