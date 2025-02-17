@@ -69,7 +69,10 @@ export async function GET(request: NextRequest) {
     // Convert back to array and return
     return NextResponse.json(sorted);
   } catch (error) {
-    console.log("An error ocurred!");
-    if (error instanceof Error) console.log(error.message);
+    console.error("Error fetching exercise history:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch exercise history" },
+      { status: 500 }
+    );
   }
 }

@@ -19,16 +19,27 @@ export default function ExerciseHistoryModal({
 }) {
   const [open, setOpen] = useState(false);
   const [exerciseHistory, setExerciseHistory] = useState<GroupedExercise[]>([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (open) {
       fetch(`/api/exercises/history?name=${encodeURIComponent(exerciseName)}`)
         .then((res) => res.json())
-        .then((data: GroupedExercise[]) => {
+        .then((data) => {
+          if (data.error) {
+            setError(data.error);
+            return;
+          }
+
           // Filter out workout based on prop
           setExerciseHistory(
-            data.filter((data) => data.workoutId !== filterOutWorkoutId)
+            (data as GroupedExercise[]).filter(
+              (data) => data.workoutId !== filterOutWorkoutId
+            )
           );
+        })
+        .catch((error) => {
+          console.log("an error ocurred!", error);
         });
     }
   }, [open, exerciseName]);
@@ -43,6 +54,7 @@ export default function ExerciseHistoryModal({
           <DialogHeader>
             <DialogTitle className="text-xl">{exerciseName}</DialogTitle>
           </DialogHeader>
+          <div className=" text-center text-red-600">{error}</div>
           <div className="divide-y-2">
             {exerciseHistory.map((exercise: GroupedExercise) => (
               <ExerciseInstanceItem
