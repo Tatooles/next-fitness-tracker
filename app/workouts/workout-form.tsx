@@ -45,7 +45,7 @@ export default function WorkoutForm({
   workoutId: number;
 }) {
   const [showSpinner, setShowSpinner] = useState(false);
-  const [exercises, setExercises] = useState([]);
+  const [exercises, setExercises] = useState<string[]>([]);
   const [popoverOpenStates, setPopoverOpenStates] = useState<boolean[]>([]);
 
   const [exerciseNameValue, setExerciseNameValue] = useState("");
@@ -55,7 +55,7 @@ export default function WorkoutForm({
   useEffect(() => {
     async function fetchExercises() {
       const response = await fetch("/api/exercises");
-      const data = await response.json();
+      const data: string[] = await response.json();
       setExercises(data);
     }
     fetchExercises();
@@ -264,11 +264,13 @@ export default function WorkoutForm({
                     className="ml-5 text-red-600 cursor-pointer"
                   ></Trash2>
                 </div>
-                <ExerciseHistoryModal
-                  exerciseName={form.watch(`exercises.${index}.name`)}
-                  // Filter out current workout if in edit mode
-                  filterOutWorkoutId={workoutId}
-                />
+                {exercises.includes(form.watch(`exercises.${index}.name`)) && (
+                  <ExerciseHistoryModal
+                    exerciseName={form.watch(`exercises.${index}.name`)}
+                    // Filter out current workout if in edit mode
+                    filterOutWorkoutId={workoutId}
+                  />
+                )}
                 <FormSets
                   exerciseIndex={index}
                   control={form.control}

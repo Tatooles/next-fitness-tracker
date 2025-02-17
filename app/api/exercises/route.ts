@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
+    // TODO: This should only be the exercises for this user
     const result = await db
       .selectDistinct({ name: exercise.name })
       .from(exercise);
