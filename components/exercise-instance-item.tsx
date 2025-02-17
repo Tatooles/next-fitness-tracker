@@ -12,7 +12,7 @@ export default function ExerciseInstanceItem({
   const { name, date, sets, notes } = exercise;
 
   return (
-    <div className="p-2 mt-4">
+    <div className="p-2 mt-4 text-center">
       {showName && <h3 className="text-lg font-bold">{name}</h3>}
       {showDate && <h3 className="text-lg text-center">{date}</h3>}
       <div className="mt-4">
@@ -35,7 +35,7 @@ export default function ExerciseInstanceItem({
         )}
       </div>
       {notes && (
-        <p className="mt-2 rounded-md dark:text-black bg-slate-300 p-2">
+        <p className="mt-2 rounded-md dark:text-black bg-slate-300 p-2 text-start">
           {notes}
         </p>
       )}

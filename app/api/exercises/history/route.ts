@@ -60,6 +60,9 @@ export async function GET(request: NextRequest) {
 
       // Add set to the respective date
       grouped[date].sets.push(exerciseData.set);
+
+      // Sort sets by id asc
+      grouped[date].sets.sort((a, b) => a.id - b.id);
     });
 
     const sorted = Object.values(grouped).sort(
