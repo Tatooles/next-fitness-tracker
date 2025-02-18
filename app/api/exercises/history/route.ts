@@ -65,11 +65,11 @@ export async function GET(request: NextRequest) {
       grouped[date].sets.sort((a, b) => a.id - b.id);
     });
 
+    // Convert back to array and sort
     const sorted = Object.values(grouped).sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     );
 
-    // Convert back to array and return
     return NextResponse.json(sorted);
   } catch (error) {
     console.error("Error fetching exercise history:", error);

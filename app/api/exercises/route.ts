@@ -1,13 +1,17 @@
 import { db } from "@/db/drizzle";
-import { exercise } from "@/db/schema";
+import { exerciseView } from "@/db/schema";
 import { NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
+import { eq } from "drizzle-orm";
 
 export async function GET() {
+  const { userId } = await auth();
+
   try {
-    // TODO: This should only be the exercises for this user
     const result = await db
-      .selectDistinct({ name: exercise.name })
-      .from(exercise);
+      .selectDistinct({ name: exerciseView.name })
+      .from(exerciseView)
+      .where(eq(exerciseView.userId, userId!));
 
     return NextResponse.json(result.map((row) => row.name));
   } catch (error) {
