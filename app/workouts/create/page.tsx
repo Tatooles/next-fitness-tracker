@@ -1,4 +1,4 @@
-import WorkoutForm from "@/app/workouts/WorkoutForm";
+import WorkoutForm from "@/app/workouts/workout-form";
 
 export default async function CreateWorkoutPage() {
   return (

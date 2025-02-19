@@ -1,13 +1,5 @@
-import { DateExercise, ExerciseSummary, Set } from "@/lib/types";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "../../components/ui/button";
-import ExerciseInstanceItem from "../../components/ExerciseInstanceItem";
+import ExerciseHistoryModal from "@/components/exercise-history-modal";
+import { ExerciseSummary, Set } from "@/lib/types";
 
 export default function ExerciseSummaryComponent({
   exerciseSummary,
@@ -62,30 +54,7 @@ export default function ExerciseSummaryComponent({
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="self-start">
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button className="text-lg">History</Button>
-          </DialogTrigger>
-          <DialogContent className="max-h-[90vh] w-11/12 rounded-md overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="text-xl">
-                {exerciseSummary.name}
-              </DialogTitle>
-            </DialogHeader>
-            <div className="divide-y-2">
-              {exerciseSummary.exercises.map((exercise: DateExercise) => (
-                <ExerciseInstanceItem
-                  exercise={exercise}
-                  key={exercise.id}
-                  showName={false}
-                  showDate={true}
-                ></ExerciseInstanceItem>
-              ))}
-            </div>
-          </DialogContent>
-        </Dialog>
-      </div>
+      <ExerciseHistoryModal exerciseName={exerciseSummary.name} />
       <div className="self-start text-xl mb-4">
         <span className="mr-4">Heaviest rep</span>
         <span className="p-2 rounded-md  bg-amber-300">

@@ -20,8 +20,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import Spinner from "@/components/Spinner";
-import ExerciseInstanceItem from "@/components/ExerciseInstanceItem";
+import Spinner from "@/components/spinner";
+import ExerciseInstanceItem from "@/components/exercise-instance-item";
 import { Workout, ExerciseInstance } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 

@@ -12,14 +12,14 @@ export default function ExerciseInstanceItem({
   const { name, date, sets, notes } = exercise;
 
   return (
-    <div className="p-2 mt-4">
+    <div className="p-2 mt-4 text-center">
       {showName && <h3 className="text-lg font-bold">{name}</h3>}
       {showDate && <h3 className="text-lg text-center">{date}</h3>}
       <div className="mt-4">
         {sets.length > 0 && (
           <div className="flex justify-around">
-            <div className="flex-1">Reps</div>
             <div className="flex-1">Weight</div>
+            <div className="flex-1">Reps</div>
             <div className="flex-1">RPE</div>
           </div>
         )}
@@ -27,15 +27,15 @@ export default function ExerciseInstanceItem({
           (set: Set, index) =>
             (set.reps || set.weight) && (
               <div key={index} className="flex justify-around">
-                <div className="flex-1">{set.reps}</div>
                 <div className="flex-1">{set.weight}</div>
+                <div className="flex-1">{set.reps}</div>
                 <div className="flex-1">{set.rpe}</div>
               </div>
             )
         )}
       </div>
       {notes && (
-        <p className="mt-2 rounded-md dark:text-black bg-slate-300 p-2">
+        <p className="mt-2 rounded-md dark:text-black bg-slate-300 p-2 text-start whitespace-pre-wrap">
           {notes}
         </p>
       )}

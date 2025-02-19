@@ -2,8 +2,8 @@ import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db/drizzle";
 import { Button } from "@/components/ui/button";
-import Workouts from "./Workouts";
 import { Workout } from "@/lib/types";
+import Workouts from "./workouts";
 
 async function getWorkouts() {
   try {

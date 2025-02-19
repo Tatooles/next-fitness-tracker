@@ -7,8 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import FormSets from "@/app/workouts/FormSets";
-import Spinner from "@/components/Spinner";
+import FormSets from "@/app/workouts/form-sets";
+import Spinner from "@/components/spinner";
 import { workoutFormSchema, TWorkoutFormSchema } from "@/lib/types";
 import {
   Form,
@@ -31,8 +31,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Check, ChevronsUpDown, Trash2 } from "lucide-react";
+import { ChevronsUpDown, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import ExerciseHistoryModal from "@/components/exercise-history-modal";
 
 export default function WorkoutForm({
   editMode,
@@ -44,7 +45,7 @@ export default function WorkoutForm({
   workoutId: number;
 }) {
   const [showSpinner, setShowSpinner] = useState(false);
-  const [exercises, setExercises] = useState([]);
+  const [exercises, setExercises] = useState<string[]>([]);
   const [popoverOpenStates, setPopoverOpenStates] = useState<boolean[]>([]);
 
   const [exerciseNameValue, setExerciseNameValue] = useState("");
@@ -54,8 +55,7 @@ export default function WorkoutForm({
   useEffect(() => {
     async function fetchExercises() {
       const response = await fetch("/api/exercises");
-      const data = await response.json();
-      // FIXME: Filter out empty??
+      const data: string[] = await response.json();
       setExercises(data);
     }
     fetchExercises();
@@ -264,6 +264,13 @@ export default function WorkoutForm({
                     className="ml-5 text-red-600 cursor-pointer"
                   ></Trash2>
                 </div>
+                {exercises.includes(form.watch(`exercises.${index}.name`)) && (
+                  <ExerciseHistoryModal
+                    exerciseName={form.watch(`exercises.${index}.name`)}
+                    // Filter out current workout if in edit mode
+                    filterOutWorkoutId={workoutId}
+                  />
+                )}
                 <FormSets
                   exerciseIndex={index}
                   control={form.control}
