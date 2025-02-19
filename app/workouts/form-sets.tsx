@@ -37,7 +37,7 @@ export default function FormSets({
                 <FormControl>
                   <Input
                     placeholder="Weight"
-                    inputMode="numeric"
+                    inputMode="decimal"
                     className="w-20 text-[16px]"
                     {...field}
                   />
@@ -53,7 +53,7 @@ export default function FormSets({
                 <FormControl>
                   <Input
                     placeholder="Reps"
-                    inputMode="numeric"
+                    inputMode="decimal"
                     className="w-16 text-[16px]"
                     {...field}
                   />
@@ -69,7 +69,7 @@ export default function FormSets({
                 <FormControl>
                   <Input
                     placeholder="RPE"
-                    inputMode="numeric"
+                    inputMode="decimal"
                     className="w-20 text-[16px]"
                     {...field}
                   />
