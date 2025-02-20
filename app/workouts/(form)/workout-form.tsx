@@ -314,7 +314,7 @@ export default function WorkoutForm({
           </Button>
         </form>
       </Form>
-      <Spinner show={showSpinner}></Spinner>
+      <Spinner show={showSpinner} />
     </div>
   );
 }
