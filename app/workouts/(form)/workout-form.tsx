@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import FormSets from "@/app/workouts/form-sets";
+import FormSets from "@/app/workouts/(form)/form-sets";
 import Spinner from "@/components/spinner";
 import { workoutFormSchema, TWorkoutFormSchema } from "@/lib/types";
 import {
