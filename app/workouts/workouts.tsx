@@ -126,7 +126,7 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
           </AccordionContent>
         </AccordionItem>
       ))}
-      <Spinner show={showSpinner}></Spinner>
+      <Spinner show={showSpinner} />
     </Accordion>
   );
 }

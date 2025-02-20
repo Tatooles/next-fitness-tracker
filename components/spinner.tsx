@@ -1,11 +1,8 @@
 // Spinner from https://flowbite.com/docs/components/spinner/
-import { createPortal } from "react-dom";
 
 export default function Spinner({ show }: { show: boolean }) {
   if (!show) return null;
 
-  // This is where we will use a portal
-  // Return two divs within that portal, the actual modal with the children inside, and the background 1/2 opacity div
   return (
     <>
       <div className="fixed top-0 left-0 bottom-0 right-0 z-10 bg-slate-700 bg-opacity-50">
