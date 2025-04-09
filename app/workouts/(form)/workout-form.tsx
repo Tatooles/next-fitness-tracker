@@ -108,6 +108,9 @@ export default function WorkoutForm({
       });
   };
 
+  // Likely need to remove workoutValues here, and code each placeholder value to be a value || placeholder text
+  // May still need a workoutValue though, just with empty values so we get the correct workouts and set counts
+  // Then update the placeholder since the value will be empty, therefore showing the placeholder
   const form = useForm<TWorkoutFormSchema>({
     resolver: zodResolver(workoutFormSchema),
     values: workoutValue,

@@ -37,6 +37,9 @@ const convertToFormType = (
       // Would rather this somehow prefill the placeholder, rather than the actual field
       // But where do I store that?
       // Would need an optional prop into WorkoutForm
+
+      // Somehow we need an emptied out template to structure the form
+      // And and the real values for the placeholders
       sets: exercise.sets.map((set) => ({
         reps: set.reps,
         weight: set.weight,
