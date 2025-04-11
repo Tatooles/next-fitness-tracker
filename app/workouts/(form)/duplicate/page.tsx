@@ -51,6 +51,24 @@ const convertToFormType = (
   return convertedWorkout;
 };
 
+const zeroWorkout = (workout?: TWorkoutFormSchema) => {
+  if (!workout) return undefined;
+
+  const zeroedWorkout: TWorkoutFormSchema = Object.assign({}, workout);
+
+  zeroedWorkout.exercises.forEach((exercise) => {
+    exercise.sets.forEach((set) => {
+      set.reps = "";
+      set.weight = "";
+      set.rpe = "";
+    });
+
+    // Clear notes??
+  });
+
+  return zeroedWorkout;
+};
+
 export default async function DuplicateWorkoutPage({
   searchParams,
 }: {
@@ -61,17 +79,23 @@ export default async function DuplicateWorkoutPage({
   if (typeof id !== "string" || isNaN(+id))
     return <WorkoutNotFound></WorkoutNotFound>;
 
-  const workout = await getWorkout(+id);
+  const workoutTemplate = await getWorkout(+id);
 
-  if (!workout) {
+  const workout = zeroWorkout(workoutTemplate);
+
+  console.log("tempalate", workoutTemplate?.exercises[0]);
+  console.log("zeroed", workout?.exercises[0]);
+
+  if (!workoutTemplate || !workout) {
     return <WorkoutNotFound></WorkoutNotFound>;
   }
 
   return (
     <WorkoutForm
-      workoutValue={workout}
+      workoutValue={workoutTemplate}
       editMode={false}
       workoutId={-1}
+      workoutTemplate={workout}
     ></WorkoutForm>
   );
 }

@@ -39,10 +39,12 @@ export default function WorkoutForm({
   editMode,
   workoutValue,
   workoutId,
+  workoutTemplate,
 }: {
   editMode: boolean;
   workoutValue: TWorkoutFormSchema;
   workoutId: number;
+  workoutTemplate: TWorkoutFormSchema;
 }) {
   const [showSpinner, setShowSpinner] = useState(false);
   const [exercises, setExercises] = useState<string[]>([]);
