@@ -14,10 +14,12 @@ export default function FormSets({
   exerciseIndex,
   control,
   getValues,
+  placeholders,
 }: {
   exerciseIndex: number;
   control: Control<TWorkoutFormSchema>;
   getValues: UseFormGetValues<TWorkoutFormSchema>;
+  placeholders?: TWorkoutFormSchema;
 }) {
   const { fields, remove, append } = useFieldArray({
     name: `exercises.${exerciseIndex}.sets`,
@@ -36,7 +38,10 @@ export default function FormSets({
               <FormItem>
                 <FormControl>
                   <Input
-                    placeholder="Weight"
+                    placeholder={
+                      placeholders?.exercises[exerciseIndex].sets[index]
+                        .weight ?? "Weight"
+                    }
                     inputMode="decimal"
                     className="w-20 text-[16px]"
                     {...field}
@@ -52,7 +57,10 @@ export default function FormSets({
               <FormItem>
                 <FormControl>
                   <Input
-                    placeholder="Reps"
+                    placeholder={
+                      placeholders?.exercises[exerciseIndex].sets[index].reps ??
+                      "Reps"
+                    }
                     inputMode="decimal"
                     className="w-16 text-[16px]"
                     {...field}
@@ -68,7 +76,10 @@ export default function FormSets({
               <FormItem>
                 <FormControl>
                   <Input
-                    placeholder="RPE"
+                    placeholder={
+                      placeholders?.exercises[exerciseIndex].sets[index].rpe ??
+                      "RPE"
+                    }
                     inputMode="decimal"
                     className="w-20 text-[16px]"
                     {...field}

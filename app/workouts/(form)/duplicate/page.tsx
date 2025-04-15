@@ -83,19 +83,16 @@ export default async function DuplicateWorkoutPage({
 
   const workout = zeroWorkout(workoutTemplate);
 
-  console.log("tempalate", workoutTemplate?.exercises[0]);
-  console.log("zeroed", workout?.exercises[0]);
-
   if (!workoutTemplate || !workout) {
     return <WorkoutNotFound></WorkoutNotFound>;
   }
 
   return (
     <WorkoutForm
-      workoutValue={workoutTemplate}
+      workoutValue={workout}
       editMode={false}
       workoutId={-1}
-      workoutTemplate={workout}
+      workoutTemplate={workoutTemplate}
     ></WorkoutForm>
   );
 }

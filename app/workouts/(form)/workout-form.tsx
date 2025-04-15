@@ -280,6 +280,7 @@ export default function WorkoutForm({
                   exerciseIndex={index}
                   control={form.control}
                   getValues={form.getValues}
+                  placeholders={workoutTemplate}
                 />
                 <FormField
                   control={form.control}
