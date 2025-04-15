@@ -277,6 +277,7 @@ export default function WorkoutForm({
                   />
                 )}
                 <FormSets
+                  exerciseName={form.watch(`exercises.${index}.name`)}
                   exerciseIndex={index}
                   control={form.control}
                   getValues={form.getValues}

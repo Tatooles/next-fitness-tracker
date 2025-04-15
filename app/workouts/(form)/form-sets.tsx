@@ -11,11 +11,13 @@ import {
 import { Trash2 } from "lucide-react";
 
 export default function FormSets({
+  exerciseName,
   exerciseIndex,
   control,
   getValues,
   placeholders,
 }: {
+  exerciseName: string;
   exerciseIndex: number;
   control: Control<TWorkoutFormSchema>;
   getValues: UseFormGetValues<TWorkoutFormSchema>;
@@ -39,8 +41,9 @@ export default function FormSets({
                 <FormControl>
                   <Input
                     placeholder={
-                      placeholders?.exercises[exerciseIndex].sets[index]
-                        .weight ?? "Weight"
+                      placeholders?.exercises.find(
+                        (x) => x.name === exerciseName
+                      )?.sets[index]?.weight ?? "Weight"
                     }
                     inputMode="decimal"
                     className="w-20 text-[16px]"
@@ -58,8 +61,9 @@ export default function FormSets({
                 <FormControl>
                   <Input
                     placeholder={
-                      placeholders?.exercises[exerciseIndex].sets[index].reps ??
-                      "Reps"
+                      placeholders?.exercises.find(
+                        (x) => x.name === exerciseName
+                      )?.sets[index]?.reps ?? "Reps"
                     }
                     inputMode="decimal"
                     className="w-16 text-[16px]"
@@ -77,8 +81,9 @@ export default function FormSets({
                 <FormControl>
                   <Input
                     placeholder={
-                      placeholders?.exercises[exerciseIndex].sets[index].rpe ??
-                      "RPE"
+                      placeholders?.exercises.find(
+                        (x) => x.name === exerciseName
+                      )?.sets[index]?.rpe ?? "RPE"
                     }
                     inputMode="decimal"
                     className="w-20 text-[16px]"
