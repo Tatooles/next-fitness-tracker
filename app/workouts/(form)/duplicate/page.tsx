@@ -54,7 +54,7 @@ const convertToFormType = (
 const zeroWorkout = (workout?: TWorkoutFormSchema) => {
   if (!workout) return undefined;
 
-  const zeroedWorkout: TWorkoutFormSchema = Object.assign({}, workout);
+  const zeroedWorkout: TWorkoutFormSchema = JSON.parse(JSON.stringify(workout));
 
   zeroedWorkout.exercises.forEach((exercise) => {
     exercise.sets.forEach((set) => {
