@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { useFieldArray } from "react-hook-form";
 import { Control, UseFormGetValues } from "react-hook-form";
-import { TWorkoutFormSchema } from "@/lib/types";
+import { ExerciseThin, TWorkoutFormSchema } from "@/lib/types";
 import {
   FormControl,
   FormField,
@@ -15,13 +15,13 @@ export default function FormSets({
   exerciseIndex,
   control,
   getValues,
-  placeholders,
+  placeholderValues,
 }: {
   exerciseName: string;
   exerciseIndex: number;
   control: Control<TWorkoutFormSchema>;
   getValues: UseFormGetValues<TWorkoutFormSchema>;
-  placeholders?: TWorkoutFormSchema;
+  placeholderValues?: ExerciseThin[];
 }) {
   const { fields, remove, append } = useFieldArray({
     name: `exercises.${exerciseIndex}.sets`,
@@ -41,9 +41,8 @@ export default function FormSets({
                 <FormControl>
                   <Input
                     placeholder={
-                      placeholders?.exercises.find(
-                        (x) => x.name === exerciseName
-                      )?.sets[index]?.weight ?? "Weight"
+                      placeholderValues?.find((x) => x.name === exerciseName)
+                        ?.sets[index]?.weight ?? "Weight"
                     }
                     inputMode="decimal"
                     className="w-20 text-[16px]"
@@ -61,9 +60,8 @@ export default function FormSets({
                 <FormControl>
                   <Input
                     placeholder={
-                      placeholders?.exercises.find(
-                        (x) => x.name === exerciseName
-                      )?.sets[index]?.reps ?? "Reps"
+                      placeholderValues?.find((x) => x.name === exerciseName)
+                        ?.sets[index]?.reps ?? "Reps"
                     }
                     inputMode="decimal"
                     className="w-16 text-[16px]"
@@ -81,9 +79,8 @@ export default function FormSets({
                 <FormControl>
                   <Input
                     placeholder={
-                      placeholders?.exercises.find(
-                        (x) => x.name === exerciseName
-                      )?.sets[index]?.rpe ?? "RPE"
+                      placeholderValues?.find((x) => x.name === exerciseName)
+                        ?.sets[index]?.rpe ?? "RPE"
                     }
                     inputMode="decimal"
                     className="w-20 text-[16px]"

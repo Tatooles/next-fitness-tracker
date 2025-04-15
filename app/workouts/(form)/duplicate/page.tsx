@@ -92,7 +92,7 @@ export default async function DuplicateWorkoutPage({
       workoutValue={workout}
       editMode={false}
       workoutId={-1}
-      workoutTemplate={workoutTemplate}
+      placeholderValues={workoutTemplate.exercises}
     ></WorkoutForm>
   );
 }

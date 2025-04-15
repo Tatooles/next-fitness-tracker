@@ -9,7 +9,11 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import FormSets from "@/app/workouts/(form)/form-sets";
 import Spinner from "@/components/spinner";
-import { workoutFormSchema, TWorkoutFormSchema } from "@/lib/types";
+import {
+  workoutFormSchema,
+  TWorkoutFormSchema,
+  ExerciseThin,
+} from "@/lib/types";
 import {
   Form,
   FormControl,
@@ -39,12 +43,12 @@ export default function WorkoutForm({
   editMode,
   workoutValue,
   workoutId,
-  workoutTemplate,
+  placeholderValues,
 }: {
   editMode: boolean;
   workoutValue: TWorkoutFormSchema;
   workoutId: number;
-  workoutTemplate: TWorkoutFormSchema;
+  placeholderValues: ExerciseThin[];
 }) {
   const [showSpinner, setShowSpinner] = useState(false);
   const [exercises, setExercises] = useState<string[]>([]);
@@ -281,7 +285,7 @@ export default function WorkoutForm({
                   exerciseIndex={index}
                   control={form.control}
                   getValues={form.getValues}
-                  placeholders={workoutTemplate}
+                  placeholderValues={placeholderValues}
                 />
                 <FormField
                   control={form.control}

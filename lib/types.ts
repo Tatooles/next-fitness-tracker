@@ -18,6 +18,16 @@ export interface ExerciseInstance {
   // It would make sense for ExerciseInstance to contain date :/
 }
 
+export interface ExerciseThin {
+  name: string;
+  notes: string;
+  sets: {
+    weight: string;
+    reps: string;
+    rpe: string;
+  }[];
+}
+
 export interface DateExercise {
   userId?: string | null;
   date?: string | null;
