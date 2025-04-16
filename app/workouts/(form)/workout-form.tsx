@@ -276,7 +276,7 @@ export default function WorkoutForm({
                 {exercises.includes(form.watch(`exercises.${index}.name`)) && (
                   <ExerciseHistoryModal
                     exerciseName={form.watch(`exercises.${index}.name`)}
-                    // Filter out current workout if in edit mode
+                    // Filter out current workout if editing
                     filterOutWorkoutId={workoutId}
                   />
                 )}
