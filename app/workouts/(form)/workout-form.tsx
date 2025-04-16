@@ -48,7 +48,7 @@ export default function WorkoutForm({
   editMode: boolean;
   workoutValue: TWorkoutFormSchema;
   workoutId: number;
-  placeholderValues: ExerciseThin[];
+  placeholderValues?: ExerciseThin[];
 }) {
   const [showSpinner, setShowSpinner] = useState(false);
   const [exercises, setExercises] = useState<string[]>([]);
