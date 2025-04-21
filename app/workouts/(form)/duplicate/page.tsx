@@ -48,6 +48,8 @@ const convertToFormType = (
     })),
   };
 
+  // TODO: Somewhere we need to store the id of the cloned workout
+  // So when we go to edit, we can populate the placeholder with the data from the cloned workout
   return convertedWorkout;
 };
 
