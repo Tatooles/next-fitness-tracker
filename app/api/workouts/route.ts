@@ -21,30 +21,34 @@ export async function POST(request: Request) {
     );
   }
 
-  const workoutData = body as TWorkoutFormSchema;
+  const { date, name, exercises } = body as TWorkoutFormSchema;
   try {
     await db.transaction(async () => {
-      const workoutResult = await db.insert(workout).values({
-        name: workoutData.name,
-        date: workoutData.date,
-        userId: userId,
-      });
+      const [newWorkout] = await db
+        .insert(workout)
+        .values({
+          name,
+          date,
+          userId,
+        })
+        .returning();
 
-      for (const exerciseData of workoutData.exercises) {
-        const exerciseResult = await db.insert(exercise).values({
-          workoutId: Number(workoutResult.lastInsertRowid),
-          name: exerciseData.name,
-          notes: exerciseData.notes,
-        });
+      for (const exerciseData of exercises) {
+        const [newExercise] = await db
+          .insert(exercise)
+          .values({
+            workoutId: newWorkout.id,
+            name: exerciseData.name,
+            notes: exerciseData.notes,
+          })
+          .returning();
 
-        for (const setData of exerciseData.sets) {
-          await db.insert(set).values({
-            exerciseId: Number(exerciseResult.lastInsertRowid),
-            reps: setData.reps,
-            weight: setData.weight,
-            rpe: setData.rpe,
-          });
-        }
+        const setValues = exerciseData.sets.map((set) => ({
+          ...set,
+          exerciseId: newExercise.id,
+        }));
+
+        await db.insert(set).values(setValues);
       }
     });
   } catch (error) {
