@@ -7,19 +7,20 @@ import { TWorkoutFormSchema, workoutFormSchema } from "@/lib/types";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-  const body: unknown = await request.json();
+  const { userId } = await auth();
+  if (!userId)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const body = await request.json();
   // Use zod to validate input
   const result = workoutFormSchema.safeParse(body);
-  let zodErrors = {};
   if (!result.success) {
-    result.error.issues.forEach((issue) => {
-      zodErrors = { ...zodErrors, [issue.path[0]]: issue.message };
-    });
-    return NextResponse.json({ errors: zodErrors });
+    return NextResponse.json(
+      { error: result.error.flatten() },
+      { status: 400 }
+    );
   }
 
-  const { userId } = await auth();
   const workoutData = body as TWorkoutFormSchema;
   try {
     await db.transaction(async () => {

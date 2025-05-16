@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "@/db/drizzle";
 import { workout } from "@/db/schema";
+import { NextResponse } from "next/server";
 
 export async function DELETE(
   request: Request,
@@ -10,7 +11,10 @@ export async function DELETE(
     await db.delete(workout).where(eq(workout.id, (await params).workout));
     return new Response("Workout successfully deleted");
   } catch (error) {
-    console.log("An error ocurred!");
-    if (error instanceof Error) console.log(error.message);
+    if (error instanceof Error)
+      return NextResponse.json(
+        { error: "Failed to delete workout" },
+        { status: 500 }
+      );
   }
 }
