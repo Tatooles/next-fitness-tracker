@@ -72,21 +72,10 @@ export default function WorkoutForm({
 
     if (!editMode) {
       // If creating or duplicating, just create new workout
-      try {
-        await addToDB(values);
-      } catch (error) {
-        setShowSpinner(false);
-        window.alert("Workout save failed");
-      }
+      await addToDB(values);
     } else {
       // If editing, delete existing workout, then add new one
-      try {
-        await Promise.all([deleteWorkout(workoutId), addToDB(values)]);
-        throw new Error();
-      } catch (error) {
-        setShowSpinner(false);
-        window.alert("Workout save failed");
-      }
+      await updateWorkout(workoutId, values);
     }
     setShowSpinner(false);
   };
@@ -106,6 +95,24 @@ export default function WorkoutForm({
       })
       .catch((error) => {
         console.error("An error occurred while adding exercise:", error);
+      });
+  };
+
+  const updateWorkout = async (id: number, form: TWorkoutFormSchema) => {
+    await fetch("/api/workouts", {
+      method: "PATCH",
+      body: JSON.stringify(form),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          console.error("Failed to update exercise.");
+        }
+      })
+      .catch((error) => {
+        console.error("An error occurred while updating exercise:", error);
       });
   };
 
