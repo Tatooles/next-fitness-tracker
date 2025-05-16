@@ -72,10 +72,21 @@ export default function WorkoutForm({
 
     if (!editMode) {
       // If creating or duplicating, just create new workout
-      await addToDB(values);
+      try {
+        await addToDB(values);
+      } catch (error) {
+        setShowSpinner(false);
+        window.alert("Workout save failed");
+      }
     } else {
       // If editing, delete existing workout, then add new one
-      await Promise.all([deleteWorkout(workoutId), addToDB(values)]);
+      try {
+        await Promise.all([deleteWorkout(workoutId), addToDB(values)]);
+        throw new Error();
+      } catch (error) {
+        setShowSpinner(false);
+        window.alert("Workout save failed");
+      }
     }
     setShowSpinner(false);
   };
