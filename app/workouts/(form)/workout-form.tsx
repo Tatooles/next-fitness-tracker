@@ -79,7 +79,7 @@ export default function WorkoutForm({
       await Promise.all([deleteWorkout(workoutId), addToDB(values)]);
       router.refresh();
     }
-    router.push("/workouts");
+    setShowSpinner(false);
   };
 
   const addToDB = async (form: TWorkoutFormSchema) => {
@@ -321,7 +321,7 @@ export default function WorkoutForm({
             </Button>
           </div>
           <Button type="submit" className="mt-4 self-center">
-            Submit
+            Save
           </Button>
         </form>
       </Form>
