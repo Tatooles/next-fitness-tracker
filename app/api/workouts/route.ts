@@ -23,8 +23,8 @@ export async function POST(request: Request) {
 
   const { date, name, exercises } = body as TWorkoutFormSchema;
   try {
-    await db.transaction(async () => {
-      const [newWorkout] = await db
+    await db.transaction(async (tx) => {
+      const [newWorkout] = await tx
         .insert(workout)
         .values({
           name,
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
         .returning();
 
       for (const exerciseData of exercises) {
-        const [newExercise] = await db
+        const [newExercise] = await tx
           .insert(exercise)
           .values({
             workoutId: newWorkout.id,
@@ -48,13 +48,15 @@ export async function POST(request: Request) {
           exerciseId: newExercise.id,
         }));
 
-        await db.insert(set).values(setValues);
+        await tx.insert(set).values(setValues);
       }
     });
   } catch (error) {
-    console.log("An error ocurred!");
-    if (error instanceof Error) console.log(error.message);
-    return NextResponse.json({ success: false });
+    console.error("Transaction failed", error);
+    return NextResponse.json(
+      { error: "Something went wrong" },
+      { status: 500 }
+    );
   }
-  return NextResponse.json({ success: true });
+  return NextResponse.json({ message: "Success" }, { status: 200 });
 }
