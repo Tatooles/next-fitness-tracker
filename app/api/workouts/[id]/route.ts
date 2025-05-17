@@ -41,43 +41,53 @@ export async function PATCH(
 
   const { name, date, exercises } = result.data;
 
-  // Update workout table
-  await db
-    .update(workout)
-    .set({ name, date })
-    .where(and(eq(workout.id, workoutId), eq(workout.userId, userId)));
+  try {
+    await db.transaction(async (tx) => {
+      // Update workout table
+      await tx
+        .update(workout)
+        .set({ name, date })
+        .where(and(eq(workout.id, workoutId), eq(workout.userId, userId)));
 
-  // Delete old exercises and sets
-  const oldExercises = await db
-    .select({ id: exercise.id })
-    .from(exercise)
-    .where(eq(exercise.workoutId, workoutId));
+      // Delete old exercises and sets
+      const oldExercises = await tx
+        .select({ id: exercise.id })
+        .from(exercise)
+        .where(eq(exercise.workoutId, workoutId));
 
-  const oldExerciseIds = oldExercises.map((ex) => ex.id);
+      const oldExerciseIds = oldExercises.map((ex) => ex.id);
 
-  if (oldExerciseIds.length > 0) {
-    await db.delete(set).where(inArray(set.exerciseId, oldExerciseIds));
-    await db.delete(exercise).where(inArray(exercise.id, oldExerciseIds));
+      if (oldExerciseIds.length > 0) {
+        await tx.delete(set).where(inArray(set.exerciseId, oldExerciseIds));
+        await tx.delete(exercise).where(inArray(exercise.id, oldExerciseIds));
+      }
+
+      // Re-insert exercises and sets
+      for (const exerciseData of exercises) {
+        const [newExercise] = await tx
+          .insert(exercise)
+          .values({
+            workoutId,
+            name: exerciseData.name,
+            notes: exerciseData.notes,
+          })
+          .returning();
+
+        const setValues = exerciseData.sets.map((set) => ({
+          ...set,
+          exerciseId: newExercise.id,
+        }));
+
+        await tx.insert(set).values(setValues);
+      }
+    });
+  } catch (error) {
+    console.error("Transaction failed", error);
+    return NextResponse.json(
+      { error: "Something went wrong" },
+      { status: 500 }
+    );
   }
 
-  // Re-insert exercises and sets
-  for (const exerciseData of exercises) {
-    const [newExercise] = await db
-      .insert(exercise)
-      .values({
-        workoutId,
-        name: exerciseData.name,
-        notes: exerciseData.notes,
-      })
-      .returning();
-
-    const setValues = exerciseData.sets.map((set) => ({
-      ...set,
-      exerciseId: newExercise.id,
-    }));
-
-    await db.insert(set).values(setValues);
-  }
-
-  return NextResponse.json({ message: "Workout updated" });
+  return NextResponse.json({ message: "Success" }, { status: 200 });
 }
