@@ -7,10 +7,10 @@ import { workoutFormSchema } from "@/lib/types";
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ workout: number }> }
+  { params }: { params: Promise<{ id: number }> }
 ) {
   try {
-    await db.delete(workout).where(eq(workout.id, (await params).workout));
+    await db.delete(workout).where(eq(workout.id, (await params).id));
     return new Response("Workout successfully deleted");
   } catch (error) {
     if (error instanceof Error)
@@ -23,10 +23,9 @@ export async function DELETE(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ workout: number }> }
+  { params }: { params: Promise<{ id: number }> }
 ) {
-  console.log("hit patch request!!");
-  const workoutId = (await params).workout;
+  const workoutId = (await params).id;
   const { userId } = await auth();
   if (!userId)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

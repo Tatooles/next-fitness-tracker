@@ -99,7 +99,7 @@ export default function WorkoutForm({
   };
 
   const updateWorkout = async (id: number, form: TWorkoutFormSchema) => {
-    await fetch("/api/workouts", {
+    await fetch(`/api/workouts/${id}`, {
       method: "PATCH",
       body: JSON.stringify(form),
       headers: {

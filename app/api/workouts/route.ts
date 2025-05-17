@@ -4,9 +4,9 @@ import { workout } from "@/db/schema";
 import { exercise } from "@/db/schema";
 import { set } from "@/db/schema";
 import { TWorkoutFormSchema, workoutFormSchema } from "@/lib/types";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   const { userId } = await auth();
   if (!userId)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
