@@ -73,11 +73,12 @@ export default function WorkoutForm({
     if (!editMode) {
       // If creating or duplicating, just create new workout
       await addToDB(values);
+      router.push("/workouts");
     } else {
       // If editing, delete existing workout, then add new one
       await updateWorkout(workoutId, values);
+      setShowSpinner(false);
     }
-    setShowSpinner(false);
   };
 
   const addToDB = async (form: TWorkoutFormSchema) => {
@@ -113,20 +114,6 @@ export default function WorkoutForm({
       })
       .catch((error) => {
         console.error("An error occurred while updating exercise:", error);
-      });
-  };
-
-  const deleteWorkout = async (id: number) => {
-    await fetch(`/api/workouts/${id}`, {
-      method: "DELETE",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          console.log("Failed to delete exercise.");
-        }
-      })
-      .catch((error) => {
-        console.error("An error occurred while deleting exercise:", error);
       });
   };
 
@@ -337,7 +324,7 @@ export default function WorkoutForm({
             </Button>
           </div>
           <Button type="submit" className="mt-4 self-center">
-            Save
+            {editMode ? "Save" : "Add workout"}
           </Button>
         </form>
       </Form>
