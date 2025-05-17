@@ -13,11 +13,11 @@ export async function DELETE(
     await db.delete(workout).where(eq(workout.id, (await params).id));
     return new Response("Workout successfully deleted");
   } catch (error) {
-    if (error instanceof Error)
-      return NextResponse.json(
-        { error: "Failed to delete workout" },
-        { status: 500 }
-      );
+    console.error("Delete failed", error);
+    return NextResponse.json(
+      { error: "Failed to delete workout" },
+      { status: 500 }
+    );
   }
 }
 
@@ -89,5 +89,5 @@ export async function PATCH(
     );
   }
 
-  return NextResponse.json({ message: "Success" }, { status: 200 });
+  return NextResponse.json({ message: "Workout updated" });
 }

@@ -69,19 +69,16 @@ export default function WorkoutForm({
 
   const onSubmit = async (values: TWorkoutFormSchema) => {
     setShowSpinner(true);
-
     if (!editMode) {
-      // If creating or duplicating, just create new workout
-      await addToDB(values);
+      await addWorkout(values);
       router.push("/workouts");
     } else {
-      // If editing, delete existing workout, then add new one
       await updateWorkout(workoutId, values);
       setShowSpinner(false);
     }
   };
 
-  const addToDB = async (form: TWorkoutFormSchema) => {
+  const addWorkout = async (form: TWorkoutFormSchema) => {
     await fetch("/api/workouts", {
       method: "POST",
       body: JSON.stringify(form),

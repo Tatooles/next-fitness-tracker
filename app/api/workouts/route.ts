@@ -58,5 +58,5 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-  return NextResponse.json({ message: "Success" }, { status: 200 });
+  return NextResponse.json({ message: "Workout created" }, { status: 201 });
 }
