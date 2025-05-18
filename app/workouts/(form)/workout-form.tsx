@@ -215,14 +215,16 @@ export default function WorkoutForm({
                                       role="combobox"
                                       aria-expanded={popoverOpenStates[index]}
                                       className={cn(
-                                        "w-full justify-between h-10 sm:h-11 text-sm sm:text-base bg-background/50 hover:bg-background/80 transition-colors",
+                                        "sm:w-[28rem] w-56 justify-between h-10 sm:h-11 text-sm sm:text-base bg-background/50 hover:bg-background/80 transition-colors",
                                         !field.value && "text-muted-foreground"
                                       )}
                                     >
-                                      {field.value
-                                        ? field.value
-                                        : "Select exercise"}
-                                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                      <span className="truncate">
+                                        {field.value
+                                          ? field.value
+                                          : "Select exercise"}
+                                      </span>
+                                      <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
                                     </Button>
                                   </FormControl>
                                 </PopoverTrigger>
