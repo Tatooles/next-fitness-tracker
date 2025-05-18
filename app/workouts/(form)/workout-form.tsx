@@ -145,7 +145,7 @@ export default function WorkoutForm({
                 name="date"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm sm:text-base font-semibold">
+                    <FormLabel className="text-base font-semibold">
                       Date
                     </FormLabel>
                     <FormControl>
@@ -164,12 +164,12 @@ export default function WorkoutForm({
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm sm:text-base font-semibold">
+                    <FormLabel className="text-base font-semibold">
                       Workout Name
                     </FormLabel>
                     <FormControl>
                       <Input
-                        className="h-10 sm:h-11 text-sm sm:text-base bg-background/50 hover:bg-background/80 transition-colors"
+                        className="h-10 sm:h-11 text-base sm:text-base bg-background/50 hover:bg-background/80 transition-colors"
                         placeholder="Enter workout name"
                         {...field}
                       />
@@ -215,7 +215,7 @@ export default function WorkoutForm({
                                       role="combobox"
                                       aria-expanded={popoverOpenStates[index]}
                                       className={cn(
-                                        "sm:w-[28rem] w-56 justify-between h-10 sm:h-11 text-sm sm:text-base bg-background/50 hover:bg-background/80 transition-colors",
+                                        "sm:w-[28rem] w-56 justify-between h-10 sm:h-11 text-base bg-background/50 hover:bg-background/80 transition-colors",
                                         !field.value && "text-muted-foreground"
                                       )}
                                     >
@@ -235,7 +235,7 @@ export default function WorkoutForm({
                                   <Command>
                                     <CommandInput
                                       placeholder="Search exercise..."
-                                      className="h-10 sm:h-11 text-sm sm:text-base"
+                                      className="h-10 sm:h-11 text-base"
                                       onInput={(e) =>
                                         setExerciseNameValue(
                                           e.currentTarget.value
@@ -279,7 +279,7 @@ export default function WorkoutForm({
                                                 return newState;
                                               });
                                             }}
-                                            className="cursor-pointer hover:bg-primary/10 transition-colors text-sm sm:text-base"
+                                            className="cursor-pointer hover:bg-primary/10 transition-colors text-base"
                                           >
                                             {exercise}
                                           </CommandItem>
@@ -353,7 +353,7 @@ export default function WorkoutForm({
                     sets: [{ weight: "", reps: "", rpe: "" }],
                   })
                 }
-                className="w-full text-sm sm:text-base hover:bg-primary/10 transition-colors"
+                className="w-full text-base hover:bg-primary/10 transition-colors"
               >
                 Add Exercise
               </Button>
@@ -362,7 +362,7 @@ export default function WorkoutForm({
             <div className="flex justify-end pt-2 sm:pt-4">
               <Button
                 type="submit"
-                className="w-full md:w-auto bg-primary hover:bg-primary/90 transition-colors text-sm sm:text-base"
+                className="w-full md:w-auto bg-primary hover:bg-primary/90 transition-colors text-base"
                 disabled={showSpinner}
               >
                 {editMode ? "Save" : "Create Workout"}
