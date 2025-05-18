@@ -69,20 +69,16 @@ export default function WorkoutForm({
 
   const onSubmit = async (values: TWorkoutFormSchema) => {
     setShowSpinner(true);
-
     if (!editMode) {
-      // If creating or duplicating, just create new workout
-      await addToDB(values);
-      router.refresh();
+      await addWorkout(values);
+      router.push("/workouts");
     } else {
-      // If editing, delete existing workout, then add new one
-      await Promise.all([deleteWorkout(workoutId), addToDB(values)]);
-      router.refresh();
+      await updateWorkout(workoutId, values);
+      setShowSpinner(false);
     }
-    router.push("/workouts");
   };
 
-  const addToDB = async (form: TWorkoutFormSchema) => {
+  const addWorkout = async (form: TWorkoutFormSchema) => {
     await fetch("/api/workouts", {
       method: "POST",
       body: JSON.stringify(form),
@@ -100,17 +96,21 @@ export default function WorkoutForm({
       });
   };
 
-  const deleteWorkout = async (id: number) => {
+  const updateWorkout = async (id: number, form: TWorkoutFormSchema) => {
     await fetch(`/api/workouts/${id}`, {
-      method: "DELETE",
+      method: "PATCH",
+      body: JSON.stringify(form),
+      headers: {
+        "Content-Type": "application/json",
+      },
     })
       .then((response) => {
         if (!response.ok) {
-          console.log("Failed to delete exercise.");
+          console.error("Failed to update exercise.");
         }
       })
       .catch((error) => {
-        console.error("An error occurred while deleting exercise:", error);
+        console.error("An error occurred while updating exercise:", error);
       });
   };
 
@@ -321,7 +321,7 @@ export default function WorkoutForm({
             </Button>
           </div>
           <Button type="submit" className="mt-4 self-center">
-            Submit
+            {editMode ? "Save" : "Add workout"}
           </Button>
         </form>
       </Form>

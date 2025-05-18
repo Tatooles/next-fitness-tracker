@@ -4,52 +4,59 @@ import { workout } from "@/db/schema";
 import { exercise } from "@/db/schema";
 import { set } from "@/db/schema";
 import { TWorkoutFormSchema, workoutFormSchema } from "@/lib/types";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: Request) {
-  const body: unknown = await request.json();
+export async function POST(request: NextRequest) {
+  const { userId } = await auth();
+  if (!userId)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const body = await request.json();
   // Use zod to validate input
   const result = workoutFormSchema.safeParse(body);
-  let zodErrors = {};
   if (!result.success) {
-    result.error.issues.forEach((issue) => {
-      zodErrors = { ...zodErrors, [issue.path[0]]: issue.message };
-    });
-    return NextResponse.json({ errors: zodErrors });
+    return NextResponse.json(
+      { error: result.error.flatten() },
+      { status: 400 }
+    );
   }
 
-  const { userId } = await auth();
-  const workoutData = body as TWorkoutFormSchema;
+  const { date, name, exercises } = body as TWorkoutFormSchema;
   try {
-    await db.transaction(async () => {
-      const workoutResult = await db.insert(workout).values({
-        name: workoutData.name,
-        date: workoutData.date,
-        userId: userId,
-      });
+    await db.transaction(async (tx) => {
+      const [newWorkout] = await tx
+        .insert(workout)
+        .values({
+          name,
+          date,
+          userId,
+        })
+        .returning();
 
-      for (const exerciseData of workoutData.exercises) {
-        const exerciseResult = await db.insert(exercise).values({
-          workoutId: Number(workoutResult.lastInsertRowid),
-          name: exerciseData.name,
-          notes: exerciseData.notes,
-        });
+      for (const exerciseData of exercises) {
+        const [newExercise] = await tx
+          .insert(exercise)
+          .values({
+            workoutId: newWorkout.id,
+            name: exerciseData.name,
+            notes: exerciseData.notes,
+          })
+          .returning();
 
-        for (const setData of exerciseData.sets) {
-          await db.insert(set).values({
-            exerciseId: Number(exerciseResult.lastInsertRowid),
-            reps: setData.reps,
-            weight: setData.weight,
-            rpe: setData.rpe,
-          });
-        }
+        const setValues = exerciseData.sets.map((set) => ({
+          ...set,
+          exerciseId: newExercise.id,
+        }));
+
+        await tx.insert(set).values(setValues);
       }
     });
   } catch (error) {
-    console.log("An error ocurred!");
-    if (error instanceof Error) console.log(error.message);
-    return NextResponse.json({ success: false });
+    console.error("Transaction failed", error);
+    return NextResponse.json(
+      { error: "Something went wrong" },
+      { status: 500 }
+    );
   }
-  return NextResponse.json({ success: true });
+  return NextResponse.json({ message: "Workout created" }, { status: 201 });
 }
