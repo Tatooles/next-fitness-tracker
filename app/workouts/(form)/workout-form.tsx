@@ -331,7 +331,7 @@ export default function WorkoutForm({
                           <FormControl>
                             <Textarea
                               placeholder="Add notes"
-                              className="resize-none text-sm sm:text-base bg-background/50 hover:bg-background/80 transition-colors"
+                              className="resize-none text-base sm:text-base bg-background/50 hover:bg-background/80 transition-colors"
                               {...field}
                             />
                           </FormControl>
