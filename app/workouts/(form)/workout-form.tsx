@@ -129,9 +129,9 @@ export default function WorkoutForm({
 
   return (
     <div className="mx-auto px-2 sm:px-6 max-w-2xl">
-      {showSpinner && <Spinner show={true} />}
+      <Spinner show={showSpinner} />
       <div className="bg-card rounded-lg shadow-lg p-3 sm:p-6 space-y-4 sm:space-y-6">
-        <h2 className="text-2xl sm:text-3xl font-bold text-center mb-4 sm:mb-8 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+        <h2 className="text-center text-2xl sm:text-3xl font-bold mb-4 sm:mb-8 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
           {workoutId !== -1 ? "Edit Workout" : "Create Workout"}
         </h2>
         <Form {...form}>
@@ -151,7 +151,7 @@ export default function WorkoutForm({
                     <FormControl>
                       <Input
                         type="date"
-                        className="h-10 sm:h-11 text-sm sm:text-base bg-background/50 hover:bg-background/80 transition-colors"
+                        className="h-10 sm:h-11 text-base bg-background/50 hover:bg-background/80 transition-colors"
                         {...field}
                       />
                     </FormControl>
@@ -169,7 +169,7 @@ export default function WorkoutForm({
                     </FormLabel>
                     <FormControl>
                       <Input
-                        className="h-10 sm:h-11 text-base sm:text-base bg-background/50 hover:bg-background/80 transition-colors"
+                        className="h-10 sm:h-11 text-base bg-background/50 hover:bg-background/80 transition-colors"
                         placeholder="Enter workout name"
                         {...field}
                       />
@@ -187,10 +187,10 @@ export default function WorkoutForm({
 
               {fields.map((field, index) => (
                 <div
-                  className="relative rounded-lg border bg-card p-3 sm:p-4 shadow-sm transition-all hover:shadow-md"
+                  className="relative rounded-lg border bg-card p-3 shadow-sm transition-all hover:shadow-md"
                   key={field.id}
                 >
-                  <div className="space-y-3 sm:space-y-4">
+                  <div className="space-y-4">
                     <div className="flex items-center gap-2">
                       <FormField
                         control={form.control}
@@ -235,7 +235,7 @@ export default function WorkoutForm({
                                   <Command>
                                     <CommandInput
                                       placeholder="Search exercise..."
-                                      className="h-10 sm:h-11 text-base"
+                                      className="h-11 text-base"
                                       onInput={(e) =>
                                         setExerciseNameValue(
                                           e.currentTarget.value
@@ -331,7 +331,7 @@ export default function WorkoutForm({
                           <FormControl>
                             <Textarea
                               placeholder="Add notes"
-                              className="resize-none text-base sm:text-base bg-background/50 hover:bg-background/80 transition-colors"
+                              className="resize-none text-base bg-background/50 hover:bg-background/80 transition-colors"
                               {...field}
                             />
                           </FormControl>
@@ -353,16 +353,16 @@ export default function WorkoutForm({
                     sets: [{ weight: "", reps: "", rpe: "" }],
                   })
                 }
-                className="w-full text-base hover:bg-primary/10 transition-colors"
+                className="w-full text-base hover:bg-primary/10"
               >
                 Add Exercise
               </Button>
             </div>
 
-            <div className="flex justify-end pt-2 sm:pt-4">
+            <div className="flex justify-end pt-2">
               <Button
                 type="submit"
-                className="w-full md:w-auto bg-primary hover:bg-primary/90 transition-colors text-base"
+                className="w-full text-base bg-primary hover:bg-primary/90"
                 disabled={showSpinner}
               >
                 {editMode ? "Save" : "Create Workout"}
