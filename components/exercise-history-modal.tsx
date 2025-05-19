@@ -55,19 +55,20 @@ export default function ExerciseHistoryModal({
           <History className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-h-[80vh] w-11/12 rounded-md overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl">{exerciseName}</DialogTitle>
+      <DialogContent className="max-h-[80vh] w-11/12 sm:max-w-md rounded-lg bg-card p-0">
+        <DialogHeader className="p-4">
+          <DialogTitle className="text-2xl font-semibold">
+            {exerciseName}
+          </DialogTitle>
         </DialogHeader>
-        <div className=" text-center text-red-600">{error}</div>
-        <div className="divide-y-2">
+        <div className="p-6 max-h-[calc(80vh-10rem)] overflow-y-auto">
           {exerciseHistory.map((exercise: GroupedExercise) => (
             <ExerciseInstanceItem
               exercise={exercise}
               showName={false}
               showDate={true}
               key={exercise.date}
-            ></ExerciseInstanceItem>
+            />
           ))}
         </div>
       </DialogContent>
