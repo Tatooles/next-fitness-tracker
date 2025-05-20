@@ -53,12 +53,12 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
       {workouts.map((workout: Workout, index) => (
         <AccordionItem key={index} value={`item-${index}`}>
           <AccordionTrigger>
-            <span>
+            <span className="flex w-full pr-4">
               {formatDate(workout.date)} - {workout.name}
             </span>
           </AccordionTrigger>
           <AccordionContent>
-            <div className="flex justify-start gap-4 py-2">
+            <div className="mb-4 flex justify-start gap-3 py-2">
               <Button
                 asChild
                 className="bg-green-500 text-white hover:bg-green-500/70"
@@ -89,7 +89,7 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                 <AlertDialogTrigger asChild>
                   <Button variant="destructive">Delete</Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent className="w-5/6">
+                <AlertDialogContent className="w-11/12 sm:w-5/6 md:w-3/4 lg:w-1/2">
                   <AlertDialogHeader>
                     <AlertDialogTitle>Delete workout?</AlertDialogTitle>
                   </AlertDialogHeader>
@@ -97,7 +97,7 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                     This action cannot be undone. This workout will be
                     permanently deleted and removed from our servers.
                   </AlertDialogDescription>
-                  <AlertDialogFooter className="flex flex-row justify-around">
+                  <AlertDialogFooter className="flex flex-row justify-end gap-2">
                     <AlertDialogCancel className="mt-0">
                       Cancel
                     </AlertDialogCancel>
