@@ -58,7 +58,7 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
             </span>
           </AccordionTrigger>
           <AccordionContent>
-            <div className="flex justify-start gap-4 pt-2">
+            <div className="flex justify-start gap-4 py-2">
               <Button
                 asChild
                 className="bg-green-500 text-white hover:bg-green-500/70"
@@ -113,16 +113,14 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                 </AlertDialogContent>
               </AlertDialog>
             </div>
-            <div className="divide-y-2 px-2">
-              {workout.exercises.map((exercise: ExerciseInstance) => (
-                <ExerciseInstanceItem
-                  exercise={exercise}
-                  showName={true}
-                  showDate={false}
-                  key={exercise.id}
-                ></ExerciseInstanceItem>
-              ))}
-            </div>
+            {workout.exercises.map((exercise: ExerciseInstance) => (
+              <ExerciseInstanceItem
+                exercise={exercise}
+                showName={true}
+                showDate={false}
+                key={exercise.id}
+              />
+            ))}
           </AccordionContent>
         </AccordionItem>
       ))}
