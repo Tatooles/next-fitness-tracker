@@ -93,7 +93,7 @@ export default function ExerciseHistoryModal({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex justify-center items-center">
+        <div className="flex justify-center items-center min-h-36">
           {loading && (
             <div className="flex justify-center items-center h-full pt-4">
               <Spinner show={true} />
