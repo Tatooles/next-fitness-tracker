@@ -157,7 +157,7 @@ export default function WorkoutForm({
                     <FormControl>
                       <Input
                         type="date"
-                        className="[-webkit-appearance: none] h-10 sm:h-11 text-base bg-background/50 hover:bg-background/80 transition-colors"
+                        className="webkit-appearance-none h-10 sm:h-11 text-base bg-background/50 hover:bg-background/80 transition-colors"
                         {...field}
                       />
                     </FormControl>
