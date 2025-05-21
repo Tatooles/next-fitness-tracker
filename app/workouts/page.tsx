@@ -39,8 +39,8 @@ export default async function WorkoutsPage() {
 
   return (
     <div className="p-5 text-center">
-      <h1 className="mb-5 text-3xl">Workouts</h1>
-      <Button asChild>
+      <h1 className="mb-5 text-3xl font-semibold">Workouts</h1>
+      <Button asChild className="w-full sm:w-36 mb-5">
         <Link href="/workouts/create">Add Workout</Link>
       </Button>
       <Workouts workouts={workouts}></Workouts>
