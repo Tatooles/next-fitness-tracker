@@ -44,12 +44,14 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
       })
       .catch((error) => {
         console.error("An error occurred while deleting exercise:", error);
+      })
+      .finally(() => {
+        setShowSpinner(false);
       });
-    setShowSpinner(false);
   };
 
   return (
-    <Accordion type="single" collapsible className="mb-5 mt-2">
+    <Accordion type="single" collapsible>
       {workouts.map((workout: Workout, index) => (
         <AccordionItem key={index} value={`item-${index}`}>
           <AccordionTrigger>
@@ -89,7 +91,7 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                 <AlertDialogTrigger asChild>
                   <Button variant="destructive">Delete</Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent className="w-11/12 sm:w-5/6 md:w-3/4 lg:w-1/2">
+                <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>Delete workout?</AlertDialogTitle>
                   </AlertDialogHeader>
@@ -97,15 +99,12 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                     This action cannot be undone. This workout will be
                     permanently deleted and removed from our servers.
                   </AlertDialogDescription>
-                  <AlertDialogFooter className="flex flex-row justify-end gap-2">
-                    <AlertDialogCancel className="mt-0">
-                      Cancel
-                    </AlertDialogCancel>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                       onClick={() => {
                         deleteWorkout(workout.id);
                       }}
-                      className="bg-destructive text-destructive-foreground hover:bg-destructive/70"
                     >
                       Delete
                     </AlertDialogAction>
