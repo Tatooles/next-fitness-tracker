@@ -75,8 +75,8 @@ export default function WorkoutForm({
       router.push("/workouts");
     } else {
       await updateWorkout(workoutId, values);
-      setShowSpinner(false);
     }
+    setShowSpinner(false);
   };
 
   const addWorkout = async (form: TWorkoutFormSchema) => {
@@ -89,11 +89,12 @@ export default function WorkoutForm({
     })
       .then((response) => {
         if (!response.ok) {
-          console.error("Failed to add exercise.");
+          toast.error("Failed to add workout");
         }
       })
       .catch((error) => {
         console.error("An error occurred while adding exercise:", error);
+        toast.error("Failed to add workout");
       });
   };
 
@@ -107,13 +108,14 @@ export default function WorkoutForm({
     })
       .then((response) => {
         if (!response.ok) {
-          console.error("Failed to update exercise.");
+          toast.error("Failed to save workout");
         } else {
-          toast("Saved workout");
+          toast.success("Saved workout");
         }
       })
       .catch((error) => {
         console.error("An error occurred while updating exercise:", error);
+        toast.error("Failed to save workout");
       });
   };
 
