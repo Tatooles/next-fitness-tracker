@@ -13,7 +13,7 @@ export default function ExerciseInstanceItem({
   const { name, date, sets, notes } = exercise;
 
   return (
-    <div className="mb-4 bg-card border border-border rounded-lg shadow-sm overflow-hidden">
+    <div className="bg-card border border-border rounded-lg shadow-sm overflow-hidden">
       {(showName || showDate) && (
         <div className="p-4 border-b border-border">
           {showName && (

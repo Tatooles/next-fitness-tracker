@@ -53,7 +53,7 @@ export default function ExerciseSummaryComponent({
   };
 
   return (
-    <div className="flex flex-col gap-4 p-2">
+    <div className="flex flex-col gap-4">
       <ExerciseHistoryModal exerciseName={exerciseSummary.name} />
       <SummaryItem label="Heaviest rep" value={getHeaviestRep()} unit="lb" />
       <SummaryItem label="Calculated 1RM" value={getMax()} unit="lb" />

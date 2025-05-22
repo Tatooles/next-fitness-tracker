@@ -50,17 +50,14 @@ export default function ExercisesUI({
           setInputValue(e.target.value);
         }}
       />
-      <Accordion type="single" collapsible className="space-y-4">
+      <Accordion type="single" collapsible className="space-y-2">
         {filteredList.map((exerciseSummary) => (
           <AccordionItem
             key={exerciseSummary.name}
             value={`exercise-${exerciseSummary.name}`}
-            className="rounded-lg border shadow-sm"
           >
-            <AccordionTrigger className="w-full px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
-              <span className="mr-4 truncate">{exerciseSummary.name}</span>
-            </AccordionTrigger>
-            <AccordionContent className="p-4">
+            <AccordionTrigger>{exerciseSummary.name}</AccordionTrigger>
+            <AccordionContent>
               <ExerciseSummaryComponent
                 exerciseSummary={exerciseSummary}
                 key={exerciseSummary.name}

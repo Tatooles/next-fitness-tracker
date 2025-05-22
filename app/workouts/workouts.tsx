@@ -51,19 +51,19 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
   };
 
   return (
-    <Accordion type="single" collapsible>
+    <Accordion type="single" collapsible className="space-y-2">
       {workouts.map((workout: Workout, index) => (
         <AccordionItem key={index} value={`item-${index}`}>
           <AccordionTrigger>
-            <span className="flex w-full pr-4">
-              {formatDate(workout.date)} - {workout.name}
-            </span>
+            {formatDate(workout.date)} - {workout.name}
           </AccordionTrigger>
           <AccordionContent>
-            <div className="mb-4 flex justify-start gap-3 py-2">
+            <div className="mb-6 flex justify-start space-x-3 px-1">
               <Button
                 asChild
-                className="bg-green-500 text-white hover:bg-green-500/70"
+                variant="outline"
+                size="sm"
+                className="border-green-500 text-green-500 hover:bg-green-500 hover:text-white"
               >
                 <Link
                   href={{
@@ -76,7 +76,9 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
               </Button>
               <Button
                 asChild
-                className="bg-blue-600 text-white hover:bg-blue-600/70"
+                variant="outline"
+                size="sm"
+                className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
               >
                 <Link
                   href={{
@@ -89,7 +91,13 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
               </Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="destructive">Delete</Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                  >
+                    Delete
+                  </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
@@ -112,14 +120,16 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                 </AlertDialogContent>
               </AlertDialog>
             </div>
-            {workout.exercises.map((exercise: ExerciseInstance) => (
-              <ExerciseInstanceItem
-                exercise={exercise}
-                showName={true}
-                showDate={false}
-                key={exercise.id}
-              />
-            ))}
+            <div className="space-y-4">
+              {workout.exercises.map((exercise: ExerciseInstance) => (
+                <ExerciseInstanceItem
+                  exercise={exercise}
+                  showName={true}
+                  showDate={false}
+                  key={exercise.id}
+                />
+              ))}
+            </div>
           </AccordionContent>
         </AccordionItem>
       ))}
