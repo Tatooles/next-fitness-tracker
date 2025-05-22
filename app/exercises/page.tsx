@@ -64,6 +64,9 @@ async function getExerciseSummary() {
 
 export default async function ExercisesPage() {
   return (
-    <ExercisesUI exerciseSummaries={await getExerciseSummary()}></ExercisesUI>
+    <div className=" p-5 text-center max-w-2xl mx-auto">
+      <h1 className="text-4xl mb-5 font-semibold">Exercises</h1>
+      <ExercisesUI exerciseSummaries={await getExerciseSummary()}></ExercisesUI>
+    </div>
   );
 }
