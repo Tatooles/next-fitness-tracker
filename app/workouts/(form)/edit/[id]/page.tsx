@@ -46,11 +46,11 @@ const convertToFormType = (
 };
 
 export default async function EditWorkoutPage({
-  searchParams,
+  params,
 }: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  params: Promise<{ id: number }>;
 }) {
-  const { id } = await searchParams;
+  const { id } = await params;
 
   if (typeof id !== "string" || isNaN(+id))
     return <WorkoutNotFound></WorkoutNotFound>;

@@ -65,14 +65,7 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                 size="sm"
                 className="border-green-500 text-green-500 hover:bg-green-500 hover:text-white"
               >
-                <Link
-                  href={{
-                    pathname: "/workouts/edit",
-                    query: { id: workout.id },
-                  }}
-                >
-                  Edit
-                </Link>
+                <Link href={`/workouts/edit/${workout.id}`}>Edit</Link>
               </Button>
               <Button
                 asChild
@@ -80,12 +73,7 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                 size="sm"
                 className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
               >
-                <Link
-                  href={{
-                    pathname: "/workouts/duplicate",
-                    query: { id: workout.id },
-                  }}
-                >
+                <Link href={`/workouts/duplicate/${workout.id}`}>
                   Duplicate
                 </Link>
               </Button>

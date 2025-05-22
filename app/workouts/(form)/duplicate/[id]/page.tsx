@@ -70,11 +70,11 @@ const zeroWorkout = (workout?: TWorkoutFormSchema) => {
 };
 
 export default async function DuplicateWorkoutPage({
-  searchParams,
+  params,
 }: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  params: Promise<{ id: number }>;
 }) {
-  const { id } = await searchParams;
+  const { id } = await params;
 
   if (typeof id !== "string" || isNaN(+id))
     return <WorkoutNotFound></WorkoutNotFound>;
