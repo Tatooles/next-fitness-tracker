@@ -38,9 +38,9 @@ export default async function WorkoutsPage() {
   const workouts = await getWorkouts();
 
   return (
-    <div className="p-5 text-center">
-      <h1 className="mb-5 text-3xl">Workouts</h1>
-      <Button asChild>
+    <div className="p-5 text-center max-w-2xl mx-auto">
+      <h1 className="text-4xl mb-5 font-semibold">Workouts</h1>
+      <Button asChild className="w-full sm:w-36 mb-5">
         <Link href="/workouts/create">Add Workout</Link>
       </Button>
       <Workouts workouts={workouts}></Workouts>

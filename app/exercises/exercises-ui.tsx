@@ -41,25 +41,22 @@ export default function ExercisesUI({
   }, [searchHandler]);
 
   return (
-    <div className="p-5 text-center">
-      <h1 className="mb-5 text-3xl">Exercises</h1>
+    <>
       <Input
         type="search"
         placeholder="Search exercises"
-        className="text-[16px]"
+        className="text-base mb-6"
         onChange={(e) => {
           setInputValue(e.target.value);
         }}
       />
-      <Accordion type="single" collapsible className="mb-5">
+      <Accordion type="single" collapsible className="space-y-2">
         {filteredList.map((exerciseSummary) => (
           <AccordionItem
             key={exerciseSummary.name}
             value={`exercise-${exerciseSummary.name}`}
           >
-            <AccordionTrigger className="w-full">
-              <span className="mr-4 truncate">{exerciseSummary.name}</span>
-            </AccordionTrigger>
+            <AccordionTrigger>{exerciseSummary.name}</AccordionTrigger>
             <AccordionContent>
               <ExerciseSummaryComponent
                 exerciseSummary={exerciseSummary}
@@ -69,6 +66,6 @@ export default function ExercisesUI({
           </AccordionItem>
         ))}
       </Accordion>
-    </div>
+    </>
   );
 }

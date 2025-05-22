@@ -38,6 +38,7 @@ import {
 import { ChevronsUpDown, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ExerciseHistoryModal from "@/components/exercise-history-modal";
+import { toast, Toaster } from "sonner";
 
 export default function WorkoutForm({
   editMode,
@@ -74,8 +75,8 @@ export default function WorkoutForm({
       router.push("/workouts");
     } else {
       await updateWorkout(workoutId, values);
-      setShowSpinner(false);
     }
+    setShowSpinner(false);
   };
 
   const addWorkout = async (form: TWorkoutFormSchema) => {
@@ -88,11 +89,12 @@ export default function WorkoutForm({
     })
       .then((response) => {
         if (!response.ok) {
-          console.error("Failed to add exercise.");
+          toast.error("Failed to add workout");
         }
       })
       .catch((error) => {
         console.error("An error occurred while adding exercise:", error);
+        toast.error("Failed to add workout");
       });
   };
 
@@ -106,11 +108,14 @@ export default function WorkoutForm({
     })
       .then((response) => {
         if (!response.ok) {
-          console.error("Failed to update exercise.");
+          toast.error("Failed to save workout");
+        } else {
+          toast.success("Saved workout");
         }
       })
       .catch((error) => {
         console.error("An error occurred while updating exercise:", error);
+        toast.error("Failed to save workout");
       });
   };
 
@@ -130,6 +135,7 @@ export default function WorkoutForm({
   return (
     <div className="mx-auto px-2 sm:px-6 max-w-2xl">
       <Spinner show={showSpinner} />
+      <Toaster position="top-center" />
       <div className="bg-card rounded-lg shadow-lg p-3 sm:p-6 space-y-4 sm:space-y-6">
         <h2 className="text-center text-2xl sm:text-3xl font-bold mb-4 sm:mb-8 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
           {workoutId !== -1 ? "Edit Workout" : "Create Workout"}
@@ -151,7 +157,7 @@ export default function WorkoutForm({
                     <FormControl>
                       <Input
                         type="date"
-                        className="h-10 sm:h-11 text-base bg-background/50 hover:bg-background/80 transition-colors"
+                        className="webkit-appearance-none h-10 sm:h-11 text-base bg-background/50 hover:bg-background/80 transition-colors"
                         {...field}
                       />
                     </FormControl>

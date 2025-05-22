@@ -44,52 +44,50 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
       })
       .catch((error) => {
         console.error("An error occurred while deleting exercise:", error);
+      })
+      .finally(() => {
+        setShowSpinner(false);
       });
-    setShowSpinner(false);
   };
 
   return (
-    <Accordion type="single" collapsible className="mb-5 mt-2">
+    <Accordion type="single" collapsible className="space-y-2">
       {workouts.map((workout: Workout, index) => (
         <AccordionItem key={index} value={`item-${index}`}>
           <AccordionTrigger>
-            <span>
-              {formatDate(workout.date)} - {workout.name}
-            </span>
+            {formatDate(workout.date)} - {workout.name}
           </AccordionTrigger>
           <AccordionContent>
-            <div className="flex justify-start gap-4 pt-2">
+            <div className="mb-6 flex justify-start space-x-3 px-1">
               <Button
                 asChild
-                className="bg-green-500 text-white hover:bg-green-500/70"
+                variant="outline"
+                size="sm"
+                className="border-green-500 text-green-500 hover:bg-green-500 hover:text-white"
               >
-                <Link
-                  href={{
-                    pathname: "/workouts/edit",
-                    query: { id: workout.id },
-                  }}
-                >
-                  Edit
-                </Link>
+                <Link href={`/workouts/edit/${workout.id}`}>Edit</Link>
               </Button>
               <Button
                 asChild
-                className="bg-blue-600 text-white hover:bg-blue-600/70"
+                variant="outline"
+                size="sm"
+                className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
               >
-                <Link
-                  href={{
-                    pathname: "/workouts/duplicate",
-                    query: { id: workout.id },
-                  }}
-                >
+                <Link href={`/workouts/duplicate/${workout.id}`}>
                   Duplicate
                 </Link>
               </Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="destructive">Delete</Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                  >
+                    Delete
+                  </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent className="w-5/6">
+                <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>Delete workout?</AlertDialogTitle>
                   </AlertDialogHeader>
@@ -97,15 +95,12 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                     This action cannot be undone. This workout will be
                     permanently deleted and removed from our servers.
                   </AlertDialogDescription>
-                  <AlertDialogFooter className="flex flex-row justify-around">
-                    <AlertDialogCancel className="mt-0">
-                      Cancel
-                    </AlertDialogCancel>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                       onClick={() => {
                         deleteWorkout(workout.id);
                       }}
-                      className="bg-destructive text-destructive-foreground hover:bg-destructive/70"
                     >
                       Delete
                     </AlertDialogAction>
@@ -113,14 +108,14 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                 </AlertDialogContent>
               </AlertDialog>
             </div>
-            <div className="divide-y-2 px-2">
+            <div className="space-y-4">
               {workout.exercises.map((exercise: ExerciseInstance) => (
                 <ExerciseInstanceItem
                   exercise={exercise}
                   showName={true}
                   showDate={false}
                   key={exercise.id}
-                ></ExerciseInstanceItem>
+                />
               ))}
             </div>
           </AccordionContent>

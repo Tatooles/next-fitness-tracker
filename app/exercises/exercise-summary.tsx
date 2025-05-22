@@ -53,18 +53,31 @@ export default function ExerciseSummaryComponent({
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-4">
       <ExerciseHistoryModal exerciseName={exerciseSummary.name} />
-      <div className="self-start text-xl mb-4">
-        <span className="mr-4">Heaviest rep</span>
-        <span className="p-2 rounded-md  bg-amber-300">
-          {getHeaviestRep()} lb
-        </span>
-      </div>
-      <div className="self-start text-xl">
-        <span className="mr-4">Calculated 1RM</span>
-        <span className="p-2 rounded-md  bg-amber-300">{getMax()} lb</span>
-      </div>
+      <SummaryItem label="Heaviest rep" value={getHeaviestRep()} unit="lb" />
+      <SummaryItem label="Calculated 1RM" value={getMax()} unit="lb" />
+    </div>
+  );
+}
+
+function SummaryItem({
+  label,
+  value,
+  unit,
+}: {
+  label: string;
+  value: string | number;
+  unit?: string;
+}) {
+  return (
+    <div className="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+        {label}
+      </span>
+      <span className="px-2.5 py-0.5 rounded-full text-sm font-semibold bg-amber-100 text-amber-800 dark:bg-amber-700 dark:text-amber-100">
+        {value} {unit && unit}
+      </span>
     </div>
   );
 }

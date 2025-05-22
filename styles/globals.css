@@ -66,6 +66,10 @@
 
     --ring: 217.2 32.6% 17.5%;
   }
+
+  .webkit-appearance-none {
+    -webkit-appearance: none;
+  }
 }
 
 @layer base {

@@ -93,7 +93,7 @@ export default function ExerciseHistoryModal({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex justify-center items-center">
+        <div className="flex justify-center items-center min-h-36">
           {loading && (
             <div className="flex justify-center items-center h-full pt-4">
               <Spinner show={true} />
@@ -114,7 +114,7 @@ export default function ExerciseHistoryModal({
           )}
 
           {!loading && !error && exerciseHistory.length > 0 && (
-            <div className="px-6 pb-6 max-h-[calc(80vh-6rem)] overflow-y-auto">
+            <div className="px-6 pb-6 max-h-[calc(80vh-6rem)] overflow-y-auto space-y-4">
               {exerciseHistory.map((exercise: GroupedExercise) => (
                 <ExerciseInstanceItem
                   exercise={exercise}

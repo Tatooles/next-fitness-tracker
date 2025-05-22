@@ -8,6 +8,7 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 
 export default function FormSets({
@@ -31,8 +32,8 @@ export default function FormSets({
   return (
     <div className="flex flex-col gap-2">
       {fields.map((field, index) => (
-        <div key={field.id} className="flex items-center justify-between">
-          <FormLabel>Set {index + 1}</FormLabel>
+        <div key={field.id} className="flex items-center justify-between gap-2">
+          <FormLabel className="whitespace-nowrap">Set {index + 1}</FormLabel>
           <FormField
             control={control}
             name={`exercises.${exerciseIndex}.sets.${index}.weight`}
@@ -90,17 +91,23 @@ export default function FormSets({
               </FormItem>
             )}
           />
-          <Trash2
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
             onClick={() => remove(index)}
-            size={20}
-            className="text-red-600 cursor-pointer"
-          ></Trash2>
+            className="text-red-600 hover:bg-destructive/10 hover:text-destructive transition-colors"
+          >
+            <Trash2 size={20} />
+          </Button>
         </div>
       ))}
-      <div className="flex gap-2">
-        <button
+      <div className="flex gap-3 sm:gap-2">
+        <Button
           type="button"
-          className="w-20 rounded-md bg-green-500 py-1 text-sm text-white"
+          variant="outline"
+          size="sm"
+          className="border-green-500 text-green-500 hover:bg-green-500 hover:text-white"
           onClick={() =>
             append({
               weight: "",
@@ -110,11 +117,13 @@ export default function FormSets({
           }
         >
           Add set
-        </button>
+        </Button>
         {fields.length > 0 && (
-          <button
+          <Button
             type="button"
-            className="w-20 rounded-md bg-blue-600 py-1 text-sm text-white"
+            variant="outline"
+            size="sm"
+            className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
             onClick={() =>
               append({
                 weight: getValues(
@@ -130,7 +139,7 @@ export default function FormSets({
             }
           >
             Clone set
-          </button>
+          </Button>
         )}
       </div>
     </div>
