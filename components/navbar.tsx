@@ -22,31 +22,32 @@ export default function Navbar({
   const pathName = usePathname();
 
   return (
-    <header className="flex items-center justify-between border-b-2 text-lg">
+    <header className="flex items-center justify-between border-b bg-background p-4 text-lg shadow-sm">
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-        <SheetTrigger>
-          <div className="p-5">
-            <div className="flex h-[20px] w-[20px] flex-col justify-between overflow-hidden">
-              <div className="h-[2px] w-7 bg-slate-700"></div>
-              <div className="h-[2px] w-7 bg-slate-700"></div>
-              <div className="h-[2px] w-7 bg-slate-700 "></div>
-            </div>
+        <SheetTrigger className="p-2 rounded-md hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+          <span className="sr-only">Open menu</span>
+          <div className="flex h-6 w-6 flex-col justify-around">
+            <div className="h-0.5 w-full bg-foreground rounded-full"></div>
+            <div className="h-0.5 w-full bg-foreground rounded-full"></div>
+            <div className="h-0.5 w-full bg-foreground rounded-full"></div>
           </div>
         </SheetTrigger>
         <SheetContent
           onOpenAutoFocus={(e) => e.preventDefault()}
           side="left"
-          className="w-[200px]"
+          className="w-[250px] bg-background border-r p-6"
         >
-          <nav className="flex flex-col space-y-2">
+          <nav className="flex flex-col space-y-2 pt-6">
             {sidebarItems.map((item) => (
               <Link
                 onClick={() => setSidebarOpen(false)}
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  pathName === item.href ? "bg-muted" : "hover:underline",
-                  "w-5/6 rounded-md p-2 text-xl"
+                  pathName === item.href
+                    ? "bg-primary text-primary-foreground"
+                    : "hover:bg-accent hover:text-accent-foreground",
+                  "rounded-md p-3 text-base font-medium transition-colors"
                 )}
               >
                 {item.title}
@@ -55,9 +56,9 @@ export default function Navbar({
           </nav>
         </SheetContent>
       </Sheet>
-      <div className="flex p-5 gap-4">
-        <ThemeToggle></ThemeToggle>
-        <UserButton></UserButton>
+      <div className="flex items-center gap-4 p-2">
+        <ThemeToggle />
+        <UserButton afterSignOutUrl="/" />
       </div>
     </header>
   );
