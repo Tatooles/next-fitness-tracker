@@ -78,6 +78,12 @@ export async function PATCH(
           exerciseId: newExercise.id,
         }));
 
+        if (!setValues)
+          console.error(
+            "setValues is falsy, may be causing my error: setValues:",
+            setValues
+          );
+
         await tx.insert(set).values(setValues);
       }
     });
