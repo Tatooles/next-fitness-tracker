@@ -48,7 +48,9 @@ export async function POST(request: NextRequest) {
           exerciseId: newExercise.id,
         }));
 
-        await tx.insert(set).values(setValues);
+        if (setValues.length) {
+          await tx.insert(set).values(setValues);
+        }
       }
     });
   } catch (error) {
