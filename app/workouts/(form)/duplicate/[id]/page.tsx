@@ -72,12 +72,11 @@ const zeroWorkout = (workout?: TWorkoutFormSchema) => {
 export default async function DuplicateWorkoutPage({
   params,
 }: {
-  params: Promise<{ id: number }>;
+  params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
 
-  if (typeof id !== "string" || isNaN(+id))
-    return <WorkoutNotFound></WorkoutNotFound>;
+  if (isNaN(+id)) return <WorkoutNotFound></WorkoutNotFound>;
 
   const workoutTemplate = await getWorkout(+id);
 
