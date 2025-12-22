@@ -86,7 +86,7 @@ export default function ExerciseHistoryModal({
           <History className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-h-[80vh] w-11/12 sm:max-w-md rounded-lg bg-card p-0">
+      <DialogContent className="max-h-[80vh] w-11/12 sm:max-w-md rounded-lg p-0">
         <DialogHeader className="p-4 border-b border-border">
           <DialogTitle className="text-xl font-semibold mr-4">
             {exerciseName} History

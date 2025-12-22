@@ -136,7 +136,7 @@ export default function WorkoutForm({
     <div className="mx-auto px-2 sm:px-6 max-w-2xl">
       <Spinner show={showSpinner} />
       <Toaster richColors position="top-center" />
-      <div className="bg-card rounded-lg shadow-lg p-3 sm:p-6 space-y-4 sm:space-y-6">
+      <div className="rounded-lg shadow-lg p-3 sm:p-6 space-y-4 sm:space-y-6">
         <h2 className="text-center text-2xl sm:text-3xl font-bold mb-4 sm:mb-8 bg-linear-to-r from-primary to-primary/60 bg-clip-text text-transparent">
           {workoutId !== -1 ? "Edit Workout" : "Create Workout"}
         </h2>
@@ -193,7 +193,7 @@ export default function WorkoutForm({
 
               {fields.map((field, index) => (
                 <div
-                  className="relative rounded-lg border bg-card p-3 shadow-xs transition-all hover:shadow-md"
+                  className="relative rounded-lg border p-3 shadow-xs transition-all hover:shadow-md"
                   key={field.id}
                 >
                   <div className="space-y-4">
