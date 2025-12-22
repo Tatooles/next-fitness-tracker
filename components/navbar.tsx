@@ -22,9 +22,9 @@ export default function Navbar({
   const pathName = usePathname();
 
   return (
-    <header className="flex items-center justify-between border-b bg-background p-4 text-lg shadow-sm">
+    <header className="flex items-center justify-between border-b bg-background p-4 text-lg shadow-xs">
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-        <SheetTrigger className="p-2 rounded-md hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+        <SheetTrigger className="p-2 rounded-md hover:bg-accent focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2">
           <span className="sr-only">Open menu</span>
           <div className="flex h-6 w-6 flex-col justify-around">
             <div className="h-0.5 w-full bg-foreground rounded-full"></div>

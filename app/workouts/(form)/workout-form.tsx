@@ -137,7 +137,7 @@ export default function WorkoutForm({
       <Spinner show={showSpinner} />
       <Toaster richColors position="top-center" />
       <div className="bg-card rounded-lg shadow-lg p-3 sm:p-6 space-y-4 sm:space-y-6">
-        <h2 className="text-center text-2xl sm:text-3xl font-bold mb-4 sm:mb-8 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+        <h2 className="text-center text-2xl sm:text-3xl font-bold mb-4 sm:mb-8 bg-linear-to-r from-primary to-primary/60 bg-clip-text text-transparent">
           {workoutId !== -1 ? "Edit Workout" : "Create Workout"}
         </h2>
         <Form {...form}>
@@ -193,7 +193,7 @@ export default function WorkoutForm({
 
               {fields.map((field, index) => (
                 <div
-                  className="relative rounded-lg border bg-card p-3 shadow-sm transition-all hover:shadow-md"
+                  className="relative rounded-lg border bg-card p-3 shadow-xs transition-all hover:shadow-md"
                   key={field.id}
                 >
                   <div className="space-y-4">
@@ -221,7 +221,7 @@ export default function WorkoutForm({
                                       role="combobox"
                                       aria-expanded={popoverOpenStates[index]}
                                       className={cn(
-                                        "sm:w-[28rem] w-56 justify-between h-10 sm:h-11 text-base bg-background/50 hover:bg-background/80 transition-colors",
+                                        "sm:w-md w-56 justify-between h-10 sm:h-11 text-base bg-background/50 hover:bg-background/80 transition-colors",
                                         !field.value && "text-muted-foreground"
                                       )}
                                     >
