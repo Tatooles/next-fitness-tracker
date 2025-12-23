@@ -5,7 +5,12 @@ import { usePathname } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
 
 import { cn } from "@/lib/utils";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { ThemeToggle } from "./theme-toggle";
 
 interface SidebarItem {
@@ -37,6 +42,7 @@ export default function Navbar({
           side="left"
           className="bg-background w-[250px] border-r p-6"
         >
+          <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
           <nav className="flex flex-col space-y-2 pt-6">
             {sidebarItems.map((item) => (
               <Link
