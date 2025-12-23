@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
       },
     },
   });
-  let input = [] as string[][];
+  const input = [] as string[][];
   for (const workout of data) {
     input.push([workout.name]);
     for (const exercise of workout.exercises) {

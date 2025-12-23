@@ -24,12 +24,17 @@ export default function ExerciseHistoryModal({
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (open) {
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+    if (newOpen) {
       setLoading(true);
       setExerciseHistory([]);
       setError("");
+    }
+  };
 
+  useEffect(() => {
+    if (open) {
       fetch(`/api/exercises/history?name=${encodeURIComponent(exerciseName)}`)
         .then(async (res) => {
           if (!res.ok) {
@@ -75,7 +80,7 @@ export default function ExerciseHistoryModal({
   }, [open, exerciseName, filterOutWorkoutId]);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button
           type="button"

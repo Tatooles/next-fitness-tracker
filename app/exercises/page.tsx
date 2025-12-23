@@ -18,7 +18,7 @@ async function getExercises() {
 
     return exerciseData;
   } catch (error) {
-    console.log("An error ocurred while fetching workout data");
+    console.log("An error occurred while fetching workout data:", error);
     return [];
   }
 }
@@ -30,11 +30,13 @@ async function getExerciseSummary() {
 
   // Might be able to use object.group
   exercises.forEach(({ exercise_view, set }) => {
-    let exerciseSummary = summaries.find((g) => g.name === exercise_view?.name);
+    if (!exercise_view?.name) return;
+
+    let exerciseSummary = summaries.find((g) => g.name === exercise_view.name);
 
     if (!exerciseSummary) {
       // Create new exercise summary if it doesn't exist
-      exerciseSummary = { name: exercise_view?.name!, exercises: [] };
+      exerciseSummary = { name: exercise_view.name, exercises: [] };
       summaries.push(exerciseSummary);
     }
 

@@ -32,8 +32,8 @@ export default function ExerciseSummaryComponent({
   };
 
   const calculateOneRepMax = (set: Set): number => {
-    let reps = +set.reps;
-    let weight = +set.weight;
+    const reps = +set.reps;
+    const weight = +set.weight;
     if (isNaN(reps) || isNaN(weight)) {
       return 0;
     }

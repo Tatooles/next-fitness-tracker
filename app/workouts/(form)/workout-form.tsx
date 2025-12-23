@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -130,6 +130,11 @@ export default function WorkoutForm({
   const { fields, append, remove } = useFieldArray({
     name: "exercises",
     control: form.control,
+  });
+
+  const watchedExercises = useWatch({
+    control: form.control,
+    name: "exercises",
   });
 
   return (
@@ -295,16 +300,15 @@ export default function WorkoutForm({
                                   </Command>
                                 </PopoverContent>
                               </Popover>
-                              {exercises.includes(
-                                form.watch(`exercises.${index}.name`),
-                              ) && (
-                                <ExerciseHistoryModal
-                                  exerciseName={form.watch(
-                                    `exercises.${index}.name`,
-                                  )}
-                                  filterOutWorkoutId={workoutId}
-                                />
-                              )}
+                              {watchedExercises?.[index]?.name &&
+                                exercises.includes(
+                                  watchedExercises[index].name,
+                                ) && (
+                                  <ExerciseHistoryModal
+                                    exerciseName={watchedExercises[index].name}
+                                    filterOutWorkoutId={workoutId}
+                                  />
+                                )}
                               <Button
                                 type="button"
                                 variant="ghost"
@@ -322,7 +326,7 @@ export default function WorkoutForm({
                     </div>
 
                     <FormSets
-                      exerciseName={form.watch(`exercises.${index}.name`)}
+                      exerciseName={watchedExercises?.[index]?.name || ""}
                       exerciseIndex={index}
                       control={form.control}
                       getValues={form.getValues}

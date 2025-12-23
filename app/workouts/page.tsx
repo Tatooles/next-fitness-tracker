@@ -29,7 +29,7 @@ async function getWorkouts() {
 
     return data;
   } catch (error) {
-    console.log("An error ocurred while fetching workout data");
+    console.log("An error ocurred while fetching workout data", error);
     return [];
   }
 }

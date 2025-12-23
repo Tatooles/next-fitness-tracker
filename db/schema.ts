@@ -4,7 +4,6 @@ import {
   integer,
   sqliteTable,
   sqliteView,
-  real,
 } from "drizzle-orm/sqlite-core";
 
 export const workout = sqliteTable("workout", {
