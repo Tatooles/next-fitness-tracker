@@ -96,7 +96,7 @@ export default function FormSets({
             variant="ghost"
             size="icon"
             onClick={() => remove(index)}
-            className="text-red-600 hover:bg-destructive/10 hover:text-destructive transition-colors"
+            className="hover:bg-destructive/10 hover:text-destructive text-red-600 transition-colors"
           >
             <Trash2 size={20} />
           </Button>
@@ -127,13 +127,13 @@ export default function FormSets({
             onClick={() =>
               append({
                 weight: getValues(
-                  `exercises.${exerciseIndex}.sets.${fields.length - 1}.weight`
+                  `exercises.${exerciseIndex}.sets.${fields.length - 1}.weight`,
                 ),
                 reps: getValues(
-                  `exercises.${exerciseIndex}.sets.${fields.length - 1}.reps`
+                  `exercises.${exerciseIndex}.sets.${fields.length - 1}.reps`,
                 ),
                 rpe: getValues(
-                  `exercises.${exerciseIndex}.sets.${fields.length - 1}.rpe`
+                  `exercises.${exerciseIndex}.sets.${fields.length - 1}.rpe`,
                 ),
               })
             }

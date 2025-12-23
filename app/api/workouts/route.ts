@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
   if (!result.success) {
     return NextResponse.json(
       { error: result.error.flatten() },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     console.error("Transaction failed", error);
     return NextResponse.json(
       { error: "Something went wrong" },
-      { status: 500 }
+      { status: 500 },
     );
   }
   return NextResponse.json({ message: "Workout created" }, { status: 201 });

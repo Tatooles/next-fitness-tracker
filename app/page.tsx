@@ -1,37 +1,52 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground p-4 sm:px-6 lg:px-8 text-center">
-      <h1 className="text-4xl sm:text-5xl font-extrabold mb-8 sm:mb-12 tracking-tight">
+    <div className="bg-background text-foreground flex min-h-screen flex-col items-center justify-center p-4 text-center sm:px-6 lg:px-8">
+      <h1 className="mb-8 text-4xl font-extrabold tracking-tight sm:mb-12 sm:text-5xl">
         Track Your Strength Journey
       </h1>
-      <div className="flex flex-col justify-center gap-6 sm:gap-8 sm:flex-row">
-        <div className="bg-card text-card-foreground rounded-xl shadow-xl p-6 sm:p-8 max-w-md transform hover:scale-105 transition-transform duration-300 ease-in-out">
-          <h2 className="text-2xl sm:text-3xl font-semibold mb-6">
-            Log Your Workouts
-          </h2>
-          <p className="mb-8 text-muted-foreground">
+      <div className="flex flex-col justify-center gap-6 sm:flex-row sm:gap-8">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-2xl sm:text-3xl">
+              Log Your Workouts
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-muted-foreground">
             Effortlessly create, view, and manage your training sessions. Record
             every set, rep, and note to stay on top of your game.
-          </p>
-          <Button asChild size="lg" className="w-full sm:w-auto">
-            <Link href="/workouts">View Workouts</Link>
-          </Button>
-        </div>
-        <div className="bg-card text-card-foreground rounded-xl shadow-xl p-6 sm:p-8 max-w-md transform hover:scale-105 transition-transform duration-300 ease-in-out">
-          <h2 className="text-2xl sm:text-3xl font-semibold mb-6">
-            Analyze Your Progress
-          </h2>
-          <p className="mb-8 text-muted-foreground">
+          </CardContent>
+          <CardFooter className="justify-center">
+            <Button asChild size="lg" className="w-full sm:w-auto">
+              <Link href="/workouts">View Workouts</Link>
+            </Button>
+          </CardFooter>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-2xl sm:text-3xl">
+              Analyze Your Progress
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-muted-foreground">
             Dive into your exercise history. Compare performances, visualize
             your strength gains, and stay motivated.
-          </p>
-          <Button asChild size="lg" className="w-full sm:w-auto">
-            <Link href="/exercises">View Exercises</Link>
-          </Button>
-        </div>
+          </CardContent>
+          <CardFooter className="justify-center">
+            <Button asChild size="lg" className="w-full sm:w-auto">
+              <Link href="/exercises">View Exercises</Link>
+            </Button>
+          </CardFooter>
+        </Card>
       </div>
     </div>
   );

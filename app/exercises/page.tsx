@@ -18,7 +18,7 @@ async function getExercises() {
 
     return exerciseData;
   } catch (error) {
-    console.log("An error ocurred while fetching workout data");
+    console.log("An error occurred while fetching workout data:", error);
     return [];
   }
 }
@@ -30,16 +30,18 @@ async function getExerciseSummary() {
 
   // Might be able to use object.group
   exercises.forEach(({ exercise_view, set }) => {
-    let exerciseSummary = summaries.find((g) => g.name === exercise_view?.name);
+    if (!exercise_view?.name) return;
+
+    let exerciseSummary = summaries.find((g) => g.name === exercise_view.name);
 
     if (!exerciseSummary) {
       // Create new exercise summary if it doesn't exist
-      exerciseSummary = { name: exercise_view?.name!, exercises: [] };
+      exerciseSummary = { name: exercise_view.name, exercises: [] };
       summaries.push(exerciseSummary);
     }
 
     const exerciseInstance = exerciseSummary.exercises.find(
-      (e) => e.id === exercise_view?.id
+      (e) => e.id === exercise_view?.id,
     );
 
     if (!exerciseInstance) {
@@ -64,8 +66,8 @@ async function getExerciseSummary() {
 
 export default async function ExercisesPage() {
   return (
-    <div className="p-5 text-center max-w-2xl mx-auto">
-      <h1 className="text-4xl mb-5 font-semibold">Exercises</h1>
+    <div className="mx-auto max-w-2xl p-5 text-center">
+      <h1 className="mb-5 text-4xl font-semibold">Exercises</h1>
       <ExercisesUI exerciseSummaries={await getExerciseSummary()}></ExercisesUI>
     </div>
   );

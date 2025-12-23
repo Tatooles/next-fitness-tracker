@@ -7,7 +7,7 @@ import { workoutFormSchema } from "@/lib/types";
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -18,14 +18,14 @@ export async function DELETE(
     console.error("Delete failed", error);
     return NextResponse.json(
       { error: "Failed to delete workout" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
   const workoutId = parseInt(id);
@@ -38,7 +38,7 @@ export async function PATCH(
   if (!result.success) {
     return NextResponse.json(
       { error: result.error.flatten() },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -90,7 +90,7 @@ export async function PATCH(
     console.error("Transaction failed", error);
     return NextResponse.json(
       { error: "Something went wrong" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 

@@ -18,7 +18,7 @@ export async function GET() {
     console.error("Error fetching unique exercise names:", error);
     return NextResponse.json(
       { error: "Failed to fetch exercise names" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

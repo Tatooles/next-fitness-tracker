@@ -5,7 +5,12 @@ import { usePathname } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
 
 import { cn } from "@/lib/utils";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { ThemeToggle } from "./theme-toggle";
 
 interface SidebarItem {
@@ -22,21 +27,22 @@ export default function Navbar({
   const pathName = usePathname();
 
   return (
-    <header className="flex items-center justify-between border-b bg-background p-4 text-lg shadow-sm">
+    <header className="bg-background flex items-center justify-between border-b p-4 text-lg shadow-xs">
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-        <SheetTrigger className="p-2 rounded-md hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+        <SheetTrigger className="hover:bg-accent focus:ring-ring rounded-md p-2 focus:ring-2 focus:ring-offset-2 focus:outline-hidden">
           <span className="sr-only">Open menu</span>
           <div className="flex h-6 w-6 flex-col justify-around">
-            <div className="h-0.5 w-full bg-foreground rounded-full"></div>
-            <div className="h-0.5 w-full bg-foreground rounded-full"></div>
-            <div className="h-0.5 w-full bg-foreground rounded-full"></div>
+            <div className="bg-foreground h-0.5 w-full rounded-full"></div>
+            <div className="bg-foreground h-0.5 w-full rounded-full"></div>
+            <div className="bg-foreground h-0.5 w-full rounded-full"></div>
           </div>
         </SheetTrigger>
         <SheetContent
           onOpenAutoFocus={(e) => e.preventDefault()}
           side="left"
-          className="w-[250px] bg-background border-r p-6"
+          className="bg-background w-[250px] border-r p-6"
         >
+          <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
           <nav className="flex flex-col space-y-2 pt-6">
             {sidebarItems.map((item) => (
               <Link
@@ -47,7 +53,7 @@ export default function Navbar({
                   pathName === item.href
                     ? "bg-primary text-primary-foreground"
                     : "hover:bg-accent hover:text-accent-foreground",
-                  "rounded-md p-3 text-base font-medium transition-colors"
+                  "rounded-md p-3 text-base font-medium transition-colors",
                 )}
               >
                 {item.title}

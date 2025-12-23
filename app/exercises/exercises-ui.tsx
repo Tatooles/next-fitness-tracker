@@ -45,7 +45,7 @@ export default function ExercisesUI({
       <Input
         type="search"
         placeholder="Search exercises"
-        className="text-base mb-6"
+        className="mb-6 text-base"
         onChange={(e) => {
           setInputValue(e.target.value);
         }}
