@@ -133,11 +133,11 @@ export default function WorkoutForm({
   });
 
   return (
-    <div className="mx-auto px-2 sm:px-6 max-w-2xl">
+    <div className="mx-auto max-w-2xl px-2 sm:px-6">
       <Spinner show={showSpinner} />
       <Toaster richColors position="top-center" />
-      <div className="rounded-lg shadow-lg p-3 sm:p-6 space-y-4 sm:space-y-6">
-        <h2 className="text-center text-2xl sm:text-3xl font-bold mb-4 sm:mb-8 bg-linear-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+      <div className="space-y-4 rounded-lg p-3 shadow-lg sm:space-y-6 sm:p-6">
+        <h2 className="from-primary to-primary/60 mb-4 bg-linear-to-r bg-clip-text text-center text-2xl font-bold text-transparent sm:mb-8 sm:text-3xl">
           {workoutId !== -1 ? "Edit Workout" : "Create Workout"}
         </h2>
         <Form {...form}>
@@ -145,7 +145,7 @@ export default function WorkoutForm({
             onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-4 sm:space-y-6"
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="date"
@@ -157,7 +157,7 @@ export default function WorkoutForm({
                     <FormControl>
                       <Input
                         type="date"
-                        className="webkit-appearance-none h-10 sm:h-11 text-base bg-background/50 hover:bg-background/80 transition-colors"
+                        className="webkit-appearance-none bg-background/50 hover:bg-background/80 h-10 text-base transition-colors sm:h-11"
                         {...field}
                       />
                     </FormControl>
@@ -175,7 +175,7 @@ export default function WorkoutForm({
                     </FormLabel>
                     <FormControl>
                       <Input
-                        className="h-10 sm:h-11 text-base bg-background/50 hover:bg-background/80 transition-colors"
+                        className="bg-background/50 hover:bg-background/80 h-10 text-base transition-colors sm:h-11"
                         placeholder="Enter workout name"
                         {...field}
                       />
@@ -187,7 +187,7 @@ export default function WorkoutForm({
             </div>
 
             <div className="space-y-3 sm:space-y-4">
-              <Label className="text-base sm:text-lg font-semibold">
+              <Label className="text-base font-semibold sm:text-lg">
                 Exercises
               </Label>
 
@@ -221,8 +221,8 @@ export default function WorkoutForm({
                                       role="combobox"
                                       aria-expanded={popoverOpenStates[index]}
                                       className={cn(
-                                        "sm:w-md w-56 justify-between h-10 sm:h-11 text-base bg-background/50 hover:bg-background/80 transition-colors",
-                                        !field.value && "text-muted-foreground"
+                                        "bg-background/50 hover:bg-background/80 h-10 w-56 justify-between text-base transition-colors sm:h-11 sm:w-md",
+                                        !field.value && "text-muted-foreground",
                                       )}
                                     >
                                       <span className="truncate">
@@ -244,7 +244,7 @@ export default function WorkoutForm({
                                       className="h-11 text-base"
                                       onInput={(e) =>
                                         setExerciseNameValue(
-                                          e.currentTarget.value
+                                          e.currentTarget.value,
                                         )
                                       }
                                       onKeyDown={(e) => {
@@ -255,7 +255,7 @@ export default function WorkoutForm({
                                           e.preventDefault();
                                           form.setValue(
                                             `exercises.${index}.name`,
-                                            exerciseNameValue
+                                            exerciseNameValue,
                                           );
                                           setPopoverOpenStates((prev) => {
                                             const newState = [...prev];
@@ -277,7 +277,7 @@ export default function WorkoutForm({
                                             onSelect={() => {
                                               form.setValue(
                                                 `exercises.${index}.name`,
-                                                exercise
+                                                exercise,
                                               );
                                               setPopoverOpenStates((prev) => {
                                                 const newState = [...prev];
@@ -285,7 +285,7 @@ export default function WorkoutForm({
                                                 return newState;
                                               });
                                             }}
-                                            className="cursor-pointer hover:bg-primary/10 transition-colors text-base"
+                                            className="hover:bg-primary/10 cursor-pointer text-base transition-colors"
                                           >
                                             {exercise}
                                           </CommandItem>
@@ -296,11 +296,11 @@ export default function WorkoutForm({
                                 </PopoverContent>
                               </Popover>
                               {exercises.includes(
-                                form.watch(`exercises.${index}.name`)
+                                form.watch(`exercises.${index}.name`),
                               ) && (
                                 <ExerciseHistoryModal
                                   exerciseName={form.watch(
-                                    `exercises.${index}.name`
+                                    `exercises.${index}.name`,
                                   )}
                                   filterOutWorkoutId={workoutId}
                                 />
@@ -309,7 +309,7 @@ export default function WorkoutForm({
                                 type="button"
                                 variant="ghost"
                                 size="icon"
-                                className="shrink-0 hover:bg-destructive/10 hover:text-destructive transition-colors"
+                                className="hover:bg-destructive/10 hover:text-destructive shrink-0 transition-colors"
                                 onClick={() => remove(index)}
                               >
                                 <Trash2 className="h-4 w-4" />
@@ -337,7 +337,7 @@ export default function WorkoutForm({
                           <FormControl>
                             <Textarea
                               placeholder="Add notes"
-                              className="resize-none text-base bg-background/50 hover:bg-background/80 transition-colors"
+                              className="bg-background/50 hover:bg-background/80 resize-none text-base transition-colors"
                               {...field}
                             />
                           </FormControl>
@@ -359,7 +359,7 @@ export default function WorkoutForm({
                     sets: [{ weight: "", reps: "", rpe: "" }],
                   })
                 }
-                className="w-full text-base hover:bg-primary/10"
+                className="hover:bg-primary/10 w-full text-base"
               >
                 Add Exercise
               </Button>
@@ -368,7 +368,7 @@ export default function WorkoutForm({
             <div className="flex justify-end pt-2">
               <Button
                 type="submit"
-                className="w-full text-base bg-primary hover:bg-primary/90"
+                className="bg-primary hover:bg-primary/90 w-full text-base"
                 disabled={showSpinner}
               >
                 {editMode ? "Save" : "Create Workout"}

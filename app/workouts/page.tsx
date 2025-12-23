@@ -24,7 +24,7 @@ async function getWorkouts() {
     });
 
     data.sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
     );
 
     return data;
@@ -38,9 +38,9 @@ export default async function WorkoutsPage() {
   const workouts = await getWorkouts();
 
   return (
-    <div className="p-5 text-center max-w-2xl mx-auto">
-      <h1 className="text-4xl mb-5 font-semibold">Workouts</h1>
-      <Button asChild className="w-full sm:w-36 mb-5">
+    <div className="mx-auto max-w-2xl p-5 text-center">
+      <h1 className="mb-5 text-4xl font-semibold">Workouts</h1>
+      <Button asChild className="mb-5 w-full sm:w-36">
         <Link href="/workouts/create">Add Workout</Link>
       </Button>
       <Workouts workouts={workouts}></Workouts>

@@ -53,18 +53,18 @@ export default function ExerciseHistoryModal({
           } else {
             setExerciseHistory(
               (data as GroupedExercise[]).filter(
-                (exercise) => exercise.workoutId !== filterOutWorkoutId
-              )
+                (exercise) => exercise.workoutId !== filterOutWorkoutId,
+              ),
             );
           }
         })
         .catch((err) => {
           console.error(
             "An error occurred while fetching exercise history:",
-            err
+            err,
           );
           setError(
-            err.message || "An unexpected error occurred. Please try again."
+            err.message || "An unexpected error occurred. Please try again.",
           );
           setExerciseHistory([]);
         })
@@ -81,40 +81,40 @@ export default function ExerciseHistoryModal({
           type="button"
           variant="ghost"
           size="icon"
-          className="shrink-0 hover:bg-primary/10 hover:text-primary transition-colors"
+          className="hover:bg-primary/10 hover:text-primary shrink-0 transition-colors"
         >
           <History className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-h-[80vh] w-11/12 sm:max-w-md rounded-lg p-0">
-        <DialogHeader className="p-4 border-b border-border">
-          <DialogTitle className="text-xl font-semibold mr-4">
+      <DialogContent className="max-h-[80vh] w-11/12 rounded-lg p-0 sm:max-w-md">
+        <DialogHeader className="border-border border-b p-4">
+          <DialogTitle className="mr-4 text-xl font-semibold">
             {exerciseName} History
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex justify-center items-center min-h-36">
+        <div className="flex min-h-36 items-center justify-center">
           {loading && (
-            <div className="flex justify-center items-center h-full pt-4">
+            <div className="flex h-full items-center justify-center pt-4">
               <Spinner show={true} />
             </div>
           )}
 
           {!loading && error && (
-            <div className="bg-destructive/10 text-destructive p-4 rounded-md text-sm text-center">
-              <p className="font-semibold mb-1">Unable to Load History</p>
+            <div className="bg-destructive/10 text-destructive rounded-md p-4 text-center text-sm">
+              <p className="mb-1 font-semibold">Unable to Load History</p>
               <p>{error}</p>
             </div>
           )}
 
           {!loading && !error && exerciseHistory.length === 0 && (
-            <p className="text-muted-foreground text-center py-10">
+            <p className="text-muted-foreground py-10 text-center">
               No history found for this exercise.
             </p>
           )}
 
           {!loading && !error && exerciseHistory.length > 0 && (
-            <div className="px-6 pb-6 max-h-[calc(80vh-8rem)] overflow-y-auto space-y-4">
+            <div className="max-h-[calc(80vh-8rem)] space-y-4 overflow-y-auto px-6 pb-6">
               {exerciseHistory.map((exercise: GroupedExercise) => (
                 <ExerciseInstanceItem
                   exercise={exercise}

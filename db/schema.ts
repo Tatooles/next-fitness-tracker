@@ -54,7 +54,7 @@ export const exerciseView = sqliteView("exercise_view", {
       w.user_id AS user_id
     FROM exercise e
     JOIN workout w ON e.workout_id = w.id
-  `
+  `,
 );
 
 export const set = sqliteTable("set", {

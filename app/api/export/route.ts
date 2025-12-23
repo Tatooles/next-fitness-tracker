@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
   headers.append("Content-Type", mimeType);
   headers.append(
     "Content-Disposition",
-    `attachment; filename=user_data.${fileType}`
+    `attachment; filename=user_data.${fileType}`,
   );
 
   const response = new Response(excelBuffer, {

@@ -1,6 +1,6 @@
 import { and, eq } from "drizzle-orm";
 import { db } from "@/db/drizzle";
-import { exerciseView, set, workout } from "@/db/schema";
+import { exerciseView, set } from "@/db/schema";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { Set } from "@/lib/types";
@@ -36,8 +36,8 @@ export async function GET(request: NextRequest) {
       .where(
         and(
           eq(exerciseView.userId, userId!),
-          eq(exerciseView.name, exerciseName!)
-        )
+          eq(exerciseView.name, exerciseName!),
+        ),
       );
 
     // Group exercise data by date into an object that is friendly to the front end
@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
 
     // Convert back to array and sort
     const sorted = Object.values(grouped).sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
     );
 
     return NextResponse.json(sorted);
@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
     console.error("Error fetching exercise history:", error);
     return NextResponse.json(
       { error: "Failed to fetch exercise history" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

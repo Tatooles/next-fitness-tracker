@@ -5,7 +5,7 @@ export default function Spinner({ show }: { show: boolean }) {
 
   return (
     <>
-      <div className="fixed top-0 left-0 bottom-0 right-0 z-10 bg-slate-700 bg-opacity-50">
+      <div className="bg-opacity-50 fixed top-0 right-0 bottom-0 left-0 z-10 bg-slate-700">
         <div
           role="status"
           className="fixed top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%]"

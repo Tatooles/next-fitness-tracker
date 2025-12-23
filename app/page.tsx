@@ -10,11 +10,11 @@ import {
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground p-4 sm:px-6 lg:px-8 text-center">
-      <h1 className="text-4xl sm:text-5xl font-extrabold mb-8 sm:mb-12 tracking-tight">
+    <div className="bg-background text-foreground flex min-h-screen flex-col items-center justify-center p-4 text-center sm:px-6 lg:px-8">
+      <h1 className="mb-8 text-4xl font-extrabold tracking-tight sm:mb-12 sm:text-5xl">
         Track Your Strength Journey
       </h1>
-      <div className="flex flex-col justify-center gap-6 sm:gap-8 sm:flex-row">
+      <div className="flex flex-col justify-center gap-6 sm:flex-row sm:gap-8">
         <Card>
           <CardHeader>
             <CardTitle className="text-2xl sm:text-3xl">

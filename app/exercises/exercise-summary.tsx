@@ -71,11 +71,11 @@ function SummaryItem({
   unit?: string;
 }) {
   return (
-    <div className="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+    <div className="flex items-center justify-between rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
         {label}
       </span>
-      <span className="px-2.5 py-0.5 rounded-full text-sm font-semibold bg-amber-100 text-amber-800 dark:bg-amber-700 dark:text-amber-100">
+      <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-sm font-semibold text-amber-800 dark:bg-amber-700 dark:text-amber-100">
         {value} {unit && unit}
       </span>
     </div>
