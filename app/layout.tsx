@@ -2,6 +2,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 import "../styles/globals.css";
 import Navbar from "@/components/navbar";
 import { ThemeProvider } from "@/components/theme-provider";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
 
 export const metadata = {
   title: "Lifting Log",
@@ -45,12 +47,17 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <div id="modal"></div>
-            <Navbar sidebarItems={sidebarItems}></Navbar>
-            <div id="root" className="flex h-screen flex-col">
-              {/* TODO: Put main in a container so it doesn't span the whole screen on desktop */}
-              <main className="grow">{children}</main>
-            </div>
+            <SidebarProvider>
+              <AppSidebar />
+              <div id="modal"></div>
+              <div id="root" className="flex h-screen flex-col">
+                {/* TODO: Put main in a container so it doesn't span the whole screen on desktop */}
+                <main className="grow">
+                  <SidebarTrigger />
+                  {children}
+                </main>
+              </div>
+            </SidebarProvider>
           </ThemeProvider>
         </body>
       </html>
