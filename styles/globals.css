@@ -113,6 +113,16 @@
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.439 0 0);
   }
+
+/* iOS Date Input Fixes */
+input[type="date"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
 }
 /*
   ---break---
