@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import FormSets from "@/app/workouts/(form)/form-sets";
-import Spinner from "@/components/spinner";
+import { LoadingOverlay } from "@/components/loading-overlay";
 import {
   workoutFormSchema,
   TWorkoutFormSchema,
@@ -51,7 +51,7 @@ export default function WorkoutForm({
   workoutId: number;
   placeholderValues?: ExerciseThin[];
 }) {
-  const [showSpinner, setShowSpinner] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [exercises, setExercises] = useState<string[]>([]);
   const [popoverOpenStates, setPopoverOpenStates] = useState<boolean[]>([]);
 
@@ -69,14 +69,14 @@ export default function WorkoutForm({
   }, []);
 
   const onSubmit = async (values: TWorkoutFormSchema) => {
-    setShowSpinner(true);
+    setIsLoading(true);
     if (!editMode) {
       await addWorkout(values);
       router.push("/workouts");
     } else {
       await updateWorkout(workoutId, values);
     }
-    setShowSpinner(false);
+    setIsLoading(false);
   };
 
   const addWorkout = async (form: TWorkoutFormSchema) => {
@@ -139,7 +139,7 @@ export default function WorkoutForm({
 
   return (
     <div className="mx-auto max-w-2xl px-2 sm:px-6">
-      <Spinner show={showSpinner} />
+      <LoadingOverlay isLoading={isLoading} />
       <Toaster richColors position="top-center" />
       <div className="space-y-4 rounded-lg p-3 shadow-lg sm:space-y-6 sm:p-6">
         <h2 className="from-primary to-primary/60 mb-4 bg-linear-to-r bg-clip-text text-center text-2xl font-bold text-transparent sm:mb-8 sm:text-3xl">
@@ -373,7 +373,7 @@ export default function WorkoutForm({
               <Button
                 type="submit"
                 className="bg-primary hover:bg-primary/90 w-full text-base"
-                disabled={showSpinner}
+                disabled={isLoading}
               >
                 {editMode ? "Save" : "Create Workout"}
               </Button>
