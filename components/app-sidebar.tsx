@@ -67,36 +67,18 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Lifting Log</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton asChild size="lg" className="text-base">
                     <Link href={item.url} onClick={handleLinkClick}>
-                      <item.icon />
+                      <item.icon className="size-5!" />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  className="bg-primary text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground"
-                >
-                  <Link href="/workouts/create" onClick={handleLinkClick}>
-                    <Plus />
-                    <span>Create Workout</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -109,16 +91,16 @@ export function AppSidebar() {
                 afterSignOutUrl="/"
                 appearance={{
                   elements: {
-                    avatarBox: "h-9 w-9",
+                    avatarBox: "h-10 w-10",
                     userButtonTrigger: "focus:shadow-none",
                   },
                 }}
               />
               <div className="flex min-w-0 flex-1 flex-col">
-                <span className="truncate text-sm font-semibold">
+                <span className="truncate text-base font-semibold">
                   {user?.fullName || user?.username || "User"}
                 </span>
-                <span className="text-muted-foreground truncate text-xs">
+                <span className="text-muted-foreground truncate text-sm">
                   {user?.primaryEmailAddress?.emailAddress || ""}
                 </span>
               </div>
