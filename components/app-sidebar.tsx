@@ -1,4 +1,7 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
+"use client";
+
+import { BookOpen, Download, Dumbbell, Home, ListChecks } from "lucide-react";
+import Link from "next/link";
 
 import {
   Sidebar,
@@ -10,55 +13,62 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { ThemeToggle } from "./theme-toggle";
 import { UserButton } from "@clerk/nextjs";
 
-// TODO: Add actual menu items
 const items = [
   {
     title: "Home",
-    url: "#",
+    url: "/",
     icon: Home,
   },
   {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
+    title: "Workouts",
+    url: "/workouts",
+    icon: Dumbbell,
   },
   {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
+    title: "Exercises",
+    url: "/exercises",
+    icon: ListChecks,
   },
   {
-    title: "Search",
-    url: "#",
-    icon: Search,
+    title: "Export",
+    url: "/export",
+    icon: Download,
   },
   {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
+    title: "Guide",
+    url: "/guide",
+    icon: BookOpen,
   },
 ];
 
 export function AppSidebar() {
+  const { setOpenMobile, isMobile } = useSidebar();
+
+  const handleLinkClick = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
+
   return (
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel>Lifting Log</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
-                // TODO: Add logic for active state
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <Link href={item.url} onClick={handleLinkClick}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
