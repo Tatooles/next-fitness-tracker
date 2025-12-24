@@ -1,7 +1,11 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import "../styles/globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import {
+  SidebarProvider,
+  SidebarTrigger,
+  SidebarInset,
+} from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import type { Metadata } from "next";
 
@@ -28,13 +32,12 @@ export default function RootLayout({
             <SidebarProvider>
               <AppSidebar />
               <div id="modal"></div>
-              <div id="root" className="flex h-screen flex-col">
-                {/* TODO: Put main in a container so it doesn't span the whole screen on desktop */}
-                <main className="grow">
-                  <SidebarTrigger />
-                  {children}
+              <SidebarInset>
+                <main className="flex h-screen flex-col p-4">
+                  <SidebarTrigger className="mb-4" />
+                  <div className="grow">{children}</div>
                 </main>
-              </div>
+              </SidebarInset>
             </SidebarProvider>
           </ThemeProvider>
         </body>
