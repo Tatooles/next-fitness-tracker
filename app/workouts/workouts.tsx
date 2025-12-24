@@ -20,18 +20,18 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import Spinner from "@/components/spinner";
+import { LoadingOverlay } from "@/components/loading-overlay";
 import ExerciseInstanceItem from "@/components/exercise-instance-item";
 import { Workout, ExerciseInstance } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 
 export default function Workouts({ workouts }: { workouts: Workout[] }) {
-  const [showSpinner, setShowSpinner] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
 
   const deleteWorkout = async (workout: number) => {
-    setShowSpinner(true);
+    setIsLoading(true);
     await fetch(`/api/workouts/${workout}`, {
       method: "DELETE",
     })
@@ -46,7 +46,7 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
         console.error("An error occurred while deleting exercise:", error);
       })
       .finally(() => {
-        setShowSpinner(false);
+        setIsLoading(false);
       });
   };
 
@@ -121,7 +121,7 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
           </AccordionContent>
         </AccordionItem>
       ))}
-      <Spinner show={showSpinner} />
+      <LoadingOverlay isLoading={isLoading} />
     </Accordion>
   );
 }

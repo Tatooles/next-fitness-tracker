@@ -1,5 +1,5 @@
-import Spinner from "@/components/spinner";
+import { LoadingOverlay } from "@/components/loading-overlay";
 
 export default function Loading() {
-  return <Spinner show />;
+  return <LoadingOverlay isLoading={true} />;
 }

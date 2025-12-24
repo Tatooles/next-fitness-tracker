@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { GroupedExercise } from "@/app/api/exercises/history/route";
 import ExerciseInstanceItem from "./exercise-instance-item";
 import { History } from "lucide-react";
-import Spinner from "@/components/spinner";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function ExerciseHistoryModal({
   exerciseName,
@@ -101,7 +101,7 @@ export default function ExerciseHistoryModal({
         <div className="flex min-h-36 items-center justify-center">
           {loading && (
             <div className="flex h-full items-center justify-center pt-4">
-              <Spinner show={true} />
+              <Spinner />
             </div>
           )}
 
