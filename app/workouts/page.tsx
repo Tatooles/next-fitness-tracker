@@ -4,6 +4,7 @@ import { db } from "@/db/drizzle";
 import { Button } from "@/components/ui/button";
 import { Workout } from "@/lib/types";
 import Workouts from "./workouts";
+import { Plus } from "lucide-react";
 
 async function getWorkouts() {
   try {
@@ -41,7 +42,10 @@ export default async function WorkoutsPage() {
     <div className="mx-auto max-w-2xl p-5 text-center">
       <h1 className="mb-5 text-4xl font-semibold">Workouts</h1>
       <Button asChild className="mb-5 w-full sm:w-36">
-        <Link href="/workouts/create">Add Workout</Link>
+        <Link href="/workouts/create">
+          <Plus />
+          <span>Create Workout</span>
+        </Link>
       </Button>
       <Workouts workouts={workouts}></Workouts>
     </div>

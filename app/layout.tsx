@@ -33,7 +33,7 @@ export default function RootLayout({
               <AppSidebar />
               <div id="modal"></div>
               <SidebarInset>
-                <main className="flex h-screen flex-col p-4">
+                <main>
                   <SidebarTrigger className="mb-4" />
                   <div className="grow">{children}</div>
                 </main>
