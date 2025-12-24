@@ -1,6 +1,13 @@
 "use client";
 
-import { BookOpen, Download, Dumbbell, Home, ListChecks } from "lucide-react";
+import {
+  BookOpen,
+  Download,
+  Dumbbell,
+  Home,
+  ListChecks,
+  Plus,
+} from "lucide-react";
 import Link from "next/link";
 
 import {
@@ -75,10 +82,33 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  className="bg-primary text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground"
+                >
+                  <Link href="/workouts/create" onClick={handleLinkClick}>
+                    <Plus />
+                    <span>Create Workout</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <ThemeToggle />
-        <UserButton afterSignOutUrl="/" />
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <div className="bg-card flex items-center justify-between gap-2 rounded-lg border p-2">
+              <UserButton afterSignOutUrl="/" />
+              <ThemeToggle />
+            </div>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   );
