@@ -1,11 +1,11 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import "../styles/globals.css";
-import Navbar from "@/components/navbar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import type { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Lifting Log",
   description: "Log and track your workouts",
 };
@@ -15,28 +15,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const sidebarItems = [
-    {
-      title: "Home",
-      href: "/",
-    },
-    {
-      title: "Workouts",
-      href: "/workouts",
-    },
-    {
-      title: "Exercises",
-      href: "/exercises",
-    },
-    {
-      title: "Export",
-      href: "/export",
-    },
-    {
-      title: "Guide",
-      href: "/guide",
-    },
-  ];
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>

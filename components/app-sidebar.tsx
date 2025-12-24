@@ -14,7 +14,7 @@ import {
 import { ThemeToggle } from "./theme-toggle";
 import { UserButton } from "@clerk/nextjs";
 
-// Menu items.
+// TODO: Add actual menu items
 const items = [
   {
     title: "Home",
@@ -52,6 +52,7 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
+                // TODO: Add logic for active state
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <a href={item.url}>
@@ -65,7 +66,6 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      {/* TODO: Might be a god idea to move the clerk stuff into the sidebar */}
       <SidebarFooter>
         <ThemeToggle />
         <UserButton afterSignOutUrl="/" />
