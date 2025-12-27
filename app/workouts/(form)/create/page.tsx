@@ -1,5 +1,7 @@
 import WorkoutForm from "@/app/workouts/(form)/workout-form";
 
+export const dynamic = "force-dynamic";
+
 export default async function CreateWorkoutPage() {
   return (
     <WorkoutForm
