@@ -6,7 +6,7 @@ export default async function CreateWorkoutPage() {
       editMode={false}
       workoutId={-1}
       workoutValue={{
-        date: new Date().toLocaleDateString("en-CA"),
+        date: "",
         name: "",
         exercises: [
           { name: "", notes: "", sets: [{ weight: "", reps: "", rpe: "" }] },

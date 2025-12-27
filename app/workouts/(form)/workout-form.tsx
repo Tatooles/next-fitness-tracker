@@ -137,6 +137,14 @@ export default function WorkoutForm({
     name: "exercises",
   });
 
+  // Set today's date if date is empty (for create mode)
+  useEffect(() => {
+    if (!workoutValue.date) {
+      form.setValue("date", new Date().toLocaleDateString("en-CA"));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="mx-auto max-w-2xl px-2 sm:px-6">
       <LoadingOverlay isLoading={isLoading} />
