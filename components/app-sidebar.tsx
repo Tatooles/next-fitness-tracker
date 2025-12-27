@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  BookOpen,
-  Download,
-  Dumbbell,
-  Home,
-  ListChecks,
-  Plus,
-} from "lucide-react";
+import { BookOpen, Download, Dumbbell, Home, ListChecks } from "lucide-react";
 import Link from "next/link";
 
 import {
@@ -16,7 +9,6 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
