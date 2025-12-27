@@ -1,26 +1,15 @@
 import { and, eq } from "drizzle-orm";
 import { db } from "@/db/drizzle";
-import { exerciseView, set } from "@/db/schema";
+import { exercise, workout, set } from "@/db/schema";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { Set } from "@/lib/types";
-
-export interface ExerciseData {
-  set: Set | null;
-  exercise_view: {
-    userId: string | null;
-    name: string | null;
-    date: string | null;
-    id: number | null;
-    notes: string | null;
-    workoutId: number | null;
-  } | null;
-}
 
 export interface GroupedExercise {
   date: string;
   notes: string | null;
   workoutId: number | null;
+  workoutName: string | null;
   sets: Set[];
 }
 
@@ -31,38 +20,40 @@ export async function GET(request: NextRequest) {
   try {
     const data = await db
       .select()
-      .from(exerciseView)
-      .fullJoin(set, eq(set.exerciseId, exerciseView.id))
+      .from(exercise)
+      .innerJoin(workout, eq(exercise.workoutId, workout.id))
+      .leftJoin(set, eq(set.exerciseId, exercise.id))
       .where(
-        and(
-          eq(exerciseView.userId, userId!),
-          eq(exerciseView.name, exerciseName!),
-        ),
+        and(eq(workout.userId, userId!), eq(exercise.name, exerciseName!)),
       );
 
-    // Group exercise data by date into an object that is friendly to the front end
-    const grouped: Record<string, GroupedExercise> = {};
+    // Group exercise data by workoutId into an object that is friendly to the front end
+    const grouped: Record<number, GroupedExercise> = {};
 
-    data.forEach((exerciseData) => {
-      const { date, notes, workoutId } = exerciseData.exercise_view! || {};
+    console.log(data);
 
-      // Skip if missing date or set
-      if (!date || !exerciseData.set) return;
+    data.forEach((row) => {
+      const { date, name } = row.workout;
+      const { notes, workoutId } = row.exercise;
 
-      if (!grouped[date]) {
-        grouped[date] = {
+      // Skip if missing workoutId or set
+      if (!workoutId || !row.set) return;
+
+      if (!grouped[workoutId]) {
+        grouped[workoutId] = {
           date,
           notes,
           workoutId,
+          workoutName: name,
           sets: [],
         };
       }
 
-      // Add set to the respective date
-      grouped[date].sets.push(exerciseData.set);
+      // Add set to the respective workout
+      grouped[workoutId].sets.push(row.set);
 
       // Sort sets by id asc
-      grouped[date].sets.sort((a, b) => a.id - b.id);
+      grouped[workoutId].sets.sort((a, b) => a.id - b.id);
     });
 
     // Convert back to array and sort

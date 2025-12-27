@@ -10,7 +10,7 @@ export default function ExerciseInstanceItem({
   showName: boolean;
   showDate: boolean;
 }) {
-  const { name, date, sets, notes } = exercise;
+  const { name, date, sets, notes, workoutName } = exercise;
 
   return (
     <div className="border-border overflow-hidden rounded-lg border shadow-xs">
@@ -21,11 +21,18 @@ export default function ExerciseInstanceItem({
               {name}
             </h3>
           )}
-          {showDate && (
-            <p className="text-muted-foreground text-sm">
-              {date ? formatDate(date) : "Date not available"}
-            </p>
-          )}
+          <div className="flex items-center gap-2">
+            {showDate && (
+              <p className="text-muted-foreground text-sm">
+                {date ? formatDate(date) : "Date not available"}
+              </p>
+            )}
+            {workoutName && (
+              <span className="bg-primary/10 text-primary max-w-[180px] truncate rounded-full px-2.5 py-0.5 text-xs font-medium">
+                {workoutName}
+              </span>
+            )}
+          </div>
         </div>
       )}
       <div className="p-4">
