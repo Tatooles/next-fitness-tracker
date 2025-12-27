@@ -27,8 +27,8 @@ export async function GET(request: NextRequest) {
         and(eq(workout.userId, userId!), eq(exercise.name, exerciseName!)),
       );
 
-    // Group exercise data by date into an object that is friendly to the front end
-    const grouped: Record<string, GroupedExercise> = {};
+    // Group exercise data by workoutId into an object that is friendly to the front end
+    const grouped: Record<number, GroupedExercise> = {};
 
     console.log(data);
 
@@ -36,11 +36,11 @@ export async function GET(request: NextRequest) {
       const { date, name } = row.workout;
       const { notes, workoutId } = row.exercise;
 
-      // Skip if missing date or set
-      if (!date || !row.set) return;
+      // Skip if missing workoutId or set
+      if (!workoutId || !row.set) return;
 
-      if (!grouped[date]) {
-        grouped[date] = {
+      if (!grouped[workoutId]) {
+        grouped[workoutId] = {
           date,
           notes,
           workoutId,
@@ -49,11 +49,11 @@ export async function GET(request: NextRequest) {
         };
       }
 
-      // Add set to the respective date
-      grouped[date].sets.push(row.set);
+      // Add set to the respective workout
+      grouped[workoutId].sets.push(row.set);
 
       // Sort sets by id asc
-      grouped[date].sets.sort((a, b) => a.id - b.id);
+      grouped[workoutId].sets.sort((a, b) => a.id - b.id);
     });
 
     // Convert back to array and sort
