@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db/drizzle";
 import ExercisesUI from "./exercises-ui";
 import { ExerciseSummary } from "@/lib/types";
-import { exerciseView, set } from "@/db/schema";
+import { exercise, workout, set } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 async function getExercises() {
@@ -12,9 +12,10 @@ async function getExercises() {
 
     const exerciseData = await db
       .select()
-      .from(exerciseView)
-      .fullJoin(set, eq(set.exerciseId, exerciseView.id))
-      .where(eq(exerciseView.userId, userId!));
+      .from(exercise)
+      .innerJoin(workout, eq(exercise.workoutId, workout.id))
+      .leftJoin(set, eq(set.exerciseId, exercise.id))
+      .where(eq(workout.userId, userId!));
 
     return exerciseData;
   } catch (error) {
@@ -29,25 +30,31 @@ async function getExerciseSummary() {
   const summaries: ExerciseSummary[] = [];
 
   // Might be able to use object.group
-  exercises.forEach(({ exercise_view, set }) => {
-    if (!exercise_view?.name) return;
+  exercises.forEach((row) => {
+    const { exercise, workout, set } = row;
+    if (!exercise?.name) return;
 
-    let exerciseSummary = summaries.find((g) => g.name === exercise_view.name);
+    let exerciseSummary = summaries.find((g) => g.name === exercise.name);
 
     if (!exerciseSummary) {
       // Create new exercise summary if it doesn't exist
-      exerciseSummary = { name: exercise_view.name, exercises: [] };
+      exerciseSummary = { name: exercise.name, exercises: [] };
       summaries.push(exerciseSummary);
     }
 
     const exerciseInstance = exerciseSummary.exercises.find(
-      (e) => e.id === exercise_view?.id,
+      (e) => e.id === exercise.id,
     );
 
     if (!exerciseInstance) {
       // Create new exercise instance if it doesn't exist
       exerciseSummary.exercises.push({
-        ...exercise_view,
+        id: exercise.id,
+        name: exercise.name,
+        notes: exercise.notes,
+        workoutId: exercise.workoutId,
+        date: workout.date,
+        userId: workout.userId,
         sets: set ? [set] : [],
       });
     } else if (set) {
