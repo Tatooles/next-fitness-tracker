@@ -35,6 +35,7 @@ export interface DateExercise {
   name?: string | null;
   notes?: string | null;
   workoutId?: number | null;
+  workoutName?: string | null;
   sets: Set[];
 }
 
