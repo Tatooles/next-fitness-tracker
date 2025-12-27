@@ -9,6 +9,7 @@ export interface GroupedExercise {
   date: string;
   notes: string | null;
   workoutId: number | null;
+  workoutName: string | null;
   sets: Set[];
 }
 
@@ -29,8 +30,10 @@ export async function GET(request: NextRequest) {
     // Group exercise data by date into an object that is friendly to the front end
     const grouped: Record<string, GroupedExercise> = {};
 
+    console.log(data);
+
     data.forEach((row) => {
-      const { date } = row.workout;
+      const { date, name } = row.workout;
       const { notes, workoutId } = row.exercise;
 
       // Skip if missing date or set
@@ -41,6 +44,7 @@ export async function GET(request: NextRequest) {
           date,
           notes,
           workoutId,
+          workoutName: name,
           sets: [],
         };
       }
