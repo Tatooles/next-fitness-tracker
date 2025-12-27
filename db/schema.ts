@@ -40,6 +40,7 @@ export const exerciseView = sqliteView("exercise_view", {
   name: text("name"),
   notes: text("notes"),
   workoutId: integer("workout_id"),
+  workoutName: text("workout_name"),
   date: text("date"),
   userId: text("user_id"),
 }).as(
@@ -49,6 +50,7 @@ export const exerciseView = sqliteView("exercise_view", {
       e.name AS name,
       e.notes AS notes,
       e.workout_id AS workout_id,
+      w.name AS workout_name,
       w.date AS date,
       w.user_id AS user_id
     FROM exercise e

@@ -1,6 +1,6 @@
 import { and, eq } from "drizzle-orm";
 import { db } from "@/db/drizzle";
-import { exerciseView, set, workout } from "@/db/schema";
+import { exerciseView, set } from "@/db/schema";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { Set } from "@/lib/types";
@@ -22,7 +22,6 @@ export async function GET(request: NextRequest) {
       .select()
       .from(exerciseView)
       .fullJoin(set, eq(set.exerciseId, exerciseView.id))
-      .innerJoin(workout, eq(workout.id, exerciseView.workoutId))
       .where(
         and(
           eq(exerciseView.userId, userId!),
@@ -34,8 +33,8 @@ export async function GET(request: NextRequest) {
     const grouped: Record<string, GroupedExercise> = {};
 
     data.forEach((exerciseData) => {
-      const { date, notes, workoutId } = exerciseData.exercise_view! || {};
-      const workoutName = exerciseData.workout?.name || null;
+      const { date, notes, workoutId, workoutName } =
+        exerciseData.exercise_view! || {};
 
       // Skip if missing date or set
       if (!date || !exerciseData.set) return;
