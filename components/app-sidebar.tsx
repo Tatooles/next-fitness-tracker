@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpen, Download, Dumbbell, Home, ListChecks } from "lucide-react";
+import { Download, Dumbbell, Home, ListChecks } from "lucide-react";
 import Link from "next/link";
 
 import {
@@ -9,6 +9,7 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -38,11 +39,6 @@ const items = [
     url: "/export",
     icon: Download,
   },
-  {
-    title: "Guide",
-    url: "/guide",
-    icon: BookOpen,
-  },
 ];
 
 export function AppSidebar() {
@@ -60,6 +56,7 @@ export function AppSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
+            <SidebarGroupLabel>Lifting Log</SidebarGroupLabel>
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
