@@ -34,8 +34,8 @@ export default function RootLayout({
               <div id="modal"></div>
               <SidebarInset>
                 <main>
-                  <SidebarTrigger className="mb-4" />
-                  <div className="grow">{children}</div>
+                  <SidebarTrigger />
+                  {children}
                 </main>
               </SidebarInset>
             </SidebarProvider>
