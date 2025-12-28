@@ -30,7 +30,6 @@ export default function FormSets({
       {fields.map((field, index) => (
         <div key={field.id} className="flex items-center justify-between gap-2">
           <Controller
-            key={field.id}
             name={`exercises.${exerciseIndex}.sets.${index}.weight`}
             control={control}
             render={({ field }) => (
@@ -48,7 +47,6 @@ export default function FormSets({
             )}
           />
           <Controller
-            key={field.id}
             name={`exercises.${exerciseIndex}.sets.${index}.reps`}
             control={control}
             render={({ field }) => (
@@ -66,7 +64,6 @@ export default function FormSets({
             )}
           />
           <Controller
-            key={field.id}
             name={`exercises.${exerciseIndex}.sets.${index}.rpe`}
             control={control}
             render={({ field }) => (

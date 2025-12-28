@@ -5,30 +5,16 @@ import { useForm, useFieldArray, useWatch, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import FormSets from "@/app/workouts/(form)/form-sets";
+import ExerciseSelector from "@/app/workouts/(form)/exercise-selector";
 import { LoadingOverlay } from "@/components/loading-overlay";
 import {
   workoutFormSchema,
   TWorkoutFormSchema,
   ExerciseThin,
 } from "@/lib/types";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { ChevronsUpDown, Trash2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Trash2 } from "lucide-react";
 import ExerciseHistoryModal from "@/components/exercise-history-modal";
 import { toast, Toaster } from "sonner";
 import * as z from "zod";
@@ -53,10 +39,6 @@ export default function WorkoutForm({
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const [exercises, setExercises] = useState<string[]>([]);
-  const [popoverOpenStates, setPopoverOpenStates] = useState<boolean[]>([]);
-
-  const [exerciseNameValue, setExerciseNameValue] = useState("");
-
   const router = useRouter();
 
   useEffect(() => {
@@ -234,95 +216,11 @@ export default function WorkoutForm({
                       render={({ field, fieldState }) => (
                         <Field className="flex-1">
                           <div className="flex items-center gap-2">
-                            <Popover
-                              open={popoverOpenStates[index]}
-                              onOpenChange={(isOpen) => {
-                                setPopoverOpenStates((prev) => {
-                                  const newState = [...prev];
-                                  newState[index] = isOpen;
-                                  return newState;
-                                });
-                              }}
-                            >
-                              <PopoverTrigger asChild>
-                                <Button
-                                  variant="outline"
-                                  role="combobox"
-                                  aria-expanded={popoverOpenStates[index]}
-                                  className={cn(
-                                    "bg-background/50 hover:bg-background/80 h-10 w-56 justify-between text-base transition-colors sm:h-11 sm:w-md",
-                                    !field.value && "text-muted-foreground",
-                                  )}
-                                >
-                                  <span className="truncate">
-                                    {field.value
-                                      ? field.value
-                                      : "Select exercise"}
-                                  </span>
-                                  <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
-                                </Button>
-                              </PopoverTrigger>
-                              <PopoverContent
-                                className="w-full p-0"
-                                align="start"
-                              >
-                                <Command>
-                                  <CommandInput
-                                    placeholder="Search exercise..."
-                                    className="h-11 text-base"
-                                    onInput={(e) =>
-                                      setExerciseNameValue(
-                                        e.currentTarget.value,
-                                      )
-                                    }
-                                    onKeyDown={(e) => {
-                                      if (
-                                        e.key === "Enter" &&
-                                        exerciseNameValue.trim() !== ""
-                                      ) {
-                                        e.preventDefault();
-                                        form.setValue(
-                                          `exercises.${index}.name`,
-                                          exerciseNameValue,
-                                        );
-                                        setPopoverOpenStates((prev) => {
-                                          const newState = [...prev];
-                                          newState[index] = false;
-                                          return newState;
-                                        });
-                                      }
-                                    }}
-                                  />
-                                  <CommandList>
-                                    <CommandEmpty>
-                                      No exercise found.
-                                    </CommandEmpty>
-                                    <CommandGroup>
-                                      {exercises.map((exercise) => (
-                                        <CommandItem
-                                          value={exercise}
-                                          key={exercise}
-                                          onSelect={() => {
-                                            form.setValue(
-                                              `exercises.${index}.name`,
-                                              exercise,
-                                            );
-                                            setPopoverOpenStates((prev) => {
-                                              const newState = [...prev];
-                                              newState[index] = false;
-                                              return newState;
-                                            });
-                                          }}
-                                          className="hover:bg-primary/10 cursor-pointer text-base transition-colors"
-                                        >
-                                          {exercise}
-                                        </CommandItem>
-                                      ))}
-                                    </CommandGroup>
-                                  </CommandList>
-                                </Command>
-                              </PopoverContent>
-                            </Popover>
+                            <ExerciseSelector
+                              value={field.value}
+                              onChange={field.onChange}
+                              exercises={exercises}
+                            />
                             {watchedExercises?.[index]?.name &&
                               exercises.includes(
                                 watchedExercises[index].name,
