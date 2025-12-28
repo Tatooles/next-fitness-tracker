@@ -38,6 +38,7 @@ export default function FormSets({
               <Input
                 {...field}
                 id={field.name}
+                // TODO: Placeholder values not working
                 placeholder={
                   placeholderValues?.find((x) => x.name === exerciseName)?.sets[
                     index

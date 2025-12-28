@@ -1,19 +1,11 @@
 "use client";
 import { Controller, Control, UseFormGetValues } from "react-hook-form";
-import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { History, MoreVertical, Trash2 } from "lucide-react";
 import { Field, FieldError } from "@/components/ui/field";
 import ExerciseSelector from "@/components/workout-form/exercise-selector";
+import ExerciseActionsMenu from "@/components/workout-form/exercise-actions-menu";
 import FormSets from "@/components/workout-form/form-sets";
-import ExerciseHistoryModal from "@/components/exercise/exercise-history-modal";
 import { TWorkoutFormSchema, ExerciseThin } from "@/lib/types";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 interface ExerciseItemProps {
   index: number;
@@ -51,36 +43,11 @@ export default function ExerciseItem({
                     onChange={field.onChange}
                     exercises={exercises}
                   />
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="shrink-0 transition-colors"
-                      >
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <ExerciseHistoryModal
-                        exerciseName={exerciseName}
-                        filterOutWorkoutId={workoutId}
-                      >
-                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                          <History className="h-4 w-4" />
-                          View History
-                        </DropdownMenuItem>
-                      </ExerciseHistoryModal>
-                      <DropdownMenuItem
-                        variant="destructive"
-                        onClick={onRemove}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                        Delete Exercise
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <ExerciseActionsMenu
+                    exerciseName={exerciseName}
+                    workoutId={workoutId}
+                    onDelete={onRemove}
+                  />
                 </div>
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
