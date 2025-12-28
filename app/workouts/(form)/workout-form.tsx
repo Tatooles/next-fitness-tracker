@@ -32,7 +32,13 @@ import { cn } from "@/lib/utils";
 import ExerciseHistoryModal from "@/components/exercise-history-modal";
 import { toast, Toaster } from "sonner";
 import * as z from "zod";
-import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import {
+  Field,
+  FieldError,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from "@/components/ui/field";
 
 export default function WorkoutForm({
   editMode,
@@ -73,6 +79,11 @@ export default function WorkoutForm({
     setIsLoading(false);
   };
 
+  /**
+   * Creates a new workout with the values from the form
+   *
+   * @param form the form values to create the workout with
+   */
   const addWorkout = async (form: TWorkoutFormSchema) => {
     await fetch("/api/workouts", {
       method: "POST",
@@ -92,6 +103,12 @@ export default function WorkoutForm({
       });
   };
 
+  /**
+   * Updates an existing workout with the values from the form
+   *
+   * @param id the id of the workout to update
+   * @param form the form values to update the workout with
+   */
   const updateWorkout = async (id: number, form: TWorkoutFormSchema) => {
     await fetch(`/api/workouts/${id}`, {
       method: "PATCH",
@@ -161,6 +178,8 @@ export default function WorkoutForm({
                     Date
                   </FieldLabel>
                   <Input
+                    id={field.name}
+                    aria-invalid={fieldState.invalid}
                     type="date"
                     className="bg-background/50 hover:bg-background/80 h-10 w-full text-base transition-colors sm:h-11"
                     {...field}
@@ -197,23 +216,23 @@ export default function WorkoutForm({
             />
           </div>
 
-          <div className="space-y-3 sm:space-y-4">
-            <Label className="text-base font-semibold sm:text-lg">
+          <FieldSet className="space-y-3 sm:space-y-4">
+            <FieldLegend className="text-base font-semibold sm:text-lg">
               Exercises
-            </Label>
+            </FieldLegend>
 
-            {/* {fields.map((field, index) => (
+            {fields.map((field, index) => (
               <div
                 className="relative rounded-lg border p-3 shadow-xs transition-all hover:shadow-md"
                 key={field.id}
               >
                 <div className="space-y-4">
                   <div className="flex items-center gap-2">
-                    <FormField
+                    <Controller
                       control={form.control}
                       name={`exercises.${index}.name`}
-                      render={({ field }) => (
-                        <FormItem className="flex-1">
+                      render={({ field, fieldState }) => (
+                        <Field className="flex-1">
                           <div className="flex items-center gap-2">
                             <Popover
                               open={popoverOpenStates[index]}
@@ -226,24 +245,22 @@ export default function WorkoutForm({
                               }}
                             >
                               <PopoverTrigger asChild>
-                                <FormControl>
-                                  <Button
-                                    variant="outline"
-                                    role="combobox"
-                                    aria-expanded={popoverOpenStates[index]}
-                                    className={cn(
-                                      "bg-background/50 hover:bg-background/80 h-10 w-56 justify-between text-base transition-colors sm:h-11 sm:w-md",
-                                      !field.value && "text-muted-foreground",
-                                    )}
-                                  >
-                                    <span className="truncate">
-                                      {field.value
-                                        ? field.value
-                                        : "Select exercise"}
-                                    </span>
-                                    <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
-                                  </Button>
-                                </FormControl>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  aria-expanded={popoverOpenStates[index]}
+                                  className={cn(
+                                    "bg-background/50 hover:bg-background/80 h-10 w-56 justify-between text-base transition-colors sm:h-11 sm:w-md",
+                                    !field.value && "text-muted-foreground",
+                                  )}
+                                >
+                                  <span className="truncate">
+                                    {field.value
+                                      ? field.value
+                                      : "Select exercise"}
+                                  </span>
+                                  <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+                                </Button>
                               </PopoverTrigger>
                               <PopoverContent
                                 className="w-full p-0"
@@ -325,8 +342,10 @@ export default function WorkoutForm({
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>
-                          <FormMessage />
-                        </FormItem>
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
                       )}
                     />
                   </div>
@@ -339,27 +358,29 @@ export default function WorkoutForm({
                     placeholderValues={placeholderValues}
                   />
 
-                  <FormField
+                  <Controller
                     control={form.control}
                     name={`exercises.${index}.notes`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Add notes"
-                            className="bg-background/50 hover:bg-background/80 resize-none text-base transition-colors"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={fieldState.invalid}>
+                        <Textarea
+                          {...field}
+                          id={field.name}
+                          aria-invalid={fieldState.invalid}
+                          placeholder="Add notes"
+                          className="bg-background/50 hover:bg-background/80 resize-none text-base transition-colors"
+                        />
+                        {fieldState.invalid && (
+                          <FieldError errors={[fieldState.error]} />
+                        )}
+                      </Field>
                     )}
                   />
                 </div>
               </div>
-            ))} */}
+            ))}
 
-            {/* <Button
+            <Button
               type="button"
               variant="outline"
               onClick={() =>
@@ -372,8 +393,8 @@ export default function WorkoutForm({
               className="hover:bg-primary/10 w-full text-base"
             >
               Add Exercise
-            </Button> */}
-          </div>
+            </Button>
+          </FieldSet>
 
           <div className="flex justify-end pt-2">
             <Button

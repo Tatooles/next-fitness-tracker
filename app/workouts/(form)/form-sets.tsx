@@ -1,13 +1,8 @@
 import { Input } from "@/components/ui/input";
-import { useFieldArray } from "react-hook-form";
+import { useFieldArray, Controller } from "react-hook-form";
 import { Control, UseFormGetValues } from "react-hook-form";
 import { ExerciseThin, TWorkoutFormSchema } from "@/lib/types";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-} from "@/components/ui/form";
+import { FieldLegend, FieldSet } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 
@@ -30,65 +25,62 @@ export default function FormSets({
   });
 
   return (
-    <div className="flex flex-col gap-2">
+    <FieldSet className="flex flex-col gap-2">
+      <FieldLegend variant="label">Sets</FieldLegend>
       {fields.map((field, index) => (
         <div key={field.id} className="flex items-center justify-between gap-2">
-          <FormLabel className="whitespace-nowrap">Set {index + 1}</FormLabel>
-          <FormField
-            control={control}
+          <Controller
+            key={field.id}
             name={`exercises.${exerciseIndex}.sets.${index}.weight`}
+            control={control}
             render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input
-                    placeholder={
-                      placeholderValues?.find((x) => x.name === exerciseName)
-                        ?.sets[index]?.weight ?? "Weight"
-                    }
-                    inputMode="decimal"
-                    className="w-20 text-[16px]"
-                    {...field}
-                  />
-                </FormControl>
-              </FormItem>
+              <Input
+                {...field}
+                id={field.name}
+                placeholder={
+                  placeholderValues?.find((x) => x.name === exerciseName)?.sets[
+                    index
+                  ]?.weight ?? "Weight"
+                }
+                inputMode="decimal"
+                className="w-20 text-[16px]"
+              />
             )}
           />
-          <FormField
-            control={control}
+          <Controller
+            key={field.id}
             name={`exercises.${exerciseIndex}.sets.${index}.reps`}
+            control={control}
             render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input
-                    placeholder={
-                      placeholderValues?.find((x) => x.name === exerciseName)
-                        ?.sets[index]?.reps ?? "Reps"
-                    }
-                    inputMode="decimal"
-                    className="w-16 text-[16px]"
-                    {...field}
-                  />
-                </FormControl>
-              </FormItem>
+              <Input
+                {...field}
+                id={field.name}
+                placeholder={
+                  placeholderValues?.find((x) => x.name === exerciseName)?.sets[
+                    index
+                  ]?.reps ?? "Reps"
+                }
+                inputMode="decimal"
+                className="w-16 text-[16px]"
+              />
             )}
           />
-          <FormField
-            control={control}
+          <Controller
+            key={field.id}
             name={`exercises.${exerciseIndex}.sets.${index}.rpe`}
+            control={control}
             render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input
-                    placeholder={
-                      placeholderValues?.find((x) => x.name === exerciseName)
-                        ?.sets[index]?.rpe ?? "RPE"
-                    }
-                    inputMode="decimal"
-                    className="w-20 text-[16px]"
-                    {...field}
-                  />
-                </FormControl>
-              </FormItem>
+              <Input
+                {...field}
+                id={field.name}
+                placeholder={
+                  placeholderValues?.find((x) => x.name === exerciseName)?.sets[
+                    index
+                  ]?.rpe ?? "RPE"
+                }
+                inputMode="decimal"
+                className="w-20 text-[16px]"
+              />
             )}
           />
           <Button
@@ -142,6 +134,6 @@ export default function FormSets({
           </Button>
         )}
       </div>
-    </div>
+    </FieldSet>
   );
 }

@@ -24,6 +24,11 @@ async function getWorkout(id: number) {
   return convertToFormType(data);
 }
 
+/**
+ * Populates placeholder values for a template workout
+ * @param workout the workout to populate placeholder values with
+ * @returns a form poulated with placeholder values
+ */
 const convertToFormType = (
   workout: Workout | undefined,
 ): TWorkoutFormSchema | undefined => {
@@ -34,12 +39,6 @@ const convertToFormType = (
     exercises: workout.exercises.map((exercise) => ({
       name: exercise.name,
       notes: "",
-      // Would rather this somehow prefill the placeholder, rather than the actual field
-      // But where do I store that?
-      // Would need an optional prop into WorkoutForm
-
-      // Somehow we need an emptied out template to structure the form
-      // And and the real values for the placeholders
       sets: exercise.sets.map((set) => ({
         reps: set.reps,
         weight: set.weight,
@@ -62,8 +61,6 @@ const zeroWorkout = (workout?: TWorkoutFormSchema) => {
       set.weight = "";
       set.rpe = "";
     });
-
-    // Clear notes??
   });
 
   return zeroedWorkout;
