@@ -1,30 +1,20 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm, useFieldArray, useWatch, Controller } from "react-hook-form";
+import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import FormSets from "@/app/workouts/(form)/form-sets";
-import ExerciseSelector from "@/app/workouts/(form)/exercise-selector";
+import ExerciseItem from "@/app/workouts/(form)/exercise-item";
+import WorkoutFormHeader from "@/app/workouts/(form)/workout-form-header";
 import { LoadingOverlay } from "@/components/loading-overlay";
 import {
   workoutFormSchema,
   TWorkoutFormSchema,
   ExerciseThin,
 } from "@/lib/types";
-import { Trash2 } from "lucide-react";
-import ExerciseHistoryModal from "@/components/exercise-history-modal";
 import { toast, Toaster } from "sonner";
 import * as z from "zod";
-import {
-  Field,
-  FieldError,
-  FieldLabel,
-  FieldLegend,
-  FieldSet,
-} from "@/components/ui/field";
+import { FieldLegend, FieldSet } from "@/components/ui/field";
 
 export default function WorkoutForm({
   editMode,
@@ -147,56 +137,7 @@ export default function WorkoutForm({
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-4 sm:space-y-6"
         >
-          <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
-            <Controller
-              name="date"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel
-                    htmlFor={field.name}
-                    className="text-base font-semibold"
-                  >
-                    Date
-                  </FieldLabel>
-                  <Input
-                    id={field.name}
-                    aria-invalid={fieldState.invalid}
-                    type="date"
-                    className="bg-background/50 hover:bg-background/80 h-10 w-full text-base transition-colors sm:h-11"
-                    {...field}
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-            <Controller
-              name="name"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel
-                    htmlFor={field.name}
-                    className="text-base font-semibold"
-                  >
-                    Workout Name
-                  </FieldLabel>
-                  <Input
-                    id={field.name}
-                    aria-invalid={fieldState.invalid}
-                    className="bg-background/50 hover:bg-background/80 h-10 text-base transition-colors sm:h-11"
-                    placeholder="Enter workout name"
-                    {...field}
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-          </div>
+          <WorkoutFormHeader control={form.control} />
 
           <FieldSet className="space-y-3 sm:space-y-4">
             <FieldLegend className="text-base font-semibold sm:text-lg">
@@ -204,78 +145,17 @@ export default function WorkoutForm({
             </FieldLegend>
 
             {fields.map((field, index) => (
-              <div
-                className="relative rounded-lg border p-3 shadow-xs transition-all hover:shadow-md"
+              <ExerciseItem
                 key={field.id}
-              >
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2">
-                    <Controller
-                      control={form.control}
-                      name={`exercises.${index}.name`}
-                      render={({ field, fieldState }) => (
-                        <Field className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <ExerciseSelector
-                              value={field.value}
-                              onChange={field.onChange}
-                              exercises={exercises}
-                            />
-                            {watchedExercises?.[index]?.name &&
-                              exercises.includes(
-                                watchedExercises[index].name,
-                              ) && (
-                                <ExerciseHistoryModal
-                                  exerciseName={watchedExercises[index].name}
-                                  filterOutWorkoutId={workoutId}
-                                />
-                              )}
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              className="hover:bg-destructive/10 hover:text-destructive shrink-0 transition-colors"
-                              onClick={() => remove(index)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                          {fieldState.invalid && (
-                            <FieldError errors={[fieldState.error]} />
-                          )}
-                        </Field>
-                      )}
-                    />
-                  </div>
-
-                  <FormSets
-                    exerciseName={watchedExercises?.[index]?.name || ""}
-                    exerciseIndex={index}
-                    control={form.control}
-                    getValues={form.getValues}
-                    placeholderValues={placeholderValues}
-                  />
-
-                  <Controller
-                    control={form.control}
-                    name={`exercises.${index}.notes`}
-                    render={({ field, fieldState }) => (
-                      <Field data-invalid={fieldState.invalid}>
-                        <Textarea
-                          {...field}
-                          id={field.name}
-                          aria-invalid={fieldState.invalid}
-                          placeholder="Add notes"
-                          className="bg-background/50 hover:bg-background/80 resize-none text-base transition-colors"
-                        />
-                        {fieldState.invalid && (
-                          <FieldError errors={[fieldState.error]} />
-                        )}
-                      </Field>
-                    )}
-                  />
-                </div>
-              </div>
+                index={index}
+                control={form.control}
+                getValues={form.getValues}
+                exercises={exercises}
+                exerciseName={watchedExercises?.[index]?.name || ""}
+                onRemove={() => remove(index)}
+                workoutId={workoutId}
+                placeholderValues={placeholderValues}
+              />
             ))}
 
             <Button
