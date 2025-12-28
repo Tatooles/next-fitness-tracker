@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm, useFieldArray, useWatch } from "react-hook-form";
+import { useForm, useFieldArray, useWatch, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,14 +14,6 @@ import {
   TWorkoutFormSchema,
   ExerciseThin,
 } from "@/lib/types";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import {
   Command,
   CommandEmpty,
@@ -39,6 +31,8 @@ import { ChevronsUpDown, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ExerciseHistoryModal from "@/components/exercise-history-modal";
 import { toast, Toaster } from "sonner";
+import * as z from "zod";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 
 export default function WorkoutForm({
   editMode,
@@ -119,17 +113,14 @@ export default function WorkoutForm({
       });
   };
 
-  // Likely need to remove workoutValues here, and code each placeholder value to be a value || placeholder text
-  // May still need a workoutValue though, just with empty values so we get the correct workouts and set counts
-  // Then update the placeholder since the value will be empty, therefore showing the placeholder
-  const form = useForm<TWorkoutFormSchema>({
+  const form = useForm<z.infer<typeof workoutFormSchema>>({
     resolver: zodResolver(workoutFormSchema),
     values: workoutValue,
   });
 
   const { fields, append, remove } = useFieldArray({
-    name: "exercises",
     control: form.control,
+    name: "exercises",
   });
 
   const watchedExercises = useWatch({
@@ -153,241 +144,247 @@ export default function WorkoutForm({
         <h2 className="from-primary to-primary/60 mb-4 bg-linear-to-r bg-clip-text text-center text-2xl font-bold text-transparent sm:mb-8 sm:text-3xl">
           {workoutId !== -1 ? "Edit Workout" : "Create Workout"}
         </h2>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4 sm:space-y-6"
-          >
-            <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="date"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-base font-semibold">
-                      Date
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="date"
-                        className="bg-background/50 hover:bg-background/80 h-10 w-full text-base transition-colors sm:h-11"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-base font-semibold">
-                      Workout Name
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        className="bg-background/50 hover:bg-background/80 h-10 text-base transition-colors sm:h-11"
-                        placeholder="Enter workout name"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-4 sm:space-y-6"
+        >
+          <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
+            <Controller
+              name="date"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel
+                    htmlFor={field.name}
+                    className="text-base font-semibold"
+                  >
+                    Date
+                  </FieldLabel>
+                  <Input
+                    type="date"
+                    className="bg-background/50 hover:bg-background/80 h-10 w-full text-base transition-colors sm:h-11"
+                    {...field}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+            <Controller
+              name="name"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel
+                    htmlFor={field.name}
+                    className="text-base font-semibold"
+                  >
+                    Workout Name
+                  </FieldLabel>
+                  <Input
+                    id={field.name}
+                    aria-invalid={fieldState.invalid}
+                    className="bg-background/50 hover:bg-background/80 h-10 text-base transition-colors sm:h-11"
+                    placeholder="Enter workout name"
+                    {...field}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+          </div>
 
-            <div className="space-y-3 sm:space-y-4">
-              <Label className="text-base font-semibold sm:text-lg">
-                Exercises
-              </Label>
+          <div className="space-y-3 sm:space-y-4">
+            <Label className="text-base font-semibold sm:text-lg">
+              Exercises
+            </Label>
 
-              {fields.map((field, index) => (
-                <div
-                  className="relative rounded-lg border p-3 shadow-xs transition-all hover:shadow-md"
-                  key={field.id}
-                >
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2">
-                      <FormField
-                        control={form.control}
-                        name={`exercises.${index}.name`}
-                        render={({ field }) => (
-                          <FormItem className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <Popover
-                                open={popoverOpenStates[index]}
-                                onOpenChange={(isOpen) => {
-                                  setPopoverOpenStates((prev) => {
-                                    const newState = [...prev];
-                                    newState[index] = isOpen;
-                                    return newState;
-                                  });
-                                }}
-                              >
-                                <PopoverTrigger asChild>
-                                  <FormControl>
-                                    <Button
-                                      variant="outline"
-                                      role="combobox"
-                                      aria-expanded={popoverOpenStates[index]}
-                                      className={cn(
-                                        "bg-background/50 hover:bg-background/80 h-10 w-56 justify-between text-base transition-colors sm:h-11 sm:w-md",
-                                        !field.value && "text-muted-foreground",
-                                      )}
-                                    >
-                                      <span className="truncate">
-                                        {field.value
-                                          ? field.value
-                                          : "Select exercise"}
-                                      </span>
-                                      <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
-                                    </Button>
-                                  </FormControl>
-                                </PopoverTrigger>
-                                <PopoverContent
-                                  className="w-full p-0"
-                                  align="start"
-                                >
-                                  <Command>
-                                    <CommandInput
-                                      placeholder="Search exercise..."
-                                      className="h-11 text-base"
-                                      onInput={(e) =>
-                                        setExerciseNameValue(
-                                          e.currentTarget.value,
-                                        )
-                                      }
-                                      onKeyDown={(e) => {
-                                        if (
-                                          e.key === "Enter" &&
-                                          exerciseNameValue.trim() !== ""
-                                        ) {
-                                          e.preventDefault();
-                                          form.setValue(
-                                            `exercises.${index}.name`,
-                                            exerciseNameValue,
-                                          );
-                                          setPopoverOpenStates((prev) => {
-                                            const newState = [...prev];
-                                            newState[index] = false;
-                                            return newState;
-                                          });
-                                        }
-                                      }}
-                                    />
-                                    <CommandList>
-                                      <CommandEmpty>
-                                        No exercise found.
-                                      </CommandEmpty>
-                                      <CommandGroup>
-                                        {exercises.map((exercise) => (
-                                          <CommandItem
-                                            value={exercise}
-                                            key={exercise}
-                                            onSelect={() => {
-                                              form.setValue(
-                                                `exercises.${index}.name`,
-                                                exercise,
-                                              );
-                                              setPopoverOpenStates((prev) => {
-                                                const newState = [...prev];
-                                                newState[index] = false;
-                                                return newState;
-                                              });
-                                            }}
-                                            className="hover:bg-primary/10 cursor-pointer text-base transition-colors"
-                                          >
-                                            {exercise}
-                                          </CommandItem>
-                                        ))}
-                                      </CommandGroup>
-                                    </CommandList>
-                                  </Command>
-                                </PopoverContent>
-                              </Popover>
-                              {watchedExercises?.[index]?.name &&
-                                exercises.includes(
-                                  watchedExercises[index].name,
-                                ) && (
-                                  <ExerciseHistoryModal
-                                    exerciseName={watchedExercises[index].name}
-                                    filterOutWorkoutId={workoutId}
-                                  />
-                                )}
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                className="hover:bg-destructive/10 hover:text-destructive shrink-0 transition-colors"
-                                onClick={() => remove(index)}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <FormSets
-                      exerciseName={watchedExercises?.[index]?.name || ""}
-                      exerciseIndex={index}
-                      control={form.control}
-                      getValues={form.getValues}
-                      placeholderValues={placeholderValues}
-                    />
-
+            {/* {fields.map((field, index) => (
+              <div
+                className="relative rounded-lg border p-3 shadow-xs transition-all hover:shadow-md"
+                key={field.id}
+              >
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
                     <FormField
                       control={form.control}
-                      name={`exercises.${index}.notes`}
+                      name={`exercises.${index}.name`}
                       render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Textarea
-                              placeholder="Add notes"
-                              className="bg-background/50 hover:bg-background/80 resize-none text-base transition-colors"
-                              {...field}
-                            />
-                          </FormControl>
+                        <FormItem className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <Popover
+                              open={popoverOpenStates[index]}
+                              onOpenChange={(isOpen) => {
+                                setPopoverOpenStates((prev) => {
+                                  const newState = [...prev];
+                                  newState[index] = isOpen;
+                                  return newState;
+                                });
+                              }}
+                            >
+                              <PopoverTrigger asChild>
+                                <FormControl>
+                                  <Button
+                                    variant="outline"
+                                    role="combobox"
+                                    aria-expanded={popoverOpenStates[index]}
+                                    className={cn(
+                                      "bg-background/50 hover:bg-background/80 h-10 w-56 justify-between text-base transition-colors sm:h-11 sm:w-md",
+                                      !field.value && "text-muted-foreground",
+                                    )}
+                                  >
+                                    <span className="truncate">
+                                      {field.value
+                                        ? field.value
+                                        : "Select exercise"}
+                                    </span>
+                                    <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+                                  </Button>
+                                </FormControl>
+                              </PopoverTrigger>
+                              <PopoverContent
+                                className="w-full p-0"
+                                align="start"
+                              >
+                                <Command>
+                                  <CommandInput
+                                    placeholder="Search exercise..."
+                                    className="h-11 text-base"
+                                    onInput={(e) =>
+                                      setExerciseNameValue(
+                                        e.currentTarget.value,
+                                      )
+                                    }
+                                    onKeyDown={(e) => {
+                                      if (
+                                        e.key === "Enter" &&
+                                        exerciseNameValue.trim() !== ""
+                                      ) {
+                                        e.preventDefault();
+                                        form.setValue(
+                                          `exercises.${index}.name`,
+                                          exerciseNameValue,
+                                        );
+                                        setPopoverOpenStates((prev) => {
+                                          const newState = [...prev];
+                                          newState[index] = false;
+                                          return newState;
+                                        });
+                                      }
+                                    }}
+                                  />
+                                  <CommandList>
+                                    <CommandEmpty>
+                                      No exercise found.
+                                    </CommandEmpty>
+                                    <CommandGroup>
+                                      {exercises.map((exercise) => (
+                                        <CommandItem
+                                          value={exercise}
+                                          key={exercise}
+                                          onSelect={() => {
+                                            form.setValue(
+                                              `exercises.${index}.name`,
+                                              exercise,
+                                            );
+                                            setPopoverOpenStates((prev) => {
+                                              const newState = [...prev];
+                                              newState[index] = false;
+                                              return newState;
+                                            });
+                                          }}
+                                          className="hover:bg-primary/10 cursor-pointer text-base transition-colors"
+                                        >
+                                          {exercise}
+                                        </CommandItem>
+                                      ))}
+                                    </CommandGroup>
+                                  </CommandList>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                            {watchedExercises?.[index]?.name &&
+                              exercises.includes(
+                                watchedExercises[index].name,
+                              ) && (
+                                <ExerciseHistoryModal
+                                  exerciseName={watchedExercises[index].name}
+                                  filterOutWorkoutId={workoutId}
+                                />
+                              )}
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="hover:bg-destructive/10 hover:text-destructive shrink-0 transition-colors"
+                              onClick={() => remove(index)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
                   </div>
+
+                  <FormSets
+                    exerciseName={watchedExercises?.[index]?.name || ""}
+                    exerciseIndex={index}
+                    control={form.control}
+                    getValues={form.getValues}
+                    placeholderValues={placeholderValues}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name={`exercises.${index}.notes`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Add notes"
+                            className="bg-background/50 hover:bg-background/80 resize-none text-base transition-colors"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
-              ))}
+              </div>
+            ))} */}
 
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() =>
-                  append({
-                    name: "",
-                    notes: "",
-                    sets: [{ weight: "", reps: "", rpe: "" }],
-                  })
-                }
-                className="hover:bg-primary/10 w-full text-base"
-              >
-                Add Exercise
-              </Button>
-            </div>
+            {/* <Button
+              type="button"
+              variant="outline"
+              onClick={() =>
+                append({
+                  name: "",
+                  notes: "",
+                  sets: [{ weight: "", reps: "", rpe: "" }],
+                })
+              }
+              className="hover:bg-primary/10 w-full text-base"
+            >
+              Add Exercise
+            </Button> */}
+          </div>
 
-            <div className="flex justify-end pt-2">
-              <Button
-                type="submit"
-                className="bg-primary hover:bg-primary/90 w-full text-base"
-                disabled={isLoading}
-              >
-                {editMode ? "Save" : "Create Workout"}
-              </Button>
-            </div>
-          </form>
-        </Form>
+          <div className="flex justify-end pt-2">
+            <Button
+              type="submit"
+              className="bg-primary hover:bg-primary/90 w-full text-base"
+              disabled={isLoading}
+            >
+              {editMode ? "Save" : "Create Workout"}
+            </Button>
+          </div>
+        </form>
       </div>
     </div>
   );
