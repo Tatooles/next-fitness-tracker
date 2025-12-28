@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db/drizzle";
 import { Button } from "@/components/ui/button";
 import { Workout } from "@/lib/types";
-import Workouts from "./workouts";
+import Workouts from "@/components/workouts";
 import { Plus } from "lucide-react";
 
 async function getWorkouts() {

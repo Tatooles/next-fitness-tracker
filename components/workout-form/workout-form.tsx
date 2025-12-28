@@ -15,18 +15,19 @@ import {
 import { toast, Toaster } from "sonner";
 import * as z from "zod";
 import { FieldLegend, FieldSet } from "@/components/ui/field";
+interface WorkoutFormProps {
+  editMode: boolean;
+  workoutValue: TWorkoutFormSchema;
+  workoutId: number;
+  placeholderValues?: ExerciseThin[];
+}
 
 export default function WorkoutForm({
   editMode,
   workoutValue,
   workoutId,
   placeholderValues,
-}: {
-  editMode: boolean;
-  workoutValue: TWorkoutFormSchema;
-  workoutId: number;
-  placeholderValues?: ExerciseThin[];
-}) {
+}: WorkoutFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [exercises, setExercises] = useState<string[]>([]);
   const router = useRouter();

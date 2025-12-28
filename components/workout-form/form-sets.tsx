@@ -6,19 +6,21 @@ import { FieldLegend, FieldSet } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 
+interface FormSetsProps {
+  exerciseName: string;
+  exerciseIndex: number;
+  control: Control<TWorkoutFormSchema>;
+  getValues: UseFormGetValues<TWorkoutFormSchema>;
+  placeholderValues?: ExerciseThin[];
+}
+
 export default function FormSets({
   exerciseName,
   exerciseIndex,
   control,
   getValues,
   placeholderValues,
-}: {
-  exerciseName: string;
-  exerciseIndex: number;
-  control: Control<TWorkoutFormSchema>;
-  getValues: UseFormGetValues<TWorkoutFormSchema>;
-  placeholderValues?: ExerciseThin[];
-}) {
+}: FormSetsProps) {
   const { fields, remove, append } = useFieldArray({
     name: `exercises.${exerciseIndex}.sets`,
     control,
