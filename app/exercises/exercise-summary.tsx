@@ -1,5 +1,7 @@
 import ExerciseHistoryModal from "@/components/exercise-history-modal";
 import { ExerciseSummary, Set } from "@/lib/types";
+import { Button } from "@/components/ui/button";
+import { History } from "lucide-react";
 
 export default function ExerciseSummaryComponent({
   exerciseSummary,
@@ -54,7 +56,15 @@ export default function ExerciseSummaryComponent({
 
   return (
     <div className="flex flex-col gap-4">
-      <ExerciseHistoryModal exerciseName={exerciseSummary.name} />
+      <ExerciseHistoryModal exerciseName={exerciseSummary.name}>
+        <Button
+          variant="outline"
+          className="hover:bg-primary/10 hover:text-primary w-full transition-colors"
+        >
+          <History className="h-4 w-4" />
+          View Exercise History
+        </Button>
+      </ExerciseHistoryModal>
       <SummaryItem label="Heaviest rep" value={getHeaviestRep()} unit="lb" />
       <SummaryItem label="Calculated 1RM" value={getMax()} unit="lb" />
     </div>

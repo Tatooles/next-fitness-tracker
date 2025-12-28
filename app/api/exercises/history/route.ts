@@ -30,8 +30,6 @@ export async function GET(request: NextRequest) {
     // Group exercise data by workoutId into an object that is friendly to the front end
     const grouped: Record<number, GroupedExercise> = {};
 
-    console.log(data);
-
     data.forEach((row) => {
       const { date, name } = row.workout;
       const { notes, workoutId } = row.exercise;

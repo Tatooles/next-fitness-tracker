@@ -5,19 +5,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "./ui/button";
 import { useEffect, useState } from "react";
 import { GroupedExercise } from "@/app/api/exercises/history/route";
 import ExerciseInstanceItem from "./exercise-instance-item";
-import { History } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 
 export default function ExerciseHistoryModal({
   exerciseName,
   filterOutWorkoutId,
+  children,
 }: {
   exerciseName: string;
   filterOutWorkoutId?: number;
+  children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   const [exerciseHistory, setExerciseHistory] = useState<GroupedExercise[]>([]);
@@ -81,16 +81,7 @@ export default function ExerciseHistoryModal({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className="hover:bg-primary/10 hover:text-primary shrink-0 transition-colors"
-        >
-          <History className="h-4 w-4" />
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="max-h-[80vh] w-11/12 rounded-lg p-0 sm:max-w-md">
         <DialogHeader className="border-border border-b p-4">
           <DialogTitle className="mr-4 text-xl font-semibold">

@@ -35,7 +35,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { ChevronsUpDown, Trash2 } from "lucide-react";
+import { ChevronsUpDown, Trash2, MoreVertical, History } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import ExerciseHistoryModal from "@/components/exercise-history-modal";
 import { toast, Toaster } from "sonner";
@@ -217,115 +223,139 @@ export default function WorkoutForm({
                         render={({ field }) => (
                           <FormItem className="flex-1">
                             <div className="flex items-center gap-2">
-                              <Popover
-                                open={popoverOpenStates[index]}
-                                onOpenChange={(isOpen) => {
-                                  setPopoverOpenStates((prev) => {
-                                    const newState = [...prev];
-                                    newState[index] = isOpen;
-                                    return newState;
-                                  });
-                                }}
-                              >
-                                <PopoverTrigger asChild>
-                                  <FormControl>
-                                    <Button
-                                      variant="outline"
-                                      role="combobox"
-                                      aria-expanded={popoverOpenStates[index]}
-                                      className={cn(
-                                        "bg-background/50 hover:bg-background/80 h-10 w-56 justify-between text-base transition-colors sm:h-11 sm:w-md",
-                                        !field.value && "text-muted-foreground",
-                                      )}
-                                    >
-                                      <span className="truncate">
-                                        {field.value
-                                          ? field.value
-                                          : "Select exercise"}
-                                      </span>
-                                      <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
-                                    </Button>
-                                  </FormControl>
-                                </PopoverTrigger>
-                                <PopoverContent
-                                  className="w-full p-0"
-                                  align="start"
+                              <div className="flex-1">
+                                <Popover
+                                  open={popoverOpenStates[index]}
+                                  onOpenChange={(isOpen) => {
+                                    setPopoverOpenStates((prev) => {
+                                      const newState = [...prev];
+                                      newState[index] = isOpen;
+                                      return newState;
+                                    });
+                                  }}
                                 >
-                                  <Command>
-                                    <CommandInput
-                                      placeholder="Search exercise..."
-                                      className="h-11 text-base"
-                                      onInput={(e) =>
-                                        setExerciseNameValue(
-                                          e.currentTarget.value,
-                                        )
-                                      }
-                                      onKeyDown={(e) => {
-                                        if (
-                                          e.key === "Enter" &&
-                                          exerciseNameValue.trim() !== ""
-                                        ) {
-                                          e.preventDefault();
-                                          form.setValue(
-                                            `exercises.${index}.name`,
-                                            exerciseNameValue,
-                                          );
-                                          setPopoverOpenStates((prev) => {
-                                            const newState = [...prev];
-                                            newState[index] = false;
-                                            return newState;
-                                          });
+                                  <PopoverTrigger asChild>
+                                    <FormControl>
+                                      <Button
+                                        variant="outline"
+                                        role="combobox"
+                                        aria-expanded={popoverOpenStates[index]}
+                                        className={cn(
+                                          "bg-background/50 hover:bg-background/80 h-10 w-full justify-between text-base transition-colors sm:h-11",
+                                          !field.value &&
+                                            "text-muted-foreground",
+                                        )}
+                                      >
+                                        <span className="truncate">
+                                          {field.value
+                                            ? field.value
+                                            : "Select exercise"}
+                                        </span>
+                                        <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+                                      </Button>
+                                    </FormControl>
+                                  </PopoverTrigger>
+                                  <PopoverContent
+                                    className="w-full p-0"
+                                    align="start"
+                                  >
+                                    <Command>
+                                      <CommandInput
+                                        placeholder="Search exercise..."
+                                        className="h-11 text-base"
+                                        onInput={(e) =>
+                                          setExerciseNameValue(
+                                            e.currentTarget.value,
+                                          )
                                         }
-                                      }}
-                                    />
-                                    <CommandList>
-                                      <CommandEmpty>
-                                        No exercise found.
-                                      </CommandEmpty>
-                                      <CommandGroup>
-                                        {exercises.map((exercise) => (
-                                          <CommandItem
-                                            value={exercise}
-                                            key={exercise}
-                                            onSelect={() => {
-                                              form.setValue(
-                                                `exercises.${index}.name`,
-                                                exercise,
-                                              );
-                                              setPopoverOpenStates((prev) => {
-                                                const newState = [...prev];
-                                                newState[index] = false;
-                                                return newState;
-                                              });
-                                            }}
-                                            className="hover:bg-primary/10 cursor-pointer text-base transition-colors"
-                                          >
-                                            {exercise}
-                                          </CommandItem>
-                                        ))}
-                                      </CommandGroup>
-                                    </CommandList>
-                                  </Command>
-                                </PopoverContent>
-                              </Popover>
-                              {watchedExercises?.[index]?.name &&
-                                exercises.includes(
-                                  watchedExercises[index].name,
-                                ) && (
-                                  <ExerciseHistoryModal
-                                    exerciseName={watchedExercises[index].name}
-                                    filterOutWorkoutId={workoutId}
-                                  />
-                                )}
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                className="hover:bg-destructive/10 hover:text-destructive shrink-0 transition-colors"
-                                onClick={() => remove(index)}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
+                                        onKeyDown={(e) => {
+                                          if (
+                                            e.key === "Enter" &&
+                                            exerciseNameValue.trim() !== ""
+                                          ) {
+                                            e.preventDefault();
+                                            form.setValue(
+                                              `exercises.${index}.name`,
+                                              exerciseNameValue,
+                                            );
+                                            setPopoverOpenStates((prev) => {
+                                              const newState = [...prev];
+                                              newState[index] = false;
+                                              return newState;
+                                            });
+                                          }
+                                        }}
+                                      />
+                                      <CommandList>
+                                        <CommandEmpty>
+                                          No exercise found.
+                                        </CommandEmpty>
+                                        <CommandGroup>
+                                          {exercises.map((exercise) => (
+                                            <CommandItem
+                                              value={exercise}
+                                              key={exercise}
+                                              onSelect={() => {
+                                                form.setValue(
+                                                  `exercises.${index}.name`,
+                                                  exercise,
+                                                );
+                                                setPopoverOpenStates((prev) => {
+                                                  const newState = [...prev];
+                                                  newState[index] = false;
+                                                  return newState;
+                                                });
+                                              }}
+                                              className="hover:bg-primary/10 cursor-pointer text-base transition-colors"
+                                            >
+                                              {exercise}
+                                            </CommandItem>
+                                          ))}
+                                        </CommandGroup>
+                                      </CommandList>
+                                    </Command>
+                                  </PopoverContent>
+                                </Popover>
+                              </div>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    className="shrink-0 transition-colors"
+                                  >
+                                    <MoreVertical className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  {watchedExercises?.[index]?.name &&
+                                    exercises.includes(
+                                      watchedExercises[index].name,
+                                    ) && (
+                                      <ExerciseHistoryModal
+                                        exerciseName={
+                                          watchedExercises[index].name
+                                        }
+                                        filterOutWorkoutId={workoutId}
+                                      >
+                                        <DropdownMenuItem
+                                          onSelect={(e) => e.preventDefault()}
+                                        >
+                                          <History className="h-4 w-4" />
+                                          View History
+                                        </DropdownMenuItem>
+                                      </ExerciseHistoryModal>
+                                    )}
+                                  <DropdownMenuItem
+                                    variant="destructive"
+                                    onClick={() => remove(index)}
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                    Delete Exercise
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
                             </div>
                             <FormMessage />
                           </FormItem>
