@@ -4,8 +4,8 @@ import { useRouter } from "next/navigation";
 import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import ExerciseItem from "@/app/workouts/(form)/exercise-item";
-import WorkoutFormHeader from "@/app/workouts/(form)/workout-form-header";
+import ExerciseItem from "@/components/workout-form/exercise-item";
+import WorkoutFormHeader from "@/components/workout-form/workout-form-header";
 import { LoadingOverlay } from "@/components/loading-overlay";
 import {
   workoutFormSchema,

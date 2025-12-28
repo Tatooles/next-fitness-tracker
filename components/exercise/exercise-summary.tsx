@@ -1,4 +1,4 @@
-import ExerciseHistoryModal from "@/components/exercise-history-modal";
+import ExerciseHistoryModal from "@/components/exercise/exercise-history-modal";
 import { ExerciseSummary, Set } from "@/lib/types";
 
 export default function ExerciseSummaryComponent({

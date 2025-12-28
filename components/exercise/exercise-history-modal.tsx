@@ -5,7 +5,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
 import { GroupedExercise } from "@/app/api/exercises/history/route";
 import ExerciseInstanceItem from "./exercise-instance-item";

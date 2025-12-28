@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db/drizzle";
-import ExercisesUI from "./exercises-ui";
+import ExercisesUI from "@/components/exercise/exercises-ui";
 import { ExerciseSummary } from "@/lib/types";
 import { exercise, workout, set } from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -75,7 +75,7 @@ export default async function ExercisesPage() {
   return (
     <div className="mx-auto max-w-2xl p-5 text-center">
       <h1 className="mb-5 text-4xl font-semibold">Exercises</h1>
-      <ExercisesUI exerciseSummaries={await getExerciseSummary()}></ExercisesUI>
+      <ExercisesUI exerciseSummaries={await getExerciseSummary()} />
     </div>
   );
 }

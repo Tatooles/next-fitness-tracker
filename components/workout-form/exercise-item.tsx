@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Trash2 } from "lucide-react";
 import { Field, FieldError } from "@/components/ui/field";
-import ExerciseSelector from "@/app/workouts/(form)/exercise-selector";
-import FormSets from "@/app/workouts/(form)/form-sets";
-import ExerciseHistoryModal from "@/components/exercise-history-modal";
+import ExerciseSelector from "@/components/workout-form/exercise-selector";
+import FormSets from "@/components/workout-form/form-sets";
+import ExerciseHistoryModal from "@/components/exercise/exercise-history-modal";
 import { TWorkoutFormSchema, ExerciseThin } from "@/lib/types";
 
 interface ExerciseItemProps {
@@ -61,7 +61,9 @@ export default function ExerciseItem({
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
-                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />
@@ -95,4 +97,3 @@ export default function ExerciseItem({
     </div>
   );
 }
-
