@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { LoadingOverlay } from "@/components/loading-overlay";
-import ExerciseInstanceItem from "@/components/exercise-instance-item";
+import ExerciseInstanceItem from "@/components/exercise/exercise-instance-item";
 import { Workout, ExerciseInstance } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 

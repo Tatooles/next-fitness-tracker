@@ -54,15 +54,10 @@ export interface Set {
 
 export const workoutFormSchema = z.object({
   date: z.string(),
-  name: z
-    .string()
-    .min(1, {
-      message: "Workout name must be at least 1 character",
-    })
-    .max(50),
+  name: z.string().min(1, "Workout name must be at least 1 character").max(50),
   exercises: z
     .object({
-      name: z.string(),
+      name: z.string().min(1, "Exercise name must be at least 1 character"),
       notes: z.string(),
       sets: z
         .object({
