@@ -24,6 +24,8 @@ import { LoadingOverlay } from "@/components/loading-overlay";
 import ExerciseInstanceItem from "@/components/exercise/exercise-instance-item";
 import { Workout, ExerciseInstance } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
+import { copyWorkoutToClipboard } from "@/lib/workout-utils";
+import { Copy } from "lucide-react";
 
 export default function Workouts({ workouts }: { workouts: Workout[] }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -76,6 +78,15 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                 <Link href={`/workouts/duplicate/${workout.id}`}>
                   Duplicate
                 </Link>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-purple-500 text-purple-500 hover:bg-purple-500 hover:text-white"
+                onClick={() => copyWorkoutToClipboard(workout)}
+              >
+                <Copy />
+                <span>Copy</span>
               </Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
