@@ -25,7 +25,7 @@ import ExerciseInstanceItem from "@/components/exercise/exercise-instance-item";
 import { Workout, ExerciseInstance } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 import { copyWorkoutToClipboard } from "@/lib/workout-utils";
-import { Copy } from "lucide-react";
+import { Copy, Pencil, Files, Trash2 } from "lucide-react";
 
 export default function Workouts({ workouts }: { workouts: Workout[] }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -67,7 +67,10 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                 size="sm"
                 className="border-green-500 text-green-500 hover:bg-green-500 hover:text-white"
               >
-                <Link href={`/workouts/edit/${workout.id}`}>Edit</Link>
+                <Link href={`/workouts/edit/${workout.id}`}>
+                  <Pencil />
+                  <span className="hidden sm:inline">Edit</span>
+                </Link>
               </Button>
               <Button
                 asChild
@@ -76,7 +79,8 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                 className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
               >
                 <Link href={`/workouts/duplicate/${workout.id}`}>
-                  Duplicate
+                  <Files />
+                  <span className="hidden sm:inline">Duplicate</span>
                 </Link>
               </Button>
               <Button
@@ -86,7 +90,7 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                 onClick={() => copyWorkoutToClipboard(workout)}
               >
                 <Copy />
-                <span>Copy</span>
+                <span className="hidden sm:inline">Copy</span>
               </Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -95,7 +99,8 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                     size="sm"
                     className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
                   >
-                    Delete
+                    <Trash2 />
+                    <span className="hidden sm:inline">Delete</span>
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
