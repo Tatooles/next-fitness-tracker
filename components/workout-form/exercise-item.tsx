@@ -29,59 +29,55 @@ export default function ExerciseItem({
   placeholderValues,
 }: ExerciseItemProps) {
   return (
-    <div className="relative rounded-lg border p-3 shadow-xs transition-all hover:shadow-md">
-      <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <Controller
-            control={control}
-            name={`exercises.${index}.name`}
-            render={({ field, fieldState }) => (
-              <Field className="flex-1">
-                <div className="flex items-center gap-2">
-                  <ExerciseSelector
-                    value={field.value}
-                    onChange={field.onChange}
-                    exercises={exercises}
-                  />
-                  <ExerciseActionsMenu
-                    exerciseName={exerciseName}
-                    workoutId={workoutId}
-                    onDelete={onRemove}
-                  />
-                </div>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
-          />
-        </div>
-
-        <FormSets
-          exerciseName={exerciseName}
-          exerciseIndex={index}
-          control={control}
-          getValues={getValues}
-          placeholderValues={placeholderValues}
-        />
-
+    <div className="space-y-4 rounded-lg border p-3">
+      <div className="flex items-center">
         <Controller
           control={control}
-          name={`exercises.${index}.notes`}
+          name={`exercises.${index}.name`}
           render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <Textarea
-                {...field}
-                id={field.name}
-                aria-invalid={fieldState.invalid}
-                placeholder="Add notes"
-                className="bg-background/50 hover:bg-background/80 resize-none text-base transition-colors"
-              />
+            <Field className="flex-1">
+              <div className="flex items-center gap-2">
+                <ExerciseSelector
+                  value={field.value}
+                  onChange={field.onChange}
+                  exercises={exercises}
+                />
+                <ExerciseActionsMenu
+                  exerciseName={exerciseName}
+                  workoutId={workoutId}
+                  onDelete={onRemove}
+                />
+              </div>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
       </div>
+
+      <FormSets
+        exerciseName={exerciseName}
+        exerciseIndex={index}
+        control={control}
+        getValues={getValues}
+        placeholderValues={placeholderValues}
+      />
+
+      <Controller
+        control={control}
+        name={`exercises.${index}.notes`}
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid}>
+            <Textarea
+              {...field}
+              id={field.name}
+              aria-invalid={fieldState.invalid}
+              placeholder="Add notes"
+              className="bg-background/50 hover:bg-background/80 resize-none text-base transition-colors"
+            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        )}
+      />
     </div>
   );
 }

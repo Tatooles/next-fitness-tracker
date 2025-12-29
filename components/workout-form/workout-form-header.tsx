@@ -8,9 +8,7 @@ interface WorkoutFormHeaderProps {
   control: Control<TWorkoutFormSchema>;
 }
 
-export default function WorkoutFormHeader({
-  control,
-}: WorkoutFormHeaderProps) {
+export default function WorkoutFormHeader({ control }: WorkoutFormHeaderProps) {
   return (
     <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
       <Controller
@@ -60,4 +58,3 @@ export default function WorkoutFormHeader({
     </div>
   );
 }
-

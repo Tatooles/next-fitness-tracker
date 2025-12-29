@@ -44,7 +44,7 @@ export default function ExerciseSelector({
           )}
         >
           <span className="truncate">{value ? value : "Select exercise"}</span>
-          <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+          <ChevronsUpDown />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full p-0" align="start">

@@ -23,13 +23,8 @@ export default function ExerciseActionsMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className="shrink-0 transition-colors"
-        >
-          <MoreVertical className="h-4 w-4" />
+        <Button type="button" variant="ghost" size="icon">
+          <MoreVertical />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
@@ -38,16 +33,15 @@ export default function ExerciseActionsMenu({
           filterOutWorkoutId={workoutId}
         >
           <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-            <History className="h-4 w-4" />
+            <History />
             View History
           </DropdownMenuItem>
         </ExerciseHistoryModal>
         <DropdownMenuItem variant="destructive" onClick={onDelete}>
-          <Trash2 className="h-4 w-4" />
+          <Trash2 />
           Delete Exercise
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
-

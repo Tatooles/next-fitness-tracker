@@ -61,7 +61,7 @@ export default function ExerciseSummaryComponent({
           variant="outline"
           className="hover:bg-primary/10 hover:text-primary w-full transition-colors"
         >
-          <History className="h-4 w-4" />
+          <History />
           View Exercise History
         </Button>
       </ExerciseHistoryModal>
