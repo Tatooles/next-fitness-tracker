@@ -12,7 +12,7 @@ import {
   TWorkoutFormSchema,
   ExerciseThin,
 } from "@/lib/types";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import * as z from "zod";
 import { FieldLegend, FieldSet } from "@/components/ui/field";
 interface WorkoutFormProps {
@@ -129,7 +129,6 @@ export default function WorkoutForm({
   return (
     <div className="mx-auto max-w-2xl px-2 sm:px-6">
       <LoadingOverlay isLoading={isLoading} />
-      <Toaster richColors position="top-center" />
       <div className="space-y-4 rounded-lg p-3 shadow-lg sm:space-y-6 sm:p-6">
         <h2 className="from-primary to-primary/60 mb-4 bg-linear-to-r bg-clip-text text-center text-2xl font-bold text-transparent sm:mb-8 sm:text-3xl">
           {workoutId !== -1 ? "Edit Workout" : "Create Workout"}
