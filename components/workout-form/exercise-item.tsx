@@ -14,6 +14,10 @@ interface ExerciseItemProps {
   exercises: string[];
   exerciseName: string;
   onRemove: () => void;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
+  isFirst: boolean;
+  isLast: boolean;
   workoutId: number;
   placeholderValues?: ExerciseThin[];
 }
@@ -25,6 +29,10 @@ export default function ExerciseItem({
   exercises,
   exerciseName,
   onRemove,
+  onMoveUp,
+  onMoveDown,
+  isFirst,
+  isLast,
   workoutId,
   placeholderValues,
 }: ExerciseItemProps) {
@@ -46,6 +54,10 @@ export default function ExerciseItem({
                   exerciseName={exerciseName}
                   workoutId={workoutId}
                   onDelete={onRemove}
+                  onMoveUp={onMoveUp}
+                  onMoveDown={onMoveDown}
+                  isFirst={isFirst}
+                  isLast={isLast}
                 />
               </div>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}

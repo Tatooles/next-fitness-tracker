@@ -108,7 +108,7 @@ export default function WorkoutForm({
     values: workoutValue,
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, move } = useFieldArray({
     control: form.control,
     name: "exercises",
   });
@@ -154,6 +154,10 @@ export default function WorkoutForm({
                 exercises={exercises}
                 exerciseName={watchedExercises?.[index]?.name || ""}
                 onRemove={() => remove(index)}
+                onMoveUp={() => move(index, index - 1)}
+                onMoveDown={() => move(index, index + 1)}
+                isFirst={index === 0}
+                isLast={index === fields.length - 1}
                 workoutId={workoutId}
                 placeholderValues={placeholderValues}
               />
