@@ -24,6 +24,8 @@ import { LoadingOverlay } from "@/components/loading-overlay";
 import ExerciseInstanceItem from "@/components/exercise/exercise-instance-item";
 import { Workout, ExerciseInstance } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
+import { copyWorkoutToClipboard } from "@/lib/workout-utils";
+import { Copy, Pencil, Files, Trash2 } from "lucide-react";
 
 export default function Workouts({ workouts }: { workouts: Workout[] }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -65,7 +67,13 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                 size="sm"
                 className="border-green-500 text-green-500 hover:bg-green-500 hover:text-white"
               >
-                <Link href={`/workouts/edit/${workout.id}`}>Edit</Link>
+                <Link
+                  href={`/workouts/edit/${workout.id}`}
+                  aria-label="Edit workout"
+                >
+                  <Pencil aria-hidden="true" />
+                  <span className="hidden sm:inline">Edit</span>
+                </Link>
               </Button>
               <Button
                 asChild
@@ -73,9 +81,23 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                 size="sm"
                 className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
               >
-                <Link href={`/workouts/duplicate/${workout.id}`}>
-                  Duplicate
+                <Link
+                  href={`/workouts/duplicate/${workout.id}`}
+                  aria-label="Duplicate workout"
+                >
+                  <Files aria-hidden="true" />
+                  <span className="hidden sm:inline">Duplicate</span>
                 </Link>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-purple-500 text-purple-500 hover:bg-purple-500 hover:text-white"
+                onClick={() => copyWorkoutToClipboard(workout)}
+                aria-label="Copy workout to clipboard"
+              >
+                <Copy aria-hidden="true" />
+                <span className="hidden sm:inline">Copy</span>
               </Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -83,8 +105,10 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                     variant="outline"
                     size="sm"
                     className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                    aria-label="Delete workout"
                   >
-                    Delete
+                    <Trash2 aria-hidden="true" />
+                    <span className="hidden sm:inline">Delete</span>
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
