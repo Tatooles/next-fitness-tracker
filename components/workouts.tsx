@@ -67,8 +67,11 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                 size="sm"
                 className="border-green-500 text-green-500 hover:bg-green-500 hover:text-white"
               >
-                <Link href={`/workouts/edit/${workout.id}`}>
-                  <Pencil />
+                <Link
+                  href={`/workouts/edit/${workout.id}`}
+                  aria-label="Edit workout"
+                >
+                  <Pencil aria-hidden="true" />
                   <span className="hidden sm:inline">Edit</span>
                 </Link>
               </Button>
@@ -78,8 +81,11 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                 size="sm"
                 className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
               >
-                <Link href={`/workouts/duplicate/${workout.id}`}>
-                  <Files />
+                <Link
+                  href={`/workouts/duplicate/${workout.id}`}
+                  aria-label="Duplicate workout"
+                >
+                  <Files aria-hidden="true" />
                   <span className="hidden sm:inline">Duplicate</span>
                 </Link>
               </Button>
@@ -88,8 +94,9 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                 size="sm"
                 className="border-purple-500 text-purple-500 hover:bg-purple-500 hover:text-white"
                 onClick={() => copyWorkoutToClipboard(workout)}
+                aria-label="Copy workout to clipboard"
               >
-                <Copy />
+                <Copy aria-hidden="true" />
                 <span className="hidden sm:inline">Copy</span>
               </Button>
               <AlertDialog>
@@ -98,8 +105,9 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                     variant="outline"
                     size="sm"
                     className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                    aria-label="Delete workout"
                   >
-                    <Trash2 />
+                    <Trash2 aria-hidden="true" />
                     <span className="hidden sm:inline">Delete</span>
                   </Button>
                 </AlertDialogTrigger>
