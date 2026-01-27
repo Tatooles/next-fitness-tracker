@@ -49,7 +49,7 @@ export default function ExercisesUI({
 
     exerciseSummary.exercises.forEach((exercise) => {
       if (exercise.date) {
-        const exerciseDate = new Date(exercise.date);
+        const exerciseDate = new Date(`${exercise.date}T00:00:00`);
         if (!mostRecent || exerciseDate > mostRecent) {
           mostRecent = exerciseDate;
         }
