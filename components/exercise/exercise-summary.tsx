@@ -2,35 +2,44 @@ import ExerciseHistoryModal from "@/components/exercise/exercise-history-modal";
 import { ExerciseSummary, Set } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { History } from "lucide-react";
+import { formatDate } from "@/lib/utils";
 
 export default function ExerciseSummaryComponent({
   exerciseSummary,
 }: {
   exerciseSummary: ExerciseSummary;
 }) {
-  const getHeaviestRep = (): number => {
+  const getHeaviestRep = (): { weight: number; date: string | null } => {
     let heaviest = 0;
+    let heaviestDate: string | null = null;
 
     exerciseSummary.exercises.forEach((exercise) => {
       exercise.sets.forEach((set) => {
-        if (+set.weight > heaviest) heaviest = +set.weight;
+        if (+set.weight > heaviest) {
+          heaviest = +set.weight;
+          heaviestDate = exercise.date || null;
+        }
       });
     });
 
-    return heaviest;
+    return { weight: heaviest, date: heaviestDate };
   };
 
-  const getMax = (): number => {
+  const getMax = (): { weight: number; date: string | null } => {
     let max = 0;
+    let maxDate: string | null = null;
 
     exerciseSummary.exercises.forEach((exercise) => {
       exercise.sets.forEach((set) => {
         const setMax = calculateOneRepMax(set);
-        if (setMax > max) max = setMax;
+        if (setMax > max) {
+          max = setMax;
+          maxDate = exercise.date || null;
+        }
       });
     });
 
-    return Math.round(max);
+    return { weight: Math.round(max), date: maxDate };
   };
 
   const calculateOneRepMax = (set: Set): number => {
@@ -54,6 +63,9 @@ export default function ExerciseSummaryComponent({
     }
   };
 
+  const heaviestRep = getHeaviestRep();
+  const maxOneRep = getMax();
+
   return (
     <div className="flex flex-col gap-4">
       <ExerciseHistoryModal exerciseName={exerciseSummary.name}>
@@ -65,8 +77,18 @@ export default function ExerciseSummaryComponent({
           View Exercise History
         </Button>
       </ExerciseHistoryModal>
-      <SummaryItem label="Heaviest rep" value={getHeaviestRep()} unit="lb" />
-      <SummaryItem label="Calculated 1RM" value={getMax()} unit="lb" />
+      <SummaryItem
+        label="Heaviest rep"
+        value={heaviestRep.weight}
+        date={heaviestRep.date}
+        unit="lb"
+      />
+      <SummaryItem
+        label="Calculated 1RM"
+        value={maxOneRep.weight}
+        date={maxOneRep.date}
+        unit="lb"
+      />
     </div>
   );
 }
@@ -75,18 +97,28 @@ function SummaryItem({
   label,
   value,
   unit,
+  date,
 }: {
   label: string;
   value: string | number;
   unit?: string;
+  date?: string | null;
 }) {
   return (
     <div className="flex items-center justify-between rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
         {label}
       </span>
-      <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-sm font-semibold text-amber-800 dark:bg-amber-700 dark:text-amber-100">
+      <span className="rounded-full bg-amber-100 px-3 py-1 text-sm font-semibold text-amber-800 dark:bg-amber-700 dark:text-amber-100">
         {value} {unit && unit}
+        {date && (
+          <>
+            <span className="mx-1.5 opacity-50">•</span>
+            <span className="text-xs font-medium opacity-75">
+              {formatDate(date)}
+            </span>
+          </>
+        )}
       </span>
     </div>
   );
