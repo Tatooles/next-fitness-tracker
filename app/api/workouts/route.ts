@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
 
   const { date, name, exercises } = body as TWorkoutFormSchema;
   try {
-    await db.transaction(async (tx) => {
+    const newWorkoutId = await db.transaction(async (tx) => {
       const [newWorkout] = await tx
         .insert(workout)
         .values({
@@ -52,7 +52,14 @@ export async function POST(request: NextRequest) {
           await tx.insert(set).values(setValues);
         }
       }
+      
+      return newWorkout.id;
     });
+    
+    return NextResponse.json(
+      { message: "Workout created", workoutId: newWorkoutId },
+      { status: 201 },
+    );
   } catch (error) {
     console.error("Transaction failed", error);
     return NextResponse.json(
@@ -60,5 +67,4 @@ export async function POST(request: NextRequest) {
       { status: 500 },
     );
   }
-  return NextResponse.json({ message: "Workout created" }, { status: 201 });
 }
