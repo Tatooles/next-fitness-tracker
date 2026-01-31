@@ -44,8 +44,10 @@ export default function WorkoutForm({
   const onSubmit = async (values: TWorkoutFormSchema) => {
     setIsLoading(true);
     if (!editMode) {
-      await addWorkout(values);
-      router.push("/workouts");
+      const newWorkoutId = await createWorkout(values);
+      if (newWorkoutId) {
+        router.push(`/workouts/edit/${newWorkoutId}`);
+      }
     } else {
       await updateWorkout(workoutId, values);
     }
@@ -56,24 +58,30 @@ export default function WorkoutForm({
    * Creates a new workout with the values from the form
    *
    * @param form the form values to create the workout with
+   * @returns the ID of the newly created workout, or null if creation failed
    */
-  const addWorkout = async (form: TWorkoutFormSchema) => {
-    await fetch("/api/workouts", {
-      method: "POST",
-      body: JSON.stringify(form),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          toast.error("Failed to add workout");
-        }
-      })
-      .catch((error) => {
-        console.error("An error occurred while adding exercise:", error);
-        toast.error("Failed to add workout");
+  const createWorkout = async (form: TWorkoutFormSchema): Promise<number | null> => {
+    try {
+      const response = await fetch("/api/workouts", {
+        method: "POST",
+        body: JSON.stringify(form),
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
+      
+      if (!response.ok) {
+        toast.error("Failed to create workout");
+        return null;
+      }
+      
+      const data = await response.json();
+      return data.workoutId;
+    } catch (error) {
+      console.error("An error occurred while creating workout:", error);
+      toast.error("Failed to create workout");
+      return null;
+    }
   };
 
   /**
