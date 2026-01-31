@@ -44,7 +44,7 @@ export default function WorkoutForm({
   const onSubmit = async (values: TWorkoutFormSchema) => {
     setIsLoading(true);
     if (!editMode) {
-      const newWorkoutId = await addWorkout(values);
+      const newWorkoutId = await createWorkout(values);
       if (newWorkoutId) {
         router.push(`/workouts/edit/${newWorkoutId}`);
       }
@@ -60,7 +60,7 @@ export default function WorkoutForm({
    * @param form the form values to create the workout with
    * @returns the ID of the newly created workout, or null if creation failed
    */
-  const addWorkout = async (form: TWorkoutFormSchema): Promise<number | null> => {
+  const createWorkout = async (form: TWorkoutFormSchema): Promise<number | null> => {
     try {
       const response = await fetch("/api/workouts", {
         method: "POST",
@@ -71,15 +71,15 @@ export default function WorkoutForm({
       });
       
       if (!response.ok) {
-        toast.error("Failed to add workout");
+        toast.error("Failed to create workout");
         return null;
       }
       
       const data = await response.json();
       return data.workoutId;
     } catch (error) {
-      console.error("An error occurred while adding exercise:", error);
-      toast.error("Failed to add workout");
+      console.error("An error occurred while creating workout:", error);
+      toast.error("Failed to create workout");
       return null;
     }
   };
