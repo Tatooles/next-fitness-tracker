@@ -21,13 +21,14 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { date, name, exercises } = body as TWorkoutFormSchema;
+  const { date, name, notes, exercises } = body as TWorkoutFormSchema;
   try {
     const newWorkoutId = await db.transaction(async (tx) => {
       const [newWorkout] = await tx
         .insert(workout)
         .values({
           name,
+          notes,
           date,
           userId,
         })
