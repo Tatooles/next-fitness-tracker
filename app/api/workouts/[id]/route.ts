@@ -42,14 +42,14 @@ export async function PATCH(
     );
   }
 
-  const { name, date, exercises } = result.data;
+  const { name, notes, date, exercises } = result.data;
 
   try {
     await db.transaction(async (tx) => {
       // Update workout table
       await tx
         .update(workout)
-        .set({ name, date })
+        .set({ name, notes, date })
         .where(and(eq(workout.id, workoutId), eq(workout.userId, userId)));
 
       // Delete old exercises and sets

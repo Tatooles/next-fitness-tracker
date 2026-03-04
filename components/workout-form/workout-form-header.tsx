@@ -1,6 +1,7 @@
 "use client";
 import { Controller, Control } from "react-hook-form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { TWorkoutFormSchema } from "@/lib/types";
 
@@ -49,6 +50,28 @@ export default function WorkoutFormHeader({ control }: WorkoutFormHeaderProps) {
               aria-invalid={fieldState.invalid}
               className="bg-background/50 hover:bg-background/80 h-10 text-base transition-colors sm:h-11"
               placeholder="Enter workout name"
+              {...field}
+            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        )}
+      />
+      <Controller
+        name="notes"
+        control={control}
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid} className="md:col-span-2">
+            <FieldLabel
+              htmlFor={field.name}
+              className="text-base font-semibold"
+            >
+              Workout Notes
+            </FieldLabel>
+            <Textarea
+              id={field.name}
+              aria-invalid={fieldState.invalid}
+              placeholder="Add overall notes for this workout"
+              className="bg-background/50 hover:bg-background/80 min-h-24 resize-y text-base transition-colors"
               {...field}
             />
             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}

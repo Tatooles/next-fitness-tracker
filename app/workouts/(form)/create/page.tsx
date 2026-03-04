@@ -8,6 +8,7 @@ export default async function CreateWorkoutPage() {
       workoutValue={{
         date: "",
         name: "",
+        notes: "",
         exercises: [
           { name: "", notes: "", sets: [{ weight: "", reps: "", rpe: "" }] },
         ],
