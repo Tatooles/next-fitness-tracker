@@ -132,6 +132,13 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                 </AlertDialogContent>
               </AlertDialog>
             </div>
+            {workout.notes.trim() && (
+              <div className="border-border mb-4 rounded-lg border p-4">
+                <p className="text-muted-foreground whitespace-pre-wrap text-left text-sm leading-6">
+                  {workout.notes}
+                </p>
+              </div>
+            )}
             <div className="space-y-4">
               {workout.exercises.map((exercise: ExerciseInstance) => (
                 <ExerciseInstanceItem
