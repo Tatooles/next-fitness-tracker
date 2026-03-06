@@ -70,7 +70,7 @@ export default function WorkoutFormHeader({ control }: WorkoutFormHeaderProps) {
             <Textarea
               id={field.name}
               aria-invalid={fieldState.invalid}
-              placeholder="Add overall notes for this workout"
+              placeholder="Add overall workout notes"
               className="bg-background/50 hover:bg-background/80 min-h-24 resize-y text-base transition-colors"
               {...field}
             />
