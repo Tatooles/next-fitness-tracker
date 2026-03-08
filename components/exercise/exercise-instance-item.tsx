@@ -65,7 +65,7 @@ export default function ExerciseInstanceItem({
         )}
         {notes && (
           <div className="mt-3">
-            <p className="text-muted-foreground rounded-md p-2 text-start text-sm whitespace-pre-wrap sm:px-10">
+            <p className="text-muted-foreground rounded-md p-2 text-start text-sm whitespace-pre-wrap">
               {notes}
             </p>
           </div>
