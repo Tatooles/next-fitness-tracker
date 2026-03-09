@@ -3,6 +3,7 @@ import * as z from "zod";
 export interface Workout {
   id: number;
   name: string;
+  notes: string;
   userId: string | null;
   date: string;
   exercises: ExerciseInstance[];
@@ -55,6 +56,7 @@ export interface Set {
 export const workoutFormSchema = z.object({
   date: z.string(),
   name: z.string().min(1, "Workout name must be at least 1 character").max(50),
+  notes: z.string(),
   exercises: z
     .object({
       name: z.string().min(1, "Exercise name must be at least 1 character"),
