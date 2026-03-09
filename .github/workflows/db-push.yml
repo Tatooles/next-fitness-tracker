@@ -30,7 +30,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Push schema to Turso
-        run: pnpm dlx drizzle-kit@latest push --config=drizzle.config.ts
+        run: pnpm exec drizzle-kit push --config=drizzle.config.ts
         env:
           TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
           TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
