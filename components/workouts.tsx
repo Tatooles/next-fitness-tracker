@@ -66,8 +66,9 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
             <AccordionTrigger>
               {formatDate(workout.date)} - {workout.name}
             </AccordionTrigger>
-            <AccordionContent>
-              <div className="mb-6 flex justify-start space-x-3 px-1">
+          <AccordionContent>
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-3 px-1">
+              <div className="flex flex-wrap justify-start gap-3">
                 <Button
                   asChild
                   variant="outline"
@@ -140,13 +141,14 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                 </AlertDialog>
               </div>
               {duration.trim() ? (
-                <div className="text-muted-foreground mb-4 px-1 text-sm font-medium">
+                <div className="text-muted-foreground text-sm font-medium">
                   Duration: {duration}
                 </div>
               ) : null}
-              {workout.notes.trim() && (
-                <div className="border-border mb-4 rounded-lg border p-4">
-                  <p className="text-muted-foreground text-left text-sm leading-6 whitespace-pre-wrap">
+            </div>
+            {workout.notes.trim() && (
+              <div className="border-border mb-4 rounded-lg border p-4">
+                <p className="text-muted-foreground text-left text-sm leading-6 whitespace-pre-wrap">
                     {workout.notes}
                   </p>
                 </div>
