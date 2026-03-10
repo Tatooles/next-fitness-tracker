@@ -4,6 +4,7 @@ export interface Workout {
   id: number;
   name: string;
   notes: string;
+  durationMinutes: number | null;
   userId: string | null;
   date: string;
   exercises: ExerciseInstance[];
@@ -53,10 +54,18 @@ export interface Set {
   exerciseId: number;
 }
 
+const optionalDurationMinutesSchema = z
+  .number({ error: "Workout duration must be a whole number of minutes" })
+  .int("Workout duration must be a whole number of minutes")
+  .positive("Workout duration must be greater than 0")
+  .nullable()
+  .optional();
+
 export const workoutFormSchema = z.object({
   date: z.string(),
   name: z.string().min(1, "Workout name must be at least 1 character").max(50),
   notes: z.string(),
+  durationMinutes: optionalDurationMinutesSchema,
   exercises: z
     .object({
       name: z.string().min(1, "Exercise name must be at least 1 character"),

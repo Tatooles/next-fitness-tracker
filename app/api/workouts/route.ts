@@ -3,7 +3,7 @@ import { db } from "@/db/drizzle";
 import { workout } from "@/db/schema";
 import { exercise } from "@/db/schema";
 import { set } from "@/db/schema";
-import { TWorkoutFormSchema, workoutFormSchema } from "@/lib/types";
+import { workoutFormSchema } from "@/lib/types";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { date, name, notes, exercises } = body as TWorkoutFormSchema;
+  const { date, name, notes, durationMinutes, exercises } = result.data;
   try {
     const newWorkoutId = await db.transaction(async (tx) => {
       const [newWorkout] = await tx
@@ -29,6 +29,7 @@ export async function POST(request: NextRequest) {
         .values({
           name,
           notes,
+          durationMinutes,
           date,
           userId,
         })
@@ -53,10 +54,10 @@ export async function POST(request: NextRequest) {
           await tx.insert(set).values(setValues);
         }
       }
-      
+
       return newWorkout.id;
     });
-    
+
     return NextResponse.json(
       { message: "Workout created", workoutId: newWorkoutId },
       { status: 201 },

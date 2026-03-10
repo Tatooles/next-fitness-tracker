@@ -23,7 +23,7 @@ import { Button } from "@/components/ui/button";
 import { LoadingOverlay } from "@/components/loading-overlay";
 import ExerciseInstanceItem from "@/components/exercise/exercise-instance-item";
 import { Workout, ExerciseInstance } from "@/lib/types";
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatWorkoutDuration } from "@/lib/utils";
 import { copyWorkoutToClipboard } from "@/lib/workout-utils";
 import { Copy, Pencil, Files, Trash2 } from "lucide-react";
 
@@ -57,7 +57,14 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
       {workouts.map((workout: Workout, index) => (
         <AccordionItem key={index} value={`item-${index}`}>
           <AccordionTrigger>
-            {formatDate(workout.date)} - {workout.name}
+            <span className="text-left">
+              {formatDate(workout.date)} - {workout.name}
+              {workout.durationMinutes ? (
+                <span className="text-muted-foreground ml-2 text-sm font-normal">
+                  ({formatWorkoutDuration(workout.durationMinutes)})
+                </span>
+              ) : null}
+            </span>
           </AccordionTrigger>
           <AccordionContent>
             <div className="mb-6 flex justify-start space-x-3 px-1">
@@ -132,6 +139,11 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
                 </AlertDialogContent>
               </AlertDialog>
             </div>
+            {workout.durationMinutes ? (
+              <div className="text-muted-foreground mb-4 px-1 text-sm font-medium">
+                Duration: {formatWorkoutDuration(workout.durationMinutes)}
+              </div>
+            ) : null}
             {workout.notes.trim() && (
               <div className="border-border mb-4 rounded-lg border p-4">
                 <p className="text-muted-foreground whitespace-pre-wrap text-left text-sm leading-6">

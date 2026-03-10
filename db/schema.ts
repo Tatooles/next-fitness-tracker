@@ -6,6 +6,7 @@ export const workout = sqliteTable("workout", {
   userId: text("user_id", { length: 64 }),
   name: text("name", { length: 256 }).notNull(),
   notes: text("notes").notNull().default(""),
+  durationMinutes: integer("duration_minutes"),
   date: text("date").notNull(),
 });
 

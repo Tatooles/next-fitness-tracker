@@ -1,11 +1,15 @@
 import { Workout, ExerciseInstance } from "@/lib/types";
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatWorkoutDuration } from "@/lib/utils";
 import { toast } from "sonner";
 
 export const copyWorkoutToClipboard = async (workout: Workout) => {
   try {
     // Build the plain text representation
     let text = `${workout.name} - ${formatDate(workout.date)}\n\n`;
+
+    if (workout.durationMinutes) {
+      text += `Duration: ${formatWorkoutDuration(workout.durationMinutes)}\n\n`;
+    }
 
     workout.exercises.forEach((exercise: ExerciseInstance, idx: number) => {
       text += `${exercise.name}\n`;
