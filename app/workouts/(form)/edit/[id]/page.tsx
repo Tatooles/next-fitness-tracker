@@ -32,6 +32,7 @@ const convertToFormType = (
     name: workout.name,
     date: workout.date,
     notes: workout.notes,
+    durationMinutes: workout.durationMinutes,
     exercises: workout.exercises.map((exercise) => ({
       name: exercise.name,
       notes: exercise.notes,

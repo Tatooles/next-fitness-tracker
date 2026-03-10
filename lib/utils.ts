@@ -12,3 +12,26 @@ export const formatDate = (date: string) => {
     year: "numeric",
   }).format(new Date(`${date}T00:00:00`));
 };
+
+export const formatWorkoutDuration = (durationMinutes?: number | null) => {
+  if (
+    typeof durationMinutes !== "number" ||
+    !Number.isFinite(durationMinutes) ||
+    durationMinutes < 1
+  ) {
+    return "";
+  }
+
+  const hours = Math.floor(durationMinutes / 60);
+  const minutes = durationMinutes % 60;
+
+  if (!hours) {
+    return `${minutes} min`;
+  }
+
+  if (!minutes) {
+    return `${hours} hr`;
+  }
+
+  return `${hours} hr ${minutes} min`;
+};

@@ -13,7 +13,6 @@ import {
   ExerciseThin,
 } from "@/lib/types";
 import { toast } from "sonner";
-import * as z from "zod";
 import { FieldLegend, FieldSet } from "@/components/ui/field";
 interface WorkoutFormProps {
   editMode: boolean;
@@ -111,7 +110,7 @@ export default function WorkoutForm({
       });
   };
 
-  const form = useForm<z.infer<typeof workoutFormSchema>>({
+  const form = useForm<TWorkoutFormSchema>({
     resolver: zodResolver(workoutFormSchema),
     values: workoutValue,
   });
@@ -142,6 +141,7 @@ export default function WorkoutForm({
           {workoutId !== -1 ? "Edit Workout" : "Create Workout"}
         </h2>
         <form
+          noValidate
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-4 sm:space-y-6"
         >
