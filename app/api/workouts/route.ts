@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
         .values({
           name,
           notes,
-          durationMinutes,
+          durationMinutes: durationMinutes ?? null,
           date,
           userId,
         })

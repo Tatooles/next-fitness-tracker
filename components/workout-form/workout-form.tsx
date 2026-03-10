@@ -141,6 +141,7 @@ export default function WorkoutForm({
           {workoutId !== -1 ? "Edit Workout" : "Create Workout"}
         </h2>
         <form
+          noValidate
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-4 sm:space-y-6"
         >

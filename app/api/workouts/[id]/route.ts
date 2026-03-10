@@ -49,7 +49,7 @@ export async function PATCH(
       // Update workout table
       await tx
         .update(workout)
-        .set({ name, notes, durationMinutes, date })
+        .set({ name, notes, durationMinutes: durationMinutes ?? null, date })
         .where(and(eq(workout.id, workoutId), eq(workout.userId, userId)));
 
       // Delete old exercises and sets

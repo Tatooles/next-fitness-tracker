@@ -54,116 +54,117 @@ export default function Workouts({ workouts }: { workouts: Workout[] }) {
 
   return (
     <Accordion type="single" collapsible className="space-y-2">
-      {workouts.map((workout: Workout, index) => (
-        <AccordionItem key={index} value={`item-${index}`}>
-          <AccordionTrigger>
-            <span className="text-left">
+      {workouts.map((workout: Workout, index) => {
+        const duration = formatWorkoutDuration(
+          typeof workout.durationMinutes === "number"
+            ? workout.durationMinutes
+            : null,
+        );
+
+        return (
+          <AccordionItem key={index} value={`item-${index}`}>
+            <AccordionTrigger>
               {formatDate(workout.date)} - {workout.name}
-              {workout.durationMinutes ? (
-                <span className="text-muted-foreground ml-2 text-sm font-normal">
-                  ({formatWorkoutDuration(workout.durationMinutes)})
-                </span>
-              ) : null}
-            </span>
-          </AccordionTrigger>
-          <AccordionContent>
-            <div className="mb-6 flex justify-start space-x-3 px-1">
-              <Button
-                asChild
-                variant="outline"
-                size="sm"
-                className="border-green-500 text-green-500 hover:bg-green-500 hover:text-white"
-              >
-                <Link
-                  href={`/workouts/edit/${workout.id}`}
-                  aria-label="Edit workout"
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="mb-6 flex justify-start space-x-3 px-1">
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  className="border-green-500 text-green-500 hover:bg-green-500 hover:text-white"
                 >
-                  <Pencil aria-hidden="true" />
-                  <span className="hidden sm:inline">Edit</span>
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                size="sm"
-                className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
-              >
-                <Link
-                  href={`/workouts/duplicate/${workout.id}`}
-                  aria-label="Duplicate workout"
-                >
-                  <Files aria-hidden="true" />
-                  <span className="hidden sm:inline">Duplicate</span>
-                </Link>
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="border-purple-500 text-purple-500 hover:bg-purple-500 hover:text-white"
-                onClick={() => copyWorkoutToClipboard(workout)}
-                aria-label="Copy workout to clipboard"
-              >
-                <Copy aria-hidden="true" />
-                <span className="hidden sm:inline">Copy</span>
-              </Button>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
-                    aria-label="Delete workout"
+                  <Link
+                    href={`/workouts/edit/${workout.id}`}
+                    aria-label="Edit workout"
                   >
-                    <Trash2 aria-hidden="true" />
-                    <span className="hidden sm:inline">Delete</span>
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Delete workout?</AlertDialogTitle>
-                  </AlertDialogHeader>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This workout will be
-                    permanently deleted and removed from our servers.
-                  </AlertDialogDescription>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={() => {
-                        deleteWorkout(workout.id);
-                      }}
+                    <Pencil aria-hidden="true" />
+                    <span className="hidden sm:inline">Edit</span>
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+                >
+                  <Link
+                    href={`/workouts/duplicate/${workout.id}`}
+                    aria-label="Duplicate workout"
+                  >
+                    <Files aria-hidden="true" />
+                    <span className="hidden sm:inline">Duplicate</span>
+                  </Link>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-purple-500 text-purple-500 hover:bg-purple-500 hover:text-white"
+                  onClick={() => copyWorkoutToClipboard(workout)}
+                  aria-label="Copy workout to clipboard"
+                >
+                  <Copy aria-hidden="true" />
+                  <span className="hidden sm:inline">Copy</span>
+                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                      aria-label="Delete workout"
                     >
-                      Delete
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
-            {workout.durationMinutes ? (
-              <div className="text-muted-foreground mb-4 px-1 text-sm font-medium">
-                Duration: {formatWorkoutDuration(workout.durationMinutes)}
+                      <Trash2 aria-hidden="true" />
+                      <span className="hidden sm:inline">Delete</span>
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete workout?</AlertDialogTitle>
+                    </AlertDialogHeader>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This workout will be
+                      permanently deleted and removed from our servers.
+                    </AlertDialogDescription>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => {
+                          deleteWorkout(workout.id);
+                        }}
+                      >
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
-            ) : null}
-            {workout.notes.trim() && (
-              <div className="border-border mb-4 rounded-lg border p-4">
-                <p className="text-muted-foreground whitespace-pre-wrap text-left text-sm leading-6">
-                  {workout.notes}
-                </p>
+              {duration.trim() ? (
+                <div className="text-muted-foreground mb-4 px-1 text-sm font-medium">
+                  Duration: {duration}
+                </div>
+              ) : null}
+              {workout.notes.trim() && (
+                <div className="border-border mb-4 rounded-lg border p-4">
+                  <p className="text-muted-foreground text-left text-sm leading-6 whitespace-pre-wrap">
+                    {workout.notes}
+                  </p>
+                </div>
+              )}
+              <div className="space-y-4">
+                {workout.exercises.map((exercise: ExerciseInstance) => (
+                  <ExerciseInstanceItem
+                    exercise={exercise}
+                    showName={true}
+                    showDate={false}
+                    key={exercise.id}
+                  />
+                ))}
               </div>
-            )}
-            <div className="space-y-4">
-              {workout.exercises.map((exercise: ExerciseInstance) => (
-                <ExerciseInstanceItem
-                  exercise={exercise}
-                  showName={true}
-                  showDate={false}
-                  key={exercise.id}
-                />
-              ))}
-            </div>
-          </AccordionContent>
-        </AccordionItem>
-      ))}
+            </AccordionContent>
+          </AccordionItem>
+        );
+      })}
       <LoadingOverlay isLoading={isLoading} />
     </Accordion>
   );

@@ -14,7 +14,11 @@ export const formatDate = (date: string) => {
 };
 
 export const formatWorkoutDuration = (durationMinutes?: number | null) => {
-  if (!durationMinutes || durationMinutes < 1) {
+  if (
+    typeof durationMinutes !== "number" ||
+    !Number.isFinite(durationMinutes) ||
+    durationMinutes < 1
+  ) {
     return "";
   }
 
