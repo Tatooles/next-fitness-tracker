@@ -11,6 +11,10 @@ export const copyWorkoutToClipboard = async (workout: Workout) => {
       text += `Duration: ${formatWorkoutDuration(workout.durationMinutes)}\n\n`;
     }
 
+    if (workout.notes.trim()) {
+      text += `Notes: ${workout.notes}\n\n`;
+    }
+
     workout.exercises.forEach((exercise: ExerciseInstance, idx: number) => {
       text += `${exercise.name}\n`;
 
