@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm, useFieldArray, useWatch } from "react-hook-form";
+import { Controller, useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import ExerciseItem from "@/components/workout-form/exercise-item";
@@ -13,7 +13,14 @@ import {
   ExerciseThin,
 } from "@/lib/types";
 import { toast } from "sonner";
-import { FieldLegend, FieldSet } from "@/components/ui/field";
+import {
+  Field,
+  FieldError,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 interface WorkoutFormProps {
   editMode: boolean;
   workoutValue: TWorkoutFormSchema;
@@ -184,6 +191,63 @@ export default function WorkoutForm({
             >
               Add Exercise
             </Button>
+          </FieldSet>
+
+          <FieldSet className="rounded-lg border border-border/60 bg-background/20 p-4 sm:p-5">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <FieldLegend
+                  variant="label"
+                  className="mb-0 text-base font-semibold sm:text-lg"
+                >
+                  Workout Duration
+                </FieldLegend>
+              </div>
+
+              <Controller
+                name="durationMinutes"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field
+                    data-invalid={fieldState.invalid}
+                    className="w-32 shrink-0 sm:w-36"
+                  >
+                    <FieldLabel htmlFor={field.name} className="sr-only">
+                      Workout duration in minutes
+                    </FieldLabel>
+                    <div className="relative">
+                      <Input
+                        id={field.name}
+                        aria-invalid={fieldState.invalid}
+                        type="number"
+                        min="1"
+                        step="1"
+                        inputMode="numeric"
+                        className="bg-background/50 hover:bg-background/80 h-11 pr-12 text-center text-lg tabular-nums transition-colors"
+                        placeholder="45"
+                        value={field.value ?? ""}
+                        onChange={(event) =>
+                          field.onChange(
+                            event.target.value === ""
+                              ? undefined
+                              : Number(event.target.value),
+                          )
+                        }
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
+                      />
+                      <span className="text-muted-foreground pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm font-medium">
+                        min
+                      </span>
+                    </div>
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+            </div>
           </FieldSet>
 
           <div className="flex justify-end pt-2">
