@@ -195,14 +195,9 @@ export default function WorkoutForm({
 
           <FieldSet className="rounded-lg border border-border/60 bg-background/20 p-4 sm:p-5">
             <div className="flex items-center justify-between gap-4">
-              <div>
-                <FieldLegend
-                  variant="label"
-                  className="mb-0 text-base font-semibold sm:text-lg"
-                >
-                  Workout Duration
-                </FieldLegend>
-              </div>
+              <p className="text-base font-semibold sm:text-lg">
+                Workout Duration
+              </p>
 
               <Controller
                 name="durationMinutes"
