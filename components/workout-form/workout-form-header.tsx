@@ -57,42 +57,6 @@ export default function WorkoutFormHeader({ control }: WorkoutFormHeaderProps) {
         )}
       />
       <Controller
-        name="durationMinutes"
-        control={control}
-        render={({ field, fieldState }) => (
-          <Field data-invalid={fieldState.invalid}>
-            <FieldLabel
-              htmlFor={field.name}
-              className="text-base font-semibold"
-            >
-              Workout Duration
-            </FieldLabel>
-            <Input
-              id={field.name}
-              aria-invalid={fieldState.invalid}
-              type="number"
-              min="1"
-              step="1"
-              inputMode="numeric"
-              className="bg-background/50 hover:bg-background/80 h-10 text-base transition-colors sm:h-11"
-              placeholder="Minutes"
-              value={field.value ?? ""}
-              onChange={(event) =>
-                field.onChange(
-                  event.target.value === ""
-                    ? undefined
-                    : Number(event.target.value),
-                )
-              }
-              onBlur={field.onBlur}
-              name={field.name}
-              ref={field.ref}
-            />
-            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-          </Field>
-        )}
-      />
-      <Controller
         name="notes"
         control={control}
         render={({ field, fieldState }) => (
