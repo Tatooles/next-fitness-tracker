@@ -8,11 +8,34 @@ import {
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Toaster } from "@/components/ui/sonner";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+
+const appName = "Lifting Log";
+const appDescription = "Log and track your workouts";
 
 export const metadata: Metadata = {
-  title: "Lifting Log",
-  description: "Log and track your workouts",
+  applicationName: appName,
+  title: appName,
+  description: appDescription,
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: appName,
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  icons: {
+    apple: "/apple-icon",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+  ],
 };
 
 export default function RootLayout({
