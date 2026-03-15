@@ -37,14 +37,14 @@ export default function ExerciseItem({
   placeholderValues,
 }: ExerciseItemProps) {
   return (
-    <div className="space-y-4 rounded-lg border p-3">
-      <div className="flex items-center">
+    <div className="min-w-0 space-y-4 rounded-lg border p-3">
+      <div className="min-w-0">
         <Controller
           control={control}
           name={`exercises.${index}.name`}
           render={({ field, fieldState }) => (
-            <Field className="flex-1">
-              <div className="flex items-center gap-2">
+            <Field className="min-w-0 flex-1">
+              <div className="flex min-w-0 items-center gap-2">
                 <ExerciseSelector
                   value={field.value}
                   onChange={field.onChange}

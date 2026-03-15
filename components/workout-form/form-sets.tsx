@@ -30,7 +30,10 @@ export default function FormSets({
     <FieldSet className="flex flex-col gap-2">
       <FieldLegend variant="label">Sets</FieldLegend>
       {fields.map((field, index) => (
-        <div key={field.id} className="flex items-center justify-between gap-2">
+        <div
+          key={field.id}
+          className="grid min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)_minmax(0,1fr)_auto] items-center gap-2"
+        >
           <Controller
             name={`exercises.${exerciseIndex}.sets.${index}.weight`}
             control={control}
@@ -93,7 +96,7 @@ export default function FormSets({
           </Button>
         </div>
       ))}
-      <div className="flex gap-3 sm:gap-2">
+      <div className="flex flex-wrap gap-3 sm:gap-2">
         <Button
           type="button"
           variant="outline"

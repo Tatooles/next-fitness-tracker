@@ -11,7 +11,7 @@ interface WorkoutFormHeaderProps {
 
 export default function WorkoutFormHeader({ control }: WorkoutFormHeaderProps) {
   return (
-    <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3">
+    <div className="min-w-0 grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3">
       <Controller
         name="date"
         control={control}

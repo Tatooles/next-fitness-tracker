@@ -141,9 +141,9 @@ export default function WorkoutForm({
   }, []);
 
   return (
-    <div className="mx-auto max-w-2xl px-2 sm:px-6">
+    <div className="mx-auto min-w-0 max-w-2xl px-2 sm:px-6">
       <LoadingOverlay isLoading={isLoading} />
-      <div className="space-y-4 rounded-lg p-3 shadow-lg sm:space-y-6 sm:p-6">
+      <div className="min-w-0 space-y-4 rounded-lg p-3 shadow-lg sm:space-y-6 sm:p-6">
         <h2 className="from-primary to-primary/60 mb-4 bg-linear-to-r bg-clip-text text-center text-2xl font-bold text-transparent sm:mb-8 sm:text-3xl">
           {workoutId !== -1 ? "Edit Workout" : "Create Workout"}
         </h2>
