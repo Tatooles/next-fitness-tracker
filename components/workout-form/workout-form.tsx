@@ -16,7 +16,6 @@ import { toast } from "sonner";
 import {
   Field,
   FieldError,
-  FieldLabel,
   FieldLegend,
   FieldSet,
 } from "@/components/ui/field";
@@ -207,12 +206,10 @@ export default function WorkoutForm({
                     data-invalid={fieldState.invalid}
                     className="w-32 shrink-0 sm:w-36"
                   >
-                    <FieldLabel htmlFor={field.name} className="sr-only">
-                      Workout duration in minutes
-                    </FieldLabel>
                     <div className="relative">
                       <Input
                         id={field.name}
+                        aria-label="Workout duration in minutes"
                         aria-invalid={fieldState.invalid}
                         type="number"
                         min="1"
