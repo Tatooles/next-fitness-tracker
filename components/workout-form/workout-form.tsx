@@ -66,7 +66,9 @@ export default function WorkoutForm({
    * @param form the form values to create the workout with
    * @returns the ID of the newly created workout, or null if creation failed
    */
-  const createWorkout = async (form: TWorkoutFormSchema): Promise<number | null> => {
+  const createWorkout = async (
+    form: TWorkoutFormSchema,
+  ): Promise<number | null> => {
     try {
       const response = await fetch("/api/workouts", {
         method: "POST",
@@ -75,12 +77,12 @@ export default function WorkoutForm({
           "Content-Type": "application/json",
         },
       });
-      
+
       if (!response.ok) {
         toast.error("Failed to create workout");
         return null;
       }
-      
+
       const data = await response.json();
       return data.workoutId;
     } catch (error) {
@@ -193,23 +195,23 @@ export default function WorkoutForm({
             </Button>
           </FieldSet>
 
-          <FieldSet className="rounded-lg border border-border/60 bg-background/20 p-4 sm:p-5">
-            <div className="flex items-center justify-between gap-4">
-              <p className="text-base font-semibold sm:text-lg">
-                Workout Duration
-              </p>
-
-              <Controller
-                name="durationMinutes"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field
-                    data-invalid={fieldState.invalid}
-                    className="w-32 shrink-0 sm:w-36"
+          <div className="border-border/60 bg-background/20 rounded-lg border p-4 sm:p-5">
+            <Controller
+              name="durationMinutes"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field
+                  data-invalid={fieldState.invalid}
+                  orientation="horizontal"
+                  className="justify-between"
+                >
+                  <FieldLabel
+                    htmlFor={field.name}
+                    className="min-w-0 text-base leading-tight font-semibold sm:text-lg"
                   >
-                    <FieldLabel htmlFor={field.name} className="sr-only">
-                      Workout duration in minutes
-                    </FieldLabel>
+                    Workout Duration
+                  </FieldLabel>
+                  <div className="w-32 shrink-0 sm:w-36">
                     <div className="relative">
                       <Input
                         id={field.name}
@@ -218,7 +220,7 @@ export default function WorkoutForm({
                         min="1"
                         step="1"
                         inputMode="numeric"
-                        className="bg-background/50 hover:bg-background/80 h-11 pr-12 text-center text-lg tabular-nums transition-colors"
+                        className="bg-background/50 hover:bg-background/80 h-11 w-full pr-12 text-center text-lg tabular-nums transition-colors"
                         placeholder="45"
                         value={field.value ?? ""}
                         onChange={(event) =>
@@ -239,11 +241,11 @@ export default function WorkoutForm({
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
-                  </Field>
-                )}
-              />
-            </div>
-          </FieldSet>
+                  </div>
+                </Field>
+              )}
+            />
+          </div>
 
           <div className="flex justify-end pt-2">
             <Button
