@@ -207,7 +207,7 @@ export default function WorkoutForm({
                 >
                   <FieldLabel
                     htmlFor={field.name}
-                    className="text-base font-semibold whitespace-nowrap sm:text-lg"
+                    className="min-w-0 text-base leading-tight font-semibold sm:text-lg"
                   >
                     Workout Duration
                   </FieldLabel>
