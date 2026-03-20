@@ -221,12 +221,11 @@ export default function WorkoutForm({
                         step="1"
                         inputMode="numeric"
                         className="bg-background/50 hover:bg-background/80 h-11 w-full pr-12 text-center text-lg tabular-nums transition-colors"
-                        placeholder="45"
                         value={field.value ?? ""}
                         onChange={(event) =>
                           field.onChange(
                             event.target.value === ""
-                              ? undefined
+                              ? null
                               : Number(event.target.value),
                           )
                         }

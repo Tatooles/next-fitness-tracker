@@ -7,7 +7,7 @@ export default async function CreateWorkoutPage() {
       workoutId={-1}
       workoutValue={{
         date: "",
-        durationMinutes: undefined,
+        durationMinutes: null,
         name: "",
         notes: "",
         exercises: [
