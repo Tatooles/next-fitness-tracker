@@ -6,6 +6,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import ExerciseItem from "@/components/workout-form/exercise-item";
 import WorkoutFormHeader from "@/components/workout-form/workout-form-header";
+import WorkoutFormActionHeader, {
+  WorkoutSaveStatus,
+} from "@/components/workout-form/workout-form-action-header";
 import { LoadingOverlay } from "@/components/loading-overlay";
 import {
   workoutFormSchema,
@@ -35,6 +38,10 @@ export default function WorkoutForm({
   placeholderValues,
 }: WorkoutFormProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [hasSavedOnce, setHasSavedOnce] = useState(editMode);
+  const [saveStatus, setSaveStatus] = useState<WorkoutSaveStatus>(
+    editMode ? "saved" : "not_saved",
+  );
   const [exercises, setExercises] = useState<string[]>([]);
   const router = useRouter();
 
@@ -49,14 +56,27 @@ export default function WorkoutForm({
 
   const onSubmit = async (values: TWorkoutFormSchema) => {
     setIsLoading(true);
+    setSaveStatus("saving");
+
     if (!editMode) {
       const newWorkoutId = await createWorkout(values);
       if (newWorkoutId) {
         router.push(`/workouts/edit/${newWorkoutId}`);
+      } else {
+        setSaveStatus("failed");
       }
     } else {
-      await updateWorkout(workoutId, values);
+      const wasSaved = await updateWorkout(workoutId, values);
+
+      if (wasSaved) {
+        form.reset(values);
+        setHasSavedOnce(true);
+        setSaveStatus("saved");
+      } else {
+        setSaveStatus("failed");
+      }
     }
+
     setIsLoading(false);
   };
 
@@ -98,31 +118,36 @@ export default function WorkoutForm({
    * @param id the id of the workout to update
    * @param form the form values to update the workout with
    */
-  const updateWorkout = async (id: number, form: TWorkoutFormSchema) => {
-    await fetch(`/api/workouts/${id}`, {
-      method: "PATCH",
-      body: JSON.stringify(form),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          toast.error("Failed to save workout");
-        } else {
-          toast.success("Saved workout");
-        }
-      })
-      .catch((error) => {
-        console.error("An error occurred while updating exercise:", error);
-        toast.error("Failed to save workout");
+  const updateWorkout = async (
+    id: number,
+    form: TWorkoutFormSchema,
+  ): Promise<boolean> => {
+    try {
+      const response = await fetch(`/api/workouts/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(form),
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
+
+      if (!response.ok) {
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error("An error occurred while updating exercise:", error);
+      return false;
+    }
   };
 
   const form = useForm<TWorkoutFormSchema>({
     resolver: zodResolver(workoutFormSchema),
-    values: workoutValue,
+    defaultValues: workoutValue,
   });
+
+  const { isDirty } = form.formState;
 
   const { fields, append, remove, move } = useFieldArray({
     control: form.control,
@@ -133,6 +158,9 @@ export default function WorkoutForm({
     control: form.control,
     name: "exercises",
   });
+  const watchedFormValues = useWatch({
+    control: form.control,
+  });
 
   // Set today's date if date is empty (for create mode)
   useEffect(() => {
@@ -142,18 +170,42 @@ export default function WorkoutForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    setSaveStatus((currentStatus) => {
+      if (currentStatus === "saving") {
+        return currentStatus;
+      }
+
+      if (currentStatus === "failed") {
+        return "unsaved";
+      }
+
+      if (isDirty) {
+        return "unsaved";
+      }
+
+      if (editMode || hasSavedOnce) {
+        return "saved";
+      }
+
+      return "not_saved";
+    });
+  }, [editMode, hasSavedOnce, isDirty, watchedFormValues]);
+
   return (
     <div className="mx-auto max-w-2xl px-2 sm:px-6">
       <LoadingOverlay isLoading={isLoading} />
       <div className="space-y-4 rounded-lg p-3 shadow-lg sm:space-y-6 sm:p-6">
-        <h2 className="from-primary to-primary/60 mb-4 bg-linear-to-r bg-clip-text text-center text-2xl font-bold text-transparent sm:mb-8 sm:text-3xl">
-          {workoutId !== -1 ? "Edit Workout" : "Create Workout"}
-        </h2>
         <form
           noValidate
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-4 sm:space-y-6"
         >
+          <WorkoutFormActionHeader
+            isLoading={isLoading}
+            saveStatus={saveStatus}
+          />
+
           <WorkoutFormHeader control={form.control} />
 
           <FieldSet className="space-y-3 sm:space-y-4">
@@ -245,16 +297,6 @@ export default function WorkoutForm({
                 </Field>
               )}
             />
-          </div>
-
-          <div className="flex justify-end pt-2">
-            <Button
-              type="submit"
-              className="bg-primary hover:bg-primary/90 w-full text-base"
-              disabled={isLoading}
-            >
-              {editMode ? "Save" : "Create Workout"}
-            </Button>
           </div>
         </form>
       </div>
