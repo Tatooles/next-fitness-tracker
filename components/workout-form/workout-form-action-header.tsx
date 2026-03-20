@@ -43,12 +43,10 @@ const saveStatusConfig: Record<
 };
 
 interface WorkoutFormActionHeaderProps {
-  isLoading: boolean;
   saveStatus: WorkoutSaveStatus;
 }
 
 export default function WorkoutFormActionHeader({
-  isLoading,
   saveStatus,
 }: WorkoutFormActionHeaderProps) {
   const status = saveStatusConfig[saveStatus];
@@ -73,7 +71,7 @@ export default function WorkoutFormActionHeader({
           <Button
             type="submit"
             className="bg-primary hover:bg-primary/90 text-base"
-            disabled={isLoading}
+            disabled={saveStatus === "saving"}
           >
             Save
           </Button>

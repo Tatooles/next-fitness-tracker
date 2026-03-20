@@ -9,7 +9,6 @@ import WorkoutFormHeader from "@/components/workout-form/workout-form-header";
 import WorkoutFormActionHeader, {
   WorkoutSaveStatus,
 } from "@/components/workout-form/workout-form-action-header";
-import { LoadingOverlay } from "@/components/loading-overlay";
 import {
   workoutFormSchema,
   TWorkoutFormSchema,
@@ -37,7 +36,6 @@ export default function WorkoutForm({
   workoutId,
   placeholderValues,
 }: WorkoutFormProps) {
-  const [isLoading, setIsLoading] = useState(false);
   const [hasSavedOnce, setHasSavedOnce] = useState(editMode);
   const [saveStatus, setSaveStatus] = useState<WorkoutSaveStatus>(
     editMode ? "saved" : "not_saved",
@@ -55,7 +53,6 @@ export default function WorkoutForm({
   }, []);
 
   const onSubmit = async (values: TWorkoutFormSchema) => {
-    setIsLoading(true);
     setSaveStatus("saving");
 
     if (!editMode) {
@@ -76,8 +73,6 @@ export default function WorkoutForm({
         setSaveStatus("failed");
       }
     }
-
-    setIsLoading(false);
   };
 
   /**
@@ -194,17 +189,13 @@ export default function WorkoutForm({
 
   return (
     <div className="mx-auto max-w-2xl px-2 sm:px-6">
-      <LoadingOverlay isLoading={isLoading} />
       <div className="space-y-4 rounded-lg p-3 shadow-lg sm:space-y-6 sm:p-6">
         <form
           noValidate
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-4 sm:space-y-6"
         >
-          <WorkoutFormActionHeader
-            isLoading={isLoading}
-            saveStatus={saveStatus}
-          />
+          <WorkoutFormActionHeader saveStatus={saveStatus} />
 
           <WorkoutFormHeader control={form.control} />
 
