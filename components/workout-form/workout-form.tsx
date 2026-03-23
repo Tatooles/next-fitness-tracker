@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Controller, useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,6 +23,9 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+
+const cloneWorkoutForm = (values: TWorkoutFormSchema) => structuredClone(values);
+
 interface WorkoutFormProps {
   editMode: boolean;
   workoutValue: TWorkoutFormSchema;
@@ -36,12 +39,56 @@ export default function WorkoutForm({
   workoutId,
   placeholderValues,
 }: WorkoutFormProps) {
-  const [hasSavedOnce, setHasSavedOnce] = useState(editMode);
-  const [saveStatus, setSaveStatus] = useState<WorkoutSaveStatus>(
-    editMode ? "saved" : "not_saved",
+  const [hasSavedSuccessfully, setHasSavedSuccessfully] = useState(editMode);
+  const [changeRevision, setChangeRevision] = useState(0);
+  const [lastFailedRevision, setLastFailedRevision] = useState<number | null>(
+    null,
   );
   const [exercises, setExercises] = useState<string[]>([]);
+  const changeRevisionRef = useRef(0);
+  const suppressedRevisionUpdatesRef = useRef(0);
   const router = useRouter();
+  const form = useForm<TWorkoutFormSchema>({
+    resolver: zodResolver(workoutFormSchema),
+    defaultValues: workoutValue,
+  });
+  const {
+    control,
+    getValues,
+    handleSubmit,
+    reset,
+    subscribe,
+    setValue,
+    formState: { isDirty, isSubmitting },
+  } = form;
+  const { fields, append, remove, move } = useFieldArray({
+    control,
+    name: "exercises",
+  });
+  const watchedExercises = useWatch({
+    control,
+    name: "exercises",
+  });
+
+  const saveStatus: WorkoutSaveStatus = (() => {
+    if (isSubmitting) {
+      return "saving";
+    }
+
+    if (lastFailedRevision !== null && changeRevision === lastFailedRevision) {
+      return "failed";
+    }
+
+    if (!hasSavedSuccessfully) {
+      return "not_saved";
+    }
+
+    if (isDirty) {
+      return "unsaved";
+    }
+
+    return "saved";
+  })();
 
   useEffect(() => {
     async function fetchExercises() {
@@ -52,25 +99,52 @@ export default function WorkoutForm({
     fetchExercises();
   }, []);
 
+  useEffect(() => {
+    return subscribe({
+      formState: {
+        values: true,
+      },
+      callback: () => {
+        if (suppressedRevisionUpdatesRef.current > 0) {
+          suppressedRevisionUpdatesRef.current -= 1;
+          return;
+        }
+
+        const nextRevision = changeRevisionRef.current + 1;
+        changeRevisionRef.current = nextRevision;
+        setChangeRevision(nextRevision);
+      },
+    });
+  }, [subscribe]);
+
   const onSubmit = async (values: TWorkoutFormSchema) => {
-    setSaveStatus("saving");
+    const submittedSnapshot = cloneWorkoutForm(values);
+    const submittedRevision = changeRevisionRef.current;
+    setLastFailedRevision(null);
 
     if (!editMode) {
-      const newWorkoutId = await createWorkout(values);
+      const newWorkoutId = await createWorkout(submittedSnapshot);
       if (newWorkoutId) {
         router.push(`/workouts/edit/${newWorkoutId}`);
       } else {
-        setSaveStatus("failed");
+        setLastFailedRevision(submittedRevision);
       }
     } else {
-      const wasSaved = await updateWorkout(workoutId, values);
+      const wasSaved = await updateWorkout(workoutId, submittedSnapshot);
 
       if (wasSaved) {
-        form.reset(values);
-        setHasSavedOnce(true);
-        setSaveStatus("saved");
+        setHasSavedSuccessfully(true);
+        setLastFailedRevision(null);
+
+        const keepValues = changeRevisionRef.current !== submittedRevision;
+
+        if (!keepValues) {
+          suppressedRevisionUpdatesRef.current += 1;
+        }
+
+        reset(submittedSnapshot, { keepValues });
       } else {
-        setSaveStatus("failed");
+        setLastFailedRevision(submittedRevision);
       }
     }
   };
@@ -137,67 +211,26 @@ export default function WorkoutForm({
     }
   };
 
-  const form = useForm<TWorkoutFormSchema>({
-    resolver: zodResolver(workoutFormSchema),
-    defaultValues: workoutValue,
-  });
-
-  const { isDirty } = form.formState;
-
-  const { fields, append, remove, move } = useFieldArray({
-    control: form.control,
-    name: "exercises",
-  });
-
-  const watchedExercises = useWatch({
-    control: form.control,
-    name: "exercises",
-  });
-  const watchedFormValues = useWatch({
-    control: form.control,
-  });
-
   // Set today's date if date is empty (for create mode)
   useEffect(() => {
     if (!workoutValue.date) {
-      form.setValue("date", new Date().toLocaleDateString("en-CA"));
+      suppressedRevisionUpdatesRef.current += 1;
+      setValue("date", new Date().toLocaleDateString("en-CA"));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    setSaveStatus((currentStatus) => {
-      if (currentStatus === "saving") {
-        return currentStatus;
-      }
-
-      if (currentStatus === "failed") {
-        return "unsaved";
-      }
-
-      if (isDirty) {
-        return "unsaved";
-      }
-
-      if (editMode || hasSavedOnce) {
-        return "saved";
-      }
-
-      return "not_saved";
-    });
-  }, [editMode, hasSavedOnce, isDirty, watchedFormValues]);
 
   return (
     <div className="mx-auto max-w-2xl px-2 sm:px-6">
       <div className="space-y-4 rounded-lg p-3 shadow-lg sm:space-y-6 sm:p-6">
         <form
           noValidate
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={handleSubmit(onSubmit)}
           className="space-y-4 sm:space-y-6"
         >
           <WorkoutFormActionHeader saveStatus={saveStatus} />
 
-          <WorkoutFormHeader control={form.control} />
+          <WorkoutFormHeader control={control} />
 
           <FieldSet className="space-y-3 sm:space-y-4">
             <FieldLegend className="text-base font-semibold sm:text-lg">
@@ -208,8 +241,8 @@ export default function WorkoutForm({
               <ExerciseItem
                 key={field.id}
                 index={index}
-                control={form.control}
-                getValues={form.getValues}
+                control={control}
+                getValues={getValues}
                 exercises={exercises}
                 exerciseName={watchedExercises?.[index]?.name || ""}
                 onRemove={() => remove(index)}
@@ -241,7 +274,7 @@ export default function WorkoutForm({
           <div className="border-border/60 bg-background/20 rounded-lg border p-4 sm:p-5">
             <Controller
               name="durationMinutes"
-              control={form.control}
+              control={control}
               render={({ field, fieldState }) => (
                 <Field
                   data-invalid={fieldState.invalid}
