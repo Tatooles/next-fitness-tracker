@@ -2,17 +2,43 @@ import * as xlsx from "xlsx";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db/drizzle";
 import { Workout } from "@/lib/types";
-import { NextRequest } from "next/server";
-import { BookType } from "xlsx";
+import { NextRequest, NextResponse } from "next/server";
+
+const EXPORT_FORMATS = {
+  xlsx: {
+    bookType: "xlsx" as const,
+    mimeType:
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  },
+  csv: {
+    bookType: "csv" as const,
+    mimeType: "text/csv",
+  },
+};
+
+type SupportedExportType = keyof typeof EXPORT_FORMATS;
+
+function isSupportedExportType(
+  fileType: string | null,
+): fileType is SupportedExportType {
+  return fileType !== null && fileType in EXPORT_FORMATS;
+}
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
-  const fileType = searchParams.get("fileType") as BookType;
+  const fileType = searchParams.get("fileType");
 
   const { userId } = await auth();
   if (!userId) {
     console.log("User not found");
     return Response.error();
+  }
+
+  if (!isSupportedExportType(fileType)) {
+    return NextResponse.json(
+      { error: "Unsupported fileType" },
+      { status: 400 },
+    );
   }
 
   const data: Workout[] = await db.query.workout.findMany({
@@ -46,21 +72,14 @@ export async function GET(request: NextRequest) {
 
   xlsx.utils.book_append_sheet(wb, ws, "Workout Data");
 
-  const excelBuffer = xlsx.write(wb, { bookType: fileType, type: "buffer" });
-
-  let mimeType = "application/json";
-
-  switch (fileType) {
-    case "xlsx":
-      mimeType =
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-      break;
-    case "csv":
-      mimeType = "text/csv";
-  }
+  const exportFormat = EXPORT_FORMATS[fileType];
+  const excelBuffer = xlsx.write(wb, {
+    bookType: exportFormat.bookType,
+    type: "buffer",
+  });
 
   const headers = new Headers();
-  headers.append("Content-Type", mimeType);
+  headers.append("Content-Type", exportFormat.mimeType);
   headers.append(
     "Content-Disposition",
     `attachment; filename=user_data.${fileType}`,
