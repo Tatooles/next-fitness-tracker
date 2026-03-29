@@ -1,6 +1,4 @@
-import { and, eq } from "drizzle-orm";
 import { db } from "@/db/drizzle";
-import { exercise, workout, set } from "@/db/schema";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { Set } from "@/lib/types";
@@ -17,46 +15,45 @@ export async function GET(request: NextRequest) {
   const { userId } = await auth();
   const exerciseName = request.nextUrl.searchParams.get("name");
 
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (!exerciseName?.trim()) {
+    return NextResponse.json(
+      { error: "Exercise name is required" },
+      { status: 400 },
+    );
+  }
+
   try {
-    const data = await db
-      .select()
-      .from(exercise)
-      .innerJoin(workout, eq(exercise.workoutId, workout.id))
-      .leftJoin(set, eq(set.exerciseId, exercise.id))
-      .where(
-        and(eq(workout.userId, userId!), eq(exercise.name, exerciseName!)),
-      );
+    const workouts = await db.query.workout.findMany({
+      where: (workout, { eq }) => eq(workout.userId, userId),
+      with: {
+        exercises: {
+          where: (exercise, { eq }) => eq(exercise.name, exerciseName.trim()),
+          with: {
+            sets: {
+              orderBy: (sets, { asc }) => [asc(sets.id)],
+            },
+          },
+        },
+      },
+    });
 
-    // Group exercise data by workoutId into an object that is friendly to the front end
-    const grouped: Record<number, GroupedExercise> = {};
-
-    data.forEach((row) => {
-      const { date, name } = row.workout;
-      const { notes, workoutId } = row.exercise;
-
-      if (!workoutId) return;
-
-      if (!grouped[workoutId]) {
-        grouped[workoutId] = {
+    const history = workouts.flatMap(({ date, name, exercises }) =>
+      exercises.map(
+        (exercise): GroupedExercise => ({
           date,
-          notes,
-          workoutId,
+          notes: exercise.notes,
+          workoutId: exercise.workoutId,
           workoutName: name,
-          sets: [],
-        };
-      }
+          sets: exercise.sets as Set[],
+        }),
+      ),
+    );
 
-      if (row.set) {
-        grouped[workoutId].sets.push(row.set);
-      }
-    });
-
-    Object.values(grouped).forEach((exercise) => {
-      exercise.sets.sort((a, b) => a.id - b.id);
-    });
-
-    // Convert back to array and sort
-    const sorted = Object.values(grouped).sort(
+    const sorted = history.sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
     );
 
