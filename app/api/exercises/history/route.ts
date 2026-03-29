@@ -34,8 +34,7 @@ export async function GET(request: NextRequest) {
       const { date, name } = row.workout;
       const { notes, workoutId } = row.exercise;
 
-      // Skip if missing workoutId or set
-      if (!workoutId || !row.set) return;
+      if (!workoutId) return;
 
       if (!grouped[workoutId]) {
         grouped[workoutId] = {
@@ -47,11 +46,13 @@ export async function GET(request: NextRequest) {
         };
       }
 
-      // Add set to the respective workout
-      grouped[workoutId].sets.push(row.set);
+      if (row.set) {
+        grouped[workoutId].sets.push(row.set);
+      }
+    });
 
-      // Sort sets by id asc
-      grouped[workoutId].sets.sort((a, b) => a.id - b.id);
+    Object.values(grouped).forEach((exercise) => {
+      exercise.sets.sort((a, b) => a.id - b.id);
     });
 
     // Convert back to array and sort
