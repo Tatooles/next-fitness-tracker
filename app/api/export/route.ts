@@ -21,7 +21,7 @@ type SupportedExportType = keyof typeof EXPORT_FORMATS;
 function isSupportedExportType(
   fileType: string | null,
 ): fileType is SupportedExportType {
-  return fileType !== null && fileType in EXPORT_FORMATS;
+  return fileType !== null && Object.hasOwn(EXPORT_FORMATS, fileType);
 }
 
 export async function GET(request: NextRequest) {
