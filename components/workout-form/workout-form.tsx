@@ -26,6 +26,38 @@ import { Input } from "@/components/ui/input";
 
 const cloneWorkoutForm = (values: TWorkoutFormSchema) => structuredClone(values);
 
+const getSaveStatus = ({
+  editMode,
+  hasSavedSuccessfully,
+  hasSaveFailed,
+  isDirty,
+  isSubmitting,
+}: {
+  editMode: boolean;
+  hasSavedSuccessfully: boolean;
+  hasSaveFailed: boolean;
+  isDirty: boolean;
+  isSubmitting: boolean;
+}): WorkoutSaveStatus => {
+  if (isSubmitting) {
+    return "saving";
+  }
+
+  if (hasSaveFailed) {
+    return "failed";
+  }
+
+  if (!editMode || !hasSavedSuccessfully) {
+    return "not_saved";
+  }
+
+  if (isDirty) {
+    return "unsaved";
+  }
+
+  return "saved";
+};
+
 interface WorkoutFormProps {
   editMode: boolean;
   workoutValue: TWorkoutFormSchema;
@@ -40,13 +72,9 @@ export default function WorkoutForm({
   placeholderValues,
 }: WorkoutFormProps) {
   const [hasSavedSuccessfully, setHasSavedSuccessfully] = useState(editMode);
-  const [changeRevision, setChangeRevision] = useState(0);
-  const [lastFailedRevision, setLastFailedRevision] = useState<number | null>(
-    null,
-  );
+  const [hasSaveFailed, setHasSaveFailed] = useState(false);
   const [exercises, setExercises] = useState<string[]>([]);
-  const changeRevisionRef = useRef(0);
-  const suppressedRevisionUpdatesRef = useRef(0);
+  const previousSerializedValuesRef = useRef<string | null>(null);
   const router = useRouter();
   const form = useForm<TWorkoutFormSchema>({
     resolver: zodResolver(workoutFormSchema),
@@ -57,7 +85,6 @@ export default function WorkoutForm({
     getValues,
     handleSubmit,
     reset,
-    subscribe,
     setValue,
     formState: { isDirty, isSubmitting },
   } = form;
@@ -70,25 +97,15 @@ export default function WorkoutForm({
     name: "exercises",
   });
 
-  const saveStatus: WorkoutSaveStatus = (() => {
-    if (isSubmitting) {
-      return "saving";
-    }
-
-    if (lastFailedRevision !== null && changeRevision === lastFailedRevision) {
-      return "failed";
-    }
-
-    if (!hasSavedSuccessfully) {
-      return "not_saved";
-    }
-
-    if (isDirty) {
-      return "unsaved";
-    }
-
-    return "saved";
-  })();
+  const watchedValues = useWatch({ control });
+  const serializedValues = JSON.stringify(watchedValues ?? null);
+  const saveStatus = getSaveStatus({
+    editMode,
+    hasSavedSuccessfully,
+    hasSaveFailed,
+    isDirty,
+    isSubmitting,
+  });
 
   useEffect(() => {
     async function fetchExercises() {
@@ -100,51 +117,37 @@ export default function WorkoutForm({
   }, []);
 
   useEffect(() => {
-    return subscribe({
-      formState: {
-        values: true,
-      },
-      callback: () => {
-        if (suppressedRevisionUpdatesRef.current > 0) {
-          suppressedRevisionUpdatesRef.current -= 1;
-          return;
-        }
+    if (
+      hasSaveFailed &&
+      previousSerializedValuesRef.current !== null &&
+      previousSerializedValuesRef.current !== serializedValues
+    ) {
+      setHasSaveFailed(false);
+    }
 
-        const nextRevision = changeRevisionRef.current + 1;
-        changeRevisionRef.current = nextRevision;
-        setChangeRevision(nextRevision);
-      },
-    });
-  }, [subscribe]);
+    previousSerializedValuesRef.current = serializedValues;
+  }, [hasSaveFailed, serializedValues]);
 
   const onSubmit = async (values: TWorkoutFormSchema) => {
     const submittedSnapshot = cloneWorkoutForm(values);
-    const submittedRevision = changeRevisionRef.current;
-    setLastFailedRevision(null);
+    setHasSaveFailed(false);
 
     if (!editMode) {
       const newWorkoutId = await createWorkout(submittedSnapshot);
       if (newWorkoutId) {
         router.push(`/workouts/edit/${newWorkoutId}`);
       } else {
-        setLastFailedRevision(submittedRevision);
+        setHasSaveFailed(true);
       }
     } else {
       const wasSaved = await updateWorkout(workoutId, submittedSnapshot);
 
       if (wasSaved) {
         setHasSavedSuccessfully(true);
-        setLastFailedRevision(null);
-
-        const keepValues = changeRevisionRef.current !== submittedRevision;
-
-        if (!keepValues) {
-          suppressedRevisionUpdatesRef.current += 1;
-        }
-
-        reset(submittedSnapshot, { keepValues });
+        setHasSaveFailed(false);
+        reset(submittedSnapshot);
       } else {
-        setLastFailedRevision(submittedRevision);
+        setHasSaveFailed(true);
       }
     }
   };
@@ -201,12 +204,14 @@ export default function WorkoutForm({
       });
 
       if (!response.ok) {
+        toast.error("Failed to save workout");
         return false;
       }
 
       return true;
     } catch (error) {
       console.error("An error occurred while updating exercise:", error);
+      toast.error("Failed to save workout");
       return false;
     }
   };
@@ -214,8 +219,9 @@ export default function WorkoutForm({
   // Set today's date if date is empty (for create mode)
   useEffect(() => {
     if (!workoutValue.date) {
-      suppressedRevisionUpdatesRef.current += 1;
-      setValue("date", new Date().toLocaleDateString("en-CA"));
+      setValue("date", new Date().toLocaleDateString("en-CA"), {
+        shouldDirty: false,
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -227,101 +233,107 @@ export default function WorkoutForm({
           noValidate
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-4 sm:space-y-6"
+          aria-busy={isSubmitting}
         >
-          <WorkoutFormActionHeader saveStatus={saveStatus} />
+          <fieldset
+            disabled={isSubmitting}
+            className="space-y-4 border-0 p-0 sm:space-y-6"
+          >
+            <WorkoutFormActionHeader saveStatus={saveStatus} />
 
-          <WorkoutFormHeader control={control} />
+            <WorkoutFormHeader control={control} />
 
-          <FieldSet className="space-y-3 sm:space-y-4">
-            <FieldLegend className="text-base font-semibold sm:text-lg">
-              Exercises
-            </FieldLegend>
+            <FieldSet className="space-y-3 sm:space-y-4">
+              <FieldLegend className="text-base font-semibold sm:text-lg">
+                Exercises
+              </FieldLegend>
 
-            {fields.map((field, index) => (
-              <ExerciseItem
-                key={field.id}
-                index={index}
+              {fields.map((field, index) => (
+                <ExerciseItem
+                  key={field.id}
+                  index={index}
+                  control={control}
+                  getValues={getValues}
+                  exercises={exercises}
+                  exerciseName={watchedExercises?.[index]?.name || ""}
+                  onRemove={() => remove(index)}
+                  onMoveUp={() => move(index, index - 1)}
+                  onMoveDown={() => move(index, index + 1)}
+                  isFirst={index === 0}
+                  isLast={index === fields.length - 1}
+                  workoutId={workoutId}
+                  placeholderValues={placeholderValues}
+                />
+              ))}
+
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() =>
+                  append({
+                    name: "",
+                    notes: "",
+                    sets: [{ weight: "", reps: "", rpe: "" }],
+                  })
+                }
+                className="hover:bg-primary/10 w-full text-base"
+              >
+                Add Exercise
+              </Button>
+            </FieldSet>
+
+            <div className="border-border/60 bg-background/20 rounded-lg border p-4 sm:p-5">
+              <Controller
+                name="durationMinutes"
                 control={control}
-                getValues={getValues}
-                exercises={exercises}
-                exerciseName={watchedExercises?.[index]?.name || ""}
-                onRemove={() => remove(index)}
-                onMoveUp={() => move(index, index - 1)}
-                onMoveDown={() => move(index, index + 1)}
-                isFirst={index === 0}
-                isLast={index === fields.length - 1}
-                workoutId={workoutId}
-                placeholderValues={placeholderValues}
-              />
-            ))}
-
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() =>
-                append({
-                  name: "",
-                  notes: "",
-                  sets: [{ weight: "", reps: "", rpe: "" }],
-                })
-              }
-              className="hover:bg-primary/10 w-full text-base"
-            >
-              Add Exercise
-            </Button>
-          </FieldSet>
-
-          <div className="border-border/60 bg-background/20 rounded-lg border p-4 sm:p-5">
-            <Controller
-              name="durationMinutes"
-              control={control}
-              render={({ field, fieldState }) => (
-                <Field
-                  data-invalid={fieldState.invalid}
-                  orientation="horizontal"
-                  className="justify-between"
-                >
-                  <FieldLabel
-                    htmlFor={field.name}
-                    className="min-w-0 text-base leading-tight font-semibold sm:text-lg"
+                render={({ field, fieldState }) => (
+                  <Field
+                    data-invalid={fieldState.invalid}
+                    orientation="horizontal"
+                    className="justify-between"
                   >
-                    Workout Duration
-                  </FieldLabel>
-                  <div className="w-32 shrink-0 sm:w-36">
-                    <div className="relative">
-                      <Input
-                        id={field.name}
-                        aria-invalid={fieldState.invalid}
-                        type="number"
-                        min="1"
-                        step="1"
-                        inputMode="numeric"
-                        className="bg-background/50 hover:bg-background/80 h-11 w-full pr-12 text-center text-lg tabular-nums transition-colors"
-                        placeholder="45"
-                        value={field.value ?? ""}
-                        onChange={(event) =>
-                          field.onChange(
-                            event.target.value === ""
-                              ? undefined
-                              : Number(event.target.value),
-                          )
-                        }
-                        onBlur={field.onBlur}
-                        name={field.name}
-                        ref={field.ref}
-                      />
-                      <span className="text-muted-foreground pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm font-medium">
-                        min
-                      </span>
+                    <FieldLabel
+                      htmlFor={field.name}
+                      className="min-w-0 text-base leading-tight font-semibold sm:text-lg"
+                    >
+                      Workout Duration
+                    </FieldLabel>
+                    <div className="w-32 shrink-0 sm:w-36">
+                      <div className="relative">
+                        <Input
+                          id={field.name}
+                          aria-invalid={fieldState.invalid}
+                          type="number"
+                          min="1"
+                          step="1"
+                          inputMode="numeric"
+                          className="bg-background/50 hover:bg-background/80 h-11 w-full pr-12 text-center text-lg tabular-nums transition-colors"
+                          placeholder="45"
+                          value={field.value ?? ""}
+                          onChange={(event) =>
+                            field.onChange(
+                              event.target.value === ""
+                                ? undefined
+                                : Number(event.target.value),
+                            )
+                          }
+                          onBlur={field.onBlur}
+                          name={field.name}
+                          ref={field.ref}
+                        />
+                        <span className="text-muted-foreground pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm font-medium">
+                          min
+                        </span>
+                      </div>
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
                     </div>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </div>
-                </Field>
-              )}
-            />
-          </div>
+                  </Field>
+                )}
+              />
+            </div>
+          </fieldset>
         </form>
       </div>
     </div>
