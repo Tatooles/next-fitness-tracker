@@ -235,7 +235,7 @@ export default function WorkoutForm({
           className="space-y-4 sm:space-y-6"
           aria-busy={isSubmitting}
         >
-          <fieldset
+          <FieldSet
             disabled={isSubmitting}
             className="space-y-4 border-0 p-0 sm:space-y-6"
           >
@@ -333,7 +333,7 @@ export default function WorkoutForm({
                 )}
               />
             </div>
-          </fieldset>
+          </FieldSet>
         </form>
       </div>
     </div>
