@@ -37,7 +37,7 @@ const convertToFormType = (
     name: `Copy of ${workout.name}`,
     date: new Date().toISOString().substring(0, 10),
     notes: "",
-    durationMinutes: workout.durationMinutes,
+    durationMinutes: null,
     exercises: workout.exercises.map((exercise) => ({
       name: exercise.name,
       notes: "",

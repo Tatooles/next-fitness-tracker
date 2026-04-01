@@ -313,7 +313,7 @@ export default function WorkoutForm({
                           onChange={(event) =>
                             field.onChange(
                               event.target.value === ""
-                                ? undefined
+                                ? null
                                 : Number(event.target.value),
                             )
                           }
