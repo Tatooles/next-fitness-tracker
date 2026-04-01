@@ -227,7 +227,7 @@ export default function WorkoutForm({
   }, []);
 
   return (
-    <div className="mx-auto max-w-2xl px-2 sm:px-6">
+    <div className="mx-auto max-w-2xl overflow-x-clip px-2 sm:px-6">
       <div className="space-y-4 rounded-lg p-3 shadow-lg sm:space-y-6 sm:p-6">
         <form
           noValidate

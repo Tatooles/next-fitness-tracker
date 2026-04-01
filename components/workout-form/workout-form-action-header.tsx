@@ -58,19 +58,19 @@ export default function WorkoutFormActionHeader({
         style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 0.75rem)" }}
       >
         <SidebarTrigger className="size-9 shrink-0" />
-        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+        <div className="flex min-w-0 flex-1 items-center justify-end gap-2 sm:gap-3">
           <p
             aria-live="polite"
             className={cn(
-              "inline-flex max-w-full min-w-0 items-center rounded-full border px-3 py-1 text-sm font-semibold whitespace-nowrap shadow-xs transition-colors sm:px-3.5",
+              "inline-flex max-w-full min-w-0 items-center overflow-hidden rounded-full border px-3 py-1 text-sm font-semibold whitespace-nowrap shadow-xs transition-colors sm:px-3.5",
               status.className,
             )}
           >
-            {status.label}
+            <span className="truncate">{status.label}</span>
           </p>
           <Button
             type="submit"
-            className="bg-primary hover:bg-primary/90 text-base"
+            className="bg-primary hover:bg-primary/90 shrink-0 text-base"
             disabled={saveStatus === "saving"}
           >
             Save
