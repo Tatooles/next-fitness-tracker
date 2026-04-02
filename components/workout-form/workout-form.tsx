@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Controller, useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,16 +25,22 @@ import {
 import { Input } from "@/components/ui/input";
 
 const cloneWorkoutForm = (values: TWorkoutFormSchema) => structuredClone(values);
+const getTodayDate = () => new Date().toLocaleDateString("en-CA");
+
+const normalizeWorkoutForm = (
+  values: TWorkoutFormSchema,
+): TWorkoutFormSchema => ({
+  ...values,
+  date: values.date || getTodayDate(),
+});
 
 const getSaveStatus = ({
   editMode,
-  hasSavedSuccessfully,
   hasSaveFailed,
   isDirty,
   isSubmitting,
 }: {
   editMode: boolean;
-  hasSavedSuccessfully: boolean;
   hasSaveFailed: boolean;
   isDirty: boolean;
   isSubmitting: boolean;
@@ -47,7 +53,7 @@ const getSaveStatus = ({
     return "failed";
   }
 
-  if (!editMode || !hasSavedSuccessfully) {
+  if (!editMode) {
     return "not_saved";
   }
 
@@ -71,21 +77,26 @@ export default function WorkoutForm({
   workoutId,
   placeholderValues,
 }: WorkoutFormProps) {
-  const [hasSavedSuccessfully, setHasSavedSuccessfully] = useState(editMode);
-  const [hasSaveFailed, setHasSaveFailed] = useState(false);
+  const [failedWorkoutValueToken, setFailedWorkoutValueToken] = useState<
+    symbol | null
+  >(null);
   const [exercises, setExercises] = useState<string[]>([]);
-  const previousSerializedValuesRef = useRef<string | null>(null);
   const router = useRouter();
+  const normalizedWorkoutValue = useMemo(
+    () => normalizeWorkoutForm(workoutValue),
+    [workoutValue],
+  );
+  const workoutValueToken = useMemo(() => Symbol("workoutValue"), [workoutValue]);
   const form = useForm<TWorkoutFormSchema>({
     resolver: zodResolver(workoutFormSchema),
-    defaultValues: workoutValue,
+    values: normalizedWorkoutValue,
   });
   const {
     control,
     getValues,
     handleSubmit,
     reset,
-    setValue,
+    subscribe,
     formState: { isDirty, isSubmitting },
   } = form;
   const { fields, append, remove, move } = useFieldArray({
@@ -96,12 +107,9 @@ export default function WorkoutForm({
     control,
     name: "exercises",
   });
-
-  const watchedValues = useWatch({ control });
-  const serializedValues = JSON.stringify(watchedValues ?? null);
+  const hasSaveFailed = failedWorkoutValueToken === workoutValueToken;
   const saveStatus = getSaveStatus({
     editMode,
-    hasSavedSuccessfully,
     hasSaveFailed,
     isDirty,
     isSubmitting,
@@ -117,37 +125,46 @@ export default function WorkoutForm({
   }, []);
 
   useEffect(() => {
-    if (
-      hasSaveFailed &&
-      previousSerializedValuesRef.current !== null &&
-      previousSerializedValuesRef.current !== serializedValues
-    ) {
-      setHasSaveFailed(false);
+    if (!hasSaveFailed) {
+      return;
     }
 
-    previousSerializedValuesRef.current = serializedValues;
-  }, [hasSaveFailed, serializedValues]);
+    const unsubscribe = subscribe({
+      formState: { values: true },
+      callback: ({ name, type }) => {
+        if (!name || type === "blur") {
+          return;
+        }
+
+        setFailedWorkoutValueToken(null);
+        unsubscribe();
+      },
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [hasSaveFailed, subscribe]);
 
   const onSubmit = async (values: TWorkoutFormSchema) => {
     const submittedSnapshot = cloneWorkoutForm(values);
-    setHasSaveFailed(false);
+    setFailedWorkoutValueToken(null);
 
     if (!editMode) {
       const newWorkoutId = await createWorkout(submittedSnapshot);
       if (newWorkoutId) {
         router.push(`/workouts/edit/${newWorkoutId}`);
       } else {
-        setHasSaveFailed(true);
+        setFailedWorkoutValueToken(workoutValueToken);
       }
     } else {
       const wasSaved = await updateWorkout(workoutId, submittedSnapshot);
 
       if (wasSaved) {
-        setHasSavedSuccessfully(true);
-        setHasSaveFailed(false);
+        setFailedWorkoutValueToken(null);
         reset(submittedSnapshot);
       } else {
-        setHasSaveFailed(true);
+        setFailedWorkoutValueToken(workoutValueToken);
       }
     }
   };
@@ -215,16 +232,6 @@ export default function WorkoutForm({
       return false;
     }
   };
-
-  // Set today's date if date is empty (for create mode)
-  useEffect(() => {
-    if (!workoutValue.date) {
-      setValue("date", new Date().toLocaleDateString("en-CA"), {
-        shouldDirty: false,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <div className="mx-auto max-w-2xl overflow-x-clip px-2 sm:px-6">
