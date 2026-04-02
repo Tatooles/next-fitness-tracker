@@ -1,12 +1,9 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import "@/styles/globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import {
-  SidebarProvider,
-  SidebarTrigger,
-  SidebarInset,
-} from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import { SidebarRouteTrigger } from "@/components/sidebar-route-trigger";
 import { Toaster } from "@/components/ui/sonner";
 import type { Metadata, Viewport } from "next";
 
@@ -32,6 +29,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
+  viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
     { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
@@ -58,7 +56,7 @@ export default function RootLayout({
               <div id="modal"></div>
               <SidebarInset>
                 <main>
-                  <SidebarTrigger />
+                  <SidebarRouteTrigger />
                   {children}
                 </main>
               </SidebarInset>
