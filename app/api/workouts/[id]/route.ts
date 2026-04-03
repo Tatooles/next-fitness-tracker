@@ -2,24 +2,44 @@ import { and, eq, inArray } from "drizzle-orm";
 import { db } from "@/db/drizzle";
 import { exercise, set, workout } from "@/db/schema";
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
 import { workoutFormSchema } from "@/lib/types";
+import {
+  jsonError,
+  parseJsonBody,
+  parsePositiveIntParam,
+  requireOwnedWorkout,
+  requireUserId,
+} from "@/lib/api/route-helpers";
 
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const userIdResult = await requireUserId();
+    if (!userIdResult.ok) {
+      return userIdResult.response;
+    }
+
     const { id } = await params;
-    const workoutId = parseInt(id);
-    await db.delete(workout).where(eq(workout.id, workoutId));
+    const workoutIdResult = parsePositiveIntParam(id, "workout id");
+    if (!workoutIdResult.ok) {
+      return workoutIdResult.response;
+    }
+
+    const ownershipResult = await requireOwnedWorkout(
+      userIdResult.value,
+      workoutIdResult.value,
+    );
+    if (!ownershipResult.ok) {
+      return ownershipResult.response;
+    }
+
+    await db.delete(workout).where(eq(workout.id, ownershipResult.value.id));
     return new Response("Workout successfully deleted");
   } catch (error) {
     console.error("Delete failed", error);
-    return NextResponse.json(
-      { error: "Failed to delete workout" },
-      { status: 500 },
-    );
+    return jsonError("Failed to delete workout", 500);
   }
 }
 
@@ -28,13 +48,30 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
-  const workoutId = parseInt(id);
-  const { userId } = await auth();
-  if (!userId)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const userIdResult = await requireUserId();
+  if (!userIdResult.ok) {
+    return userIdResult.response;
+  }
 
-  const body = await request.json();
-  const result = workoutFormSchema.safeParse(body);
+  const workoutIdResult = parsePositiveIntParam(id, "workout id");
+  if (!workoutIdResult.ok) {
+    return workoutIdResult.response;
+  }
+
+  const ownershipResult = await requireOwnedWorkout(
+    userIdResult.value,
+    workoutIdResult.value,
+  );
+  if (!ownershipResult.ok) {
+    return ownershipResult.response;
+  }
+
+  const bodyResult = await parseJsonBody(request);
+  if (!bodyResult.ok) {
+    return bodyResult.response;
+  }
+
+  const result = workoutFormSchema.safeParse(bodyResult.value);
   if (!result.success) {
     return NextResponse.json(
       { error: result.error.flatten() },
@@ -43,6 +80,8 @@ export async function PATCH(
   }
 
   const { name, notes, durationMinutes, date, exercises } = result.data;
+  const userId = userIdResult.value;
+  const workoutId = ownershipResult.value.id;
 
   try {
     await db.transaction(async (tx) => {
@@ -88,10 +127,7 @@ export async function PATCH(
     });
   } catch (error) {
     console.error("Transaction failed", error);
-    return NextResponse.json(
-      { error: "Something went wrong" },
-      { status: 500 },
-    );
+    return jsonError("Something went wrong", 500);
   }
 
   return NextResponse.json({ message: "Workout updated" });

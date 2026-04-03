@@ -2,8 +2,8 @@ import { and, asc, desc, eq } from "drizzle-orm";
 import { db } from "@/db/drizzle";
 import { exercise, set, workout } from "@/db/schema";
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
 import { Set } from "@/lib/types";
+import { jsonError, requireUserId } from "@/lib/api/route-helpers";
 
 export interface GroupedExercise {
   date: string;
@@ -14,19 +14,17 @@ export interface GroupedExercise {
 }
 
 export async function GET(request: NextRequest) {
-  const { userId } = await auth();
+  const userIdResult = await requireUserId();
+  if (!userIdResult.ok) {
+    return userIdResult.response;
+  }
+
+  const userId = userIdResult.value;
   const exerciseName = request.nextUrl.searchParams.get("name");
   const trimmedExerciseName = exerciseName?.trim();
 
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   if (!trimmedExerciseName) {
-    return NextResponse.json(
-      { error: "Exercise name is required" },
-      { status: 400 },
-    );
+    return jsonError("Exercise name is required", 400);
   }
 
   try {
@@ -72,9 +70,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(history);
   } catch (error) {
     console.error("Error fetching exercise history:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch exercise history" },
-      { status: 500 },
-    );
+    return jsonError("Failed to fetch exercise history", 500);
   }
 }
