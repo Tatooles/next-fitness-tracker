@@ -1,8 +1,8 @@
 import * as xlsx from "xlsx";
-import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db/drizzle";
 import { Workout } from "@/lib/types";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { jsonError, requireUserId } from "@/lib/api/route-helpers";
 
 const EXPORT_FORMATS = {
   xlsx: {
@@ -28,17 +28,15 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const fileType = searchParams.get("fileType");
 
-  const { userId } = await auth();
-  if (!userId) {
-    console.log("User not found");
-    return Response.error();
+  const userIdResult = await requireUserId();
+  if (!userIdResult.ok) {
+    return userIdResult.response;
   }
 
+  const userId = userIdResult.value;
+
   if (!isSupportedExportType(fileType)) {
-    return NextResponse.json(
-      { error: "Unsupported fileType" },
-      { status: 400 },
-    );
+    return jsonError("Unsupported fileType", 400);
   }
 
   const data: Workout[] = await db.query.workout.findMany({

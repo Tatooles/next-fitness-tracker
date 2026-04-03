@@ -82,7 +82,8 @@ export function AppSidebar() {
                     avatarBox: "h-10 w-10",
                     userButtonTrigger: "focus:shadow-none",
                   },
-                }} />
+                }}
+              />
               <div className="flex min-w-0 flex-1 flex-col">
                 <span className="truncate text-base font-semibold">
                   {user?.fullName || user?.username || "User"}
