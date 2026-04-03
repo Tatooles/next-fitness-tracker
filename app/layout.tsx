@@ -66,7 +66,7 @@ export default function RootLayout({
           </ThemeProvider>
           <SpeedInsights />
         </ClerkProvider>
-        </body>
-      </html>
+      </body>
+    </html>
   );
 }
