@@ -1,19 +1,23 @@
-import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db/drizzle";
 import { workout } from "@/db/schema";
 import { exercise } from "@/db/schema";
 import { set } from "@/db/schema";
 import { workoutFormSchema } from "@/lib/types";
+import { jsonError, parseJsonBody, requireUserId } from "@/lib/api/route-helpers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
-  const { userId } = await auth();
-  if (!userId)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const userIdResult = await requireUserId();
+  if (!userIdResult.ok) {
+    return userIdResult.response;
+  }
 
-  const body = await request.json();
-  // Use zod to validate input
-  const result = workoutFormSchema.safeParse(body);
+  const bodyResult = await parseJsonBody(request);
+  if (!bodyResult.ok) {
+    return bodyResult.response;
+  }
+
+  const result = workoutFormSchema.safeParse(bodyResult.value);
   if (!result.success) {
     return NextResponse.json(
       { error: result.error.flatten() },
@@ -22,6 +26,8 @@ export async function POST(request: NextRequest) {
   }
 
   const { date, name, notes, durationMinutes, exercises } = result.data;
+  const userId = userIdResult.value;
+
   try {
     const newWorkoutId = await db.transaction(async (tx) => {
       const [newWorkout] = await tx
@@ -64,9 +70,6 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error("Transaction failed", error);
-    return NextResponse.json(
-      { error: "Something went wrong" },
-      { status: 500 },
-    );
+    return jsonError("Something went wrong", 500);
   }
 }
