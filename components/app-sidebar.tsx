@@ -77,7 +77,6 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <div className="flex items-center gap-3 rounded-lg px-3 py-2">
               <UserButton
-                afterSignOutUrl="/"
                 appearance={{
                   elements: {
                     avatarBox: "h-10 w-10",
