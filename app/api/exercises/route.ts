@@ -4,25 +4,6 @@ import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { jsonError, requireUserId } from "@/lib/api/route-helpers";
 
-const getRedactedDatabaseTarget = () => {
-  const databaseUrl = process.env.TURSO_DATABASE_URL;
-
-  if (!databaseUrl) {
-    return "missing";
-  }
-
-  try {
-    const normalizedUrl = databaseUrl.startsWith("libsql://")
-      ? databaseUrl.replace("libsql://", "https://")
-      : databaseUrl;
-    const parsedUrl = new URL(normalizedUrl);
-
-    return parsedUrl.host;
-  } catch {
-    return "unparseable";
-  }
-};
-
 export async function GET() {
   const userIdResult = await requireUserId();
   if (!userIdResult.ok) {
@@ -40,19 +21,7 @@ export async function GET() {
 
     return NextResponse.json(result.map((row) => row.name));
   } catch (error) {
-    console.error("Error fetching unique exercise names", {
-      userId,
-      databaseTarget: getRedactedDatabaseTarget(),
-      error,
-      cause: error instanceof Error ? error.cause : undefined,
-      nestedCause:
-        error instanceof Error &&
-        error.cause &&
-        typeof error.cause === "object" &&
-        "cause" in error.cause
-          ? error.cause.cause
-          : undefined,
-    });
+    console.error("Error fetching unique exercise names:", error);
     return jsonError("Failed to fetch exercise names", 500);
   }
 }
