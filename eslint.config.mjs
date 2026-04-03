@@ -6,13 +6,6 @@ import prettier from "eslint-config-prettier/flat";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
-  {
-    settings: {
-      react: {
-        version: "19.2",
-      },
-    },
-  },
   prettier,
   // Override default ignores of eslint-config-next.
   globalIgnores([
