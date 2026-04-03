@@ -78,7 +78,7 @@ export default function WorkoutForm({
   placeholderValues,
 }: WorkoutFormProps) {
   const [failedWorkoutValueToken, setFailedWorkoutValueToken] = useState<
-    symbol | null
+    TWorkoutFormSchema | null
   >(null);
   const [exercises, setExercises] = useState<string[]>([]);
   const router = useRouter();
@@ -86,7 +86,7 @@ export default function WorkoutForm({
     () => normalizeWorkoutForm(workoutValue),
     [workoutValue],
   );
-  const workoutValueToken = useMemo(() => Symbol("workoutValue"), [workoutValue]);
+  const workoutValueToken = normalizedWorkoutValue;
   const form = useForm<TWorkoutFormSchema>({
     resolver: zodResolver(workoutFormSchema),
     values: normalizedWorkoutValue,
