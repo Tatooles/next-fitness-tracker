@@ -77,14 +77,12 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <div className="flex items-center gap-3 rounded-lg px-3 py-2">
               <UserButton
-                afterSignOutUrl="/"
                 appearance={{
                   elements: {
                     avatarBox: "h-10 w-10",
                     userButtonTrigger: "focus:shadow-none",
                   },
-                }}
-              />
+                }} />
               <div className="flex min-w-0 flex-1 flex-col">
                 <span className="truncate text-base font-semibold">
                   {user?.fullName || user?.username || "User"}
