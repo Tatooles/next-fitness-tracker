@@ -24,7 +24,8 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-const cloneWorkoutForm = (values: TWorkoutFormSchema) => structuredClone(values);
+const cloneWorkoutForm = (values: TWorkoutFormSchema) =>
+  structuredClone(values);
 const getTodayDate = () => new Date().toLocaleDateString("en-CA");
 
 const normalizeWorkoutForm = (
@@ -77,9 +78,8 @@ export default function WorkoutForm({
   workoutId,
   placeholderValues,
 }: WorkoutFormProps) {
-  const [failedWorkoutValueToken, setFailedWorkoutValueToken] = useState<
-    TWorkoutFormSchema | null
-  >(null);
+  const [failedWorkoutValueToken, setFailedWorkoutValueToken] =
+    useState<TWorkoutFormSchema | null>(null);
   const [exercises, setExercises] = useState<string[]>([]);
   const router = useRouter();
   const normalizedWorkoutValue = useMemo(
@@ -315,7 +315,6 @@ export default function WorkoutForm({
                           step="1"
                           inputMode="numeric"
                           className="bg-background/50 hover:bg-background/80 h-11 w-full pr-12 text-center text-lg tabular-nums transition-colors"
-                          placeholder="45"
                           value={field.value ?? ""}
                           onChange={(event) =>
                             field.onChange(
