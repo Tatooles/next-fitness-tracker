@@ -30,6 +30,7 @@ export default function ExerciseSelector({
 }: ExerciseSelectorProps) {
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const displayValue = value || "Select exercise";
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -38,12 +39,13 @@ export default function ExerciseSelector({
           variant="outline"
           role="combobox"
           aria-expanded={open}
+          title={displayValue}
           className={cn(
-            "bg-background/50 hover:bg-background/80 h-10 w-full flex-1 justify-between text-base transition-colors sm:h-11",
+            "bg-background/50 hover:bg-background/80 grid h-10 w-full flex-1 grid-cols-[minmax(0,1fr)_auto] text-base transition-colors sm:h-11",
             !value && "text-muted-foreground",
           )}
         >
-          <span className="truncate">{value ? value : "Select exercise"}</span>
+          <span className="truncate text-left">{displayValue}</span>
           <ChevronsUpDown />
         </Button>
       </PopoverTrigger>

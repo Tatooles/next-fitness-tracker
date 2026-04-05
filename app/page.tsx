@@ -10,8 +10,8 @@ import {
 
 export default function Home() {
   return (
-    <div className="bg-background text-foreground flex min-h-screen flex-col items-center justify-center p-4 text-center sm:px-6 lg:px-8">
-      <h1 className="mb-8 text-4xl font-extrabold tracking-tight sm:mb-12 sm:text-5xl">
+    <div className="bg-background text-foreground flex flex-col items-center px-4 pt-6 text-center sm:px-6 sm:pt-10 md:min-h-[70vh] md:justify-center md:py-12 lg:px-8">
+      <h1 className="mb-8 text-4xl font-extrabold tracking-tight sm:mb-10 sm:text-5xl">
         Track Your Strength Journey
       </h1>
       <div className="flex flex-col justify-center gap-6 sm:flex-row sm:gap-8">
