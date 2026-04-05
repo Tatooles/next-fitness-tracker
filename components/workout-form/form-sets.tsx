@@ -7,7 +7,7 @@ import { Trash2 } from "lucide-react";
 import type {
   ExerciseTemplateValues,
   WorkoutDraft,
-} from "@/components/workout-form/form-model";
+} from "@/components/workout-form/form-types";
 
 interface FormSetsProps {
   exerciseIndex: number;

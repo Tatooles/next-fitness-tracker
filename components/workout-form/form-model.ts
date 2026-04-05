@@ -1,23 +1,9 @@
-import type { ExerciseThin, TWorkoutFormSchema, Workout } from "@/lib/types";
-
-export type PersistMode = "create" | "update";
-
-export type WorkoutDraft = TWorkoutFormSchema;
-
-export type ExerciseTemplateValues = ExerciseThin;
-
-export type WorkoutFormSeed = {
-  initialValues: WorkoutDraft;
-  persistMode: PersistMode;
-  workoutId?: number;
-  templateValuesByExerciseName?: Record<string, ExerciseTemplateValues>;
-};
-
-export type CreateWorkoutFormSeed = Omit<WorkoutFormSeed, "persistMode"> & {
-  persistMode: "create";
-};
-
-export type SaveState = "idle" | "saving" | "saved" | "failed";
+import type { Workout } from "@/lib/types";
+import type {
+  CreateWorkoutFormSeed,
+  ExerciseTemplateValues,
+  WorkoutDraft,
+} from "@/components/workout-form/form-types";
 
 function convertToFormType(workout: Workout): WorkoutDraft {
   return {

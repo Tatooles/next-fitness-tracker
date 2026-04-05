@@ -11,10 +11,10 @@ import WorkoutFormActionHeader, {
 } from "@/components/workout-form/workout-form-action-header";
 import { workoutFormSchema } from "@/lib/types";
 import type {
-  ExerciseTemplateValues,
   PersistMode,
   WorkoutDraft,
-} from "@/components/workout-form/form-model";
+  WorkoutFormProps,
+} from "@/components/workout-form/form-types";
 import { toast } from "sonner";
 import {
   Field,
@@ -64,21 +64,6 @@ const getSaveStatus = ({
 
   return "saved";
 };
-
-type CreateWorkoutFormProps = {
-  initialValues: WorkoutDraft;
-  persistMode: "create";
-  templateValuesByExerciseName?: Record<string, ExerciseTemplateValues>;
-};
-
-type UpdateWorkoutFormProps = {
-  initialValues: WorkoutDraft;
-  persistMode: "update";
-  workoutId: number;
-  templateValuesByExerciseName?: Record<string, ExerciseTemplateValues>;
-};
-
-type WorkoutFormProps = CreateWorkoutFormProps | UpdateWorkoutFormProps;
 
 export default function WorkoutForm({
   initialValues,

@@ -8,7 +8,7 @@ import FormSets from "@/components/workout-form/form-sets";
 import type {
   ExerciseTemplateValues,
   WorkoutDraft,
-} from "@/components/workout-form/form-model";
+} from "@/components/workout-form/form-types";
 
 interface ExerciseItemProps {
   index: number;
