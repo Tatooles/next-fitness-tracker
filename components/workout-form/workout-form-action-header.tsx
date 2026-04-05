@@ -52,27 +52,20 @@ export default function WorkoutFormActionHeader({
   const status = saveStatusConfig[saveStatus];
 
   return (
-    <div className="sticky top-0 z-30 -mx-3 -mt-3 mb-4 sm:-mx-6 sm:-mt-6 sm:mb-6">
-      <div
-        className="border-border/80 bg-background/95 supports-backdrop-filter:bg-background/80 flex items-center justify-between gap-3 border-b px-3 py-3 backdrop-blur sm:px-6"
-        style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 0.75rem)" }}
-      >
-        <SidebarTrigger className="size-9 shrink-0" />
-        <div className="flex min-w-0 flex-1 items-center justify-end gap-2 sm:gap-3">
+    <div className="sticky top-0 z-30">
+      <div className="flex border-b px-3 py-3 backdrop-blur-xl">
+        <SidebarTrigger className="size-9" />
+        <div className="flex flex-1 items-center justify-end gap-2 sm:gap-3">
           <p
             aria-live="polite"
             className={cn(
-              "inline-flex max-w-full min-w-0 items-center overflow-hidden rounded-full border px-3 py-1 text-sm font-semibold whitespace-nowrap shadow-xs transition-colors sm:px-3.5",
+              "inline-flex max-w-full items-center overflow-hidden rounded-full border px-3 py-1 text-sm font-semibold whitespace-nowrap shadow-xs transition-colors sm:px-3.5",
               status.className,
             )}
           >
             <span className="truncate">{status.label}</span>
           </p>
-          <Button
-            type="submit"
-            className="bg-primary hover:bg-primary/90 shrink-0 text-base"
-            disabled={saveStatus === "saving"}
-          >
+          <Button type="submit" disabled={saveStatus === "saving"}>
             Save
           </Button>
         </div>
