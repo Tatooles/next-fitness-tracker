@@ -52,8 +52,11 @@ export default function WorkoutFormActionHeader({
   const status = saveStatusConfig[saveStatus];
 
   return (
-    <div className="sticky top-0 z-30">
-      <div className="flex border-b px-3 py-3 backdrop-blur-xl">
+    <div
+      className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur-xl"
+      style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
+    >
+      <div className="flex px-3 py-3">
         <SidebarTrigger className="size-9" />
         <div className="flex flex-1 items-center justify-end gap-2 sm:gap-3">
           <p
