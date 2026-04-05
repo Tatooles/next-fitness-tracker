@@ -234,114 +234,105 @@ export default function WorkoutForm({
   };
 
   return (
-    <div className="mx-auto max-w-2xl overflow-x-clip px-2 sm:px-6">
-      <div className="space-y-4 rounded-lg p-3 shadow-lg sm:space-y-6 sm:p-6">
-        <form
-          noValidate
-          onSubmit={handleSubmit(onSubmit)}
-          className="space-y-4 sm:space-y-6"
-          aria-busy={isSubmitting}
-        >
-          <FieldSet
-            disabled={isSubmitting}
-            className="space-y-4 border-0 p-0 sm:space-y-6"
-          >
-            <WorkoutFormActionHeader saveStatus={saveStatus} />
+    <div className="mx-auto max-w-2xl p-4">
+      <form
+        noValidate
+        onSubmit={handleSubmit(onSubmit)}
+        aria-busy={isSubmitting}
+      >
+        <WorkoutFormActionHeader saveStatus={saveStatus} />
 
-            <WorkoutFormHeader control={control} />
+        <FieldSet disabled={isSubmitting}>
+          <WorkoutFormHeader control={control} />
 
-            <FieldSet className="space-y-3 sm:space-y-4">
-              <FieldLegend className="text-base font-semibold sm:text-lg">
-                Exercises
-              </FieldLegend>
+          <FieldSet>
+            <FieldLegend>Exercises</FieldLegend>
 
-              {fields.map((field, index) => (
-                <ExerciseItem
-                  key={field.id}
-                  index={index}
-                  control={control}
-                  getValues={getValues}
-                  exercises={exercises}
-                  exerciseName={watchedExercises?.[index]?.name || ""}
-                  onRemove={() => remove(index)}
-                  onMoveUp={() => move(index, index - 1)}
-                  onMoveDown={() => move(index, index + 1)}
-                  isFirst={index === 0}
-                  isLast={index === fields.length - 1}
-                  workoutId={workoutId}
-                  placeholderValues={placeholderValues}
-                />
-              ))}
-
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() =>
-                  append({
-                    name: "",
-                    notes: "",
-                    sets: [{ weight: "", reps: "", rpe: "" }],
-                  })
-                }
-                className="hover:bg-primary/10 w-full text-base"
-              >
-                Add Exercise
-              </Button>
-            </FieldSet>
-
-            <div className="border-border/60 bg-background/20 rounded-lg border p-4 sm:p-5">
-              <Controller
-                name="durationMinutes"
+            {fields.map((field, index) => (
+              <ExerciseItem
+                key={field.id}
+                index={index}
                 control={control}
-                render={({ field, fieldState }) => (
-                  <Field
-                    data-invalid={fieldState.invalid}
-                    orientation="horizontal"
-                    className="justify-between"
-                  >
-                    <FieldLabel
-                      htmlFor={field.name}
-                      className="min-w-0 text-base leading-tight font-semibold sm:text-lg"
-                    >
-                      Workout Duration
-                    </FieldLabel>
-                    <div className="w-32 shrink-0 sm:w-36">
-                      <div className="relative">
-                        <Input
-                          id={field.name}
-                          aria-invalid={fieldState.invalid}
-                          type="number"
-                          min="1"
-                          step="1"
-                          inputMode="numeric"
-                          className="bg-background/50 hover:bg-background/80 h-11 w-full pr-12 text-center text-lg tabular-nums transition-colors"
-                          value={field.value ?? ""}
-                          onChange={(event) =>
-                            field.onChange(
-                              event.target.value === ""
-                                ? null
-                                : Number(event.target.value),
-                            )
-                          }
-                          onBlur={field.onBlur}
-                          name={field.name}
-                          ref={field.ref}
-                        />
-                        <span className="text-muted-foreground pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm font-medium">
-                          min
-                        </span>
-                      </div>
-                      {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
-                    </div>
-                  </Field>
-                )}
+                getValues={getValues}
+                exercises={exercises}
+                exerciseName={watchedExercises?.[index]?.name || ""}
+                onRemove={() => remove(index)}
+                onMoveUp={() => move(index, index - 1)}
+                onMoveDown={() => move(index, index + 1)}
+                isFirst={index === 0}
+                isLast={index === fields.length - 1}
+                workoutId={workoutId}
+                placeholderValues={placeholderValues}
               />
-            </div>
+            ))}
+
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() =>
+                append({
+                  name: "",
+                  notes: "",
+                  sets: [{ weight: "", reps: "", rpe: "" }],
+                })
+              }
+            >
+              Add Exercise
+            </Button>
           </FieldSet>
-        </form>
-      </div>
+
+          <div className="border-border/60 bg-background/20 rounded-lg border p-4 sm:p-5">
+            <Controller
+              name="durationMinutes"
+              control={control}
+              render={({ field, fieldState }) => (
+                <Field
+                  data-invalid={fieldState.invalid}
+                  orientation="horizontal"
+                  className="justify-between"
+                >
+                  <FieldLabel
+                    htmlFor={field.name}
+                    className="min-w-0 text-base leading-tight font-semibold sm:text-lg"
+                  >
+                    Workout Duration
+                  </FieldLabel>
+                  <div className="w-32 shrink-0 sm:w-36">
+                    <div className="relative">
+                      <Input
+                        id={field.name}
+                        aria-invalid={fieldState.invalid}
+                        type="number"
+                        min="1"
+                        step="1"
+                        inputMode="numeric"
+                        className="bg-background/50 hover:bg-background/80 h-11 w-full pr-12 text-center text-lg tabular-nums transition-colors"
+                        value={field.value ?? ""}
+                        onChange={(event) =>
+                          field.onChange(
+                            event.target.value === ""
+                              ? null
+                              : Number(event.target.value),
+                          )
+                        }
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
+                      />
+                      <span className="text-muted-foreground pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm font-medium">
+                        min
+                      </span>
+                    </div>
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </div>
+                </Field>
+              )}
+            />
+          </div>
+        </FieldSet>
+      </form>
     </div>
   );
 }
