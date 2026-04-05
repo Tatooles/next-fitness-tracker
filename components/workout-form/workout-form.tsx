@@ -9,11 +9,12 @@ import WorkoutFormHeader from "@/components/workout-form/workout-form-header";
 import WorkoutFormActionHeader, {
   WorkoutSaveStatus,
 } from "@/components/workout-form/workout-form-action-header";
-import {
-  workoutFormSchema,
-  TWorkoutFormSchema,
-  ExerciseThin,
-} from "@/lib/types";
+import { workoutFormSchema } from "@/lib/types";
+import type {
+  ExerciseTemplateValues,
+  PersistMode,
+  WorkoutDraft,
+} from "@/components/workout-form/form-model";
 import { toast } from "sonner";
 import {
   Field,
@@ -24,23 +25,23 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-const cloneWorkoutForm = (values: TWorkoutFormSchema) => structuredClone(values);
+const cloneWorkoutForm = (values: WorkoutDraft) => structuredClone(values);
 const getTodayDate = () => new Date().toLocaleDateString("en-CA");
 
 const normalizeWorkoutForm = (
-  values: TWorkoutFormSchema,
-): TWorkoutFormSchema => ({
+  values: WorkoutDraft,
+): WorkoutDraft => ({
   ...values,
   date: values.date || getTodayDate(),
 });
 
 const getSaveStatus = ({
-  editMode,
+  persistMode,
   hasSaveFailed,
   isDirty,
   isSubmitting,
 }: {
-  editMode: boolean;
+  persistMode: PersistMode;
   hasSaveFailed: boolean;
   isDirty: boolean;
   isSubmitting: boolean;
@@ -53,7 +54,7 @@ const getSaveStatus = ({
     return "failed";
   }
 
-  if (!editMode) {
+  if (persistMode === "create") {
     return "not_saved";
   }
 
@@ -64,30 +65,38 @@ const getSaveStatus = ({
   return "saved";
 };
 
-interface WorkoutFormProps {
-  editMode: boolean;
-  workoutValue: TWorkoutFormSchema;
+type CreateWorkoutFormProps = {
+  initialValues: WorkoutDraft;
+  persistMode: "create";
+  templateValuesByExerciseName?: Record<string, ExerciseTemplateValues>;
+};
+
+type UpdateWorkoutFormProps = {
+  initialValues: WorkoutDraft;
+  persistMode: "update";
   workoutId: number;
-  placeholderValues?: ExerciseThin[];
-}
+  templateValuesByExerciseName?: Record<string, ExerciseTemplateValues>;
+};
+
+type WorkoutFormProps = CreateWorkoutFormProps | UpdateWorkoutFormProps;
 
 export default function WorkoutForm({
-  editMode,
-  workoutValue,
-  workoutId,
-  placeholderValues,
+  initialValues,
+  persistMode,
+  templateValuesByExerciseName,
+  ...props
 }: WorkoutFormProps) {
   const [failedWorkoutValueToken, setFailedWorkoutValueToken] = useState<
-    TWorkoutFormSchema | null
+    WorkoutDraft | null
   >(null);
   const [exercises, setExercises] = useState<string[]>([]);
   const router = useRouter();
   const normalizedWorkoutValue = useMemo(
-    () => normalizeWorkoutForm(workoutValue),
-    [workoutValue],
+    () => normalizeWorkoutForm(initialValues),
+    [initialValues],
   );
   const workoutValueToken = normalizedWorkoutValue;
-  const form = useForm<TWorkoutFormSchema>({
+  const form = useForm<WorkoutDraft>({
     resolver: zodResolver(workoutFormSchema),
     values: normalizedWorkoutValue,
   });
@@ -108,8 +117,9 @@ export default function WorkoutForm({
     name: "exercises",
   });
   const hasSaveFailed = failedWorkoutValueToken === workoutValueToken;
+  const updateWorkoutId = "workoutId" in props ? props.workoutId : undefined;
   const saveStatus = getSaveStatus({
-    editMode,
+    persistMode,
     hasSaveFailed,
     isDirty,
     isSubmitting,
@@ -146,11 +156,11 @@ export default function WorkoutForm({
     };
   }, [hasSaveFailed, subscribe]);
 
-  const onSubmit = async (values: TWorkoutFormSchema) => {
+  const onSubmit = async (values: WorkoutDraft) => {
     const submittedSnapshot = cloneWorkoutForm(values);
     setFailedWorkoutValueToken(null);
 
-    if (!editMode) {
+    if (persistMode === "create") {
       const newWorkoutId = await createWorkout(submittedSnapshot);
       if (newWorkoutId) {
         router.push(`/workouts/edit/${newWorkoutId}`);
@@ -158,7 +168,11 @@ export default function WorkoutForm({
         setFailedWorkoutValueToken(workoutValueToken);
       }
     } else {
-      const wasSaved = await updateWorkout(workoutId, submittedSnapshot);
+      if (!("workoutId" in props) || props.workoutId == null) {
+        throw new Error("WorkoutForm requires workoutId in update mode");
+      }
+
+      const wasSaved = await updateWorkout(props.workoutId, submittedSnapshot);
 
       if (wasSaved) {
         setFailedWorkoutValueToken(null);
@@ -176,7 +190,7 @@ export default function WorkoutForm({
    * @returns the ID of the newly created workout, or null if creation failed
    */
   const createWorkout = async (
-    form: TWorkoutFormSchema,
+    form: WorkoutDraft,
   ): Promise<number | null> => {
     try {
       const response = await fetch("/api/workouts", {
@@ -209,7 +223,7 @@ export default function WorkoutForm({
    */
   const updateWorkout = async (
     id: number,
-    form: TWorkoutFormSchema,
+    form: WorkoutDraft,
   ): Promise<boolean> => {
     try {
       const response = await fetch(`/api/workouts/${id}`, {
@@ -255,23 +269,32 @@ export default function WorkoutForm({
                 Exercises
               </FieldLegend>
 
-              {fields.map((field, index) => (
-                <ExerciseItem
-                  key={field.id}
-                  index={index}
-                  control={control}
-                  getValues={getValues}
-                  exercises={exercises}
-                  exerciseName={watchedExercises?.[index]?.name || ""}
-                  onRemove={() => remove(index)}
-                  onMoveUp={() => move(index, index - 1)}
-                  onMoveDown={() => move(index, index + 1)}
-                  isFirst={index === 0}
-                  isLast={index === fields.length - 1}
-                  workoutId={workoutId}
-                  placeholderValues={placeholderValues}
-                />
-              ))}
+              {fields.map((field, index) => {
+                const exerciseName = watchedExercises?.[index]?.name || "";
+                const templateExercise = exerciseName
+                  ? templateValuesByExerciseName?.[exerciseName]
+                  : undefined;
+
+                return (
+                  <ExerciseItem
+                    key={field.id}
+                    index={index}
+                    control={control}
+                    getValues={getValues}
+                    exercises={exercises}
+                    exerciseName={exerciseName}
+                    onRemove={() => remove(index)}
+                    onMoveUp={() => move(index, index - 1)}
+                    onMoveDown={() => move(index, index + 1)}
+                    isFirst={index === 0}
+                    isLast={index === fields.length - 1}
+                    workoutId={
+                      persistMode === "update" ? updateWorkoutId : undefined
+                    }
+                    templateExercise={templateExercise}
+                  />
+                );
+              })}
 
               <Button
                 type="button"

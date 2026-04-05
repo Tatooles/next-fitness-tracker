@@ -3,9 +3,8 @@ import WorkoutForm from "@/components/workout-form/workout-form";
 export default async function CreateWorkoutPage() {
   return (
     <WorkoutForm
-      editMode={false}
-      workoutId={-1}
-      workoutValue={{
+      persistMode="create"
+      initialValues={{
         date: "",
         durationMinutes: null,
         name: "",

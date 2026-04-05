@@ -1,25 +1,26 @@
 import { Input } from "@/components/ui/input";
 import { useFieldArray, Controller } from "react-hook-form";
 import { Control, UseFormGetValues } from "react-hook-form";
-import { ExerciseThin, TWorkoutFormSchema } from "@/lib/types";
 import { FieldLegend, FieldSet } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
+import type {
+  ExerciseTemplateValues,
+  WorkoutDraft,
+} from "@/components/workout-form/form-model";
 
 interface FormSetsProps {
-  exerciseName: string;
   exerciseIndex: number;
-  control: Control<TWorkoutFormSchema>;
-  getValues: UseFormGetValues<TWorkoutFormSchema>;
-  placeholderValues?: ExerciseThin[];
+  control: Control<WorkoutDraft>;
+  getValues: UseFormGetValues<WorkoutDraft>;
+  templateExercise?: ExerciseTemplateValues;
 }
 
 export default function FormSets({
-  exerciseName,
   exerciseIndex,
   control,
   getValues,
-  placeholderValues,
+  templateExercise,
 }: FormSetsProps) {
   const { fields, remove, append } = useFieldArray({
     name: `exercises.${exerciseIndex}.sets`,
@@ -38,11 +39,7 @@ export default function FormSets({
               <Input
                 {...field}
                 id={field.name}
-                placeholder={
-                  placeholderValues?.find((x) => x.name === exerciseName)?.sets[
-                    index
-                  ]?.weight ?? "Weight"
-                }
+                placeholder={templateExercise?.sets[index]?.weight ?? "Weight"}
                 inputMode="decimal"
                 className="w-20 text-[16px]"
               />
@@ -55,11 +52,7 @@ export default function FormSets({
               <Input
                 {...field}
                 id={field.name}
-                placeholder={
-                  placeholderValues?.find((x) => x.name === exerciseName)?.sets[
-                    index
-                  ]?.reps ?? "Reps"
-                }
+                placeholder={templateExercise?.sets[index]?.reps ?? "Reps"}
                 inputMode="decimal"
                 className="w-16 text-[16px]"
               />
@@ -72,11 +65,7 @@ export default function FormSets({
               <Input
                 {...field}
                 id={field.name}
-                placeholder={
-                  placeholderValues?.find((x) => x.name === exerciseName)?.sets[
-                    index
-                  ]?.rpe ?? "RPE"
-                }
+                placeholder={templateExercise?.sets[index]?.rpe ?? "RPE"}
                 inputMode="decimal"
                 className="w-20 text-[16px]"
               />

@@ -64,8 +64,8 @@ export default async function EditWorkoutPage({
 
   return (
     <WorkoutForm
-      workoutValue={workout}
-      editMode={true}
+      initialValues={workout}
+      persistMode="update"
       workoutId={+id}
     ></WorkoutForm>
   );

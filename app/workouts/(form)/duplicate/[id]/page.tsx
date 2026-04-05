@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db/drizzle";
 import { Workout, TWorkoutFormSchema } from "@/lib/types";
+import { toTemplateValuesByExerciseName } from "@/components/workout-form/form-model";
 import WorkoutForm from "@/components/workout-form/workout-form";
 import WorkoutNotFound from "@/components/workout-form/workout-not-found";
 
@@ -87,10 +88,11 @@ export default async function DuplicateWorkoutPage({
 
   return (
     <WorkoutForm
-      workoutValue={workout}
-      editMode={false}
-      workoutId={-1}
-      placeholderValues={workoutTemplate.exercises}
+      initialValues={workout}
+      persistMode="create"
+      templateValuesByExerciseName={toTemplateValuesByExerciseName(
+        workoutTemplate.exercises,
+      )}
     ></WorkoutForm>
   );
 }

@@ -5,12 +5,15 @@ import { Field, FieldError } from "@/components/ui/field";
 import ExerciseSelector from "@/components/workout-form/exercise-selector";
 import ExerciseActionsMenu from "@/components/workout-form/exercise-actions-menu";
 import FormSets from "@/components/workout-form/form-sets";
-import { TWorkoutFormSchema, ExerciseThin } from "@/lib/types";
+import type {
+  ExerciseTemplateValues,
+  WorkoutDraft,
+} from "@/components/workout-form/form-model";
 
 interface ExerciseItemProps {
   index: number;
-  control: Control<TWorkoutFormSchema>;
-  getValues: UseFormGetValues<TWorkoutFormSchema>;
+  control: Control<WorkoutDraft>;
+  getValues: UseFormGetValues<WorkoutDraft>;
   exercises: string[];
   exerciseName: string;
   onRemove: () => void;
@@ -18,8 +21,8 @@ interface ExerciseItemProps {
   onMoveDown: () => void;
   isFirst: boolean;
   isLast: boolean;
-  workoutId: number;
-  placeholderValues?: ExerciseThin[];
+  workoutId?: number;
+  templateExercise?: ExerciseTemplateValues;
 }
 
 export default function ExerciseItem({
@@ -34,7 +37,7 @@ export default function ExerciseItem({
   isFirst,
   isLast,
   workoutId,
-  placeholderValues,
+  templateExercise,
 }: ExerciseItemProps) {
   return (
     <div className="space-y-4 rounded-lg border p-3">
@@ -67,11 +70,10 @@ export default function ExerciseItem({
       </div>
 
       <FormSets
-        exerciseName={exerciseName}
         exerciseIndex={index}
         control={control}
         getValues={getValues}
-        placeholderValues={placeholderValues}
+        templateExercise={templateExercise}
       />
 
       <Controller

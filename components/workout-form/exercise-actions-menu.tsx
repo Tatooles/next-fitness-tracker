@@ -17,7 +17,7 @@ import {
 
 interface ExerciseActionsMenuProps {
   exerciseName: string;
-  workoutId: number;
+  workoutId?: number;
   onDelete: () => void;
   onMoveUp: () => void;
   onMoveDown: () => void;
