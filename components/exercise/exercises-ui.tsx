@@ -109,7 +109,7 @@ export default function ExercisesUI({
               <ExerciseSummaryComponent
                 exerciseSummary={exerciseSummary}
                 key={exerciseSummary.name}
-              ></ExerciseSummaryComponent>
+              />
             </AccordionContent>
           </AccordionItem>
         ))}

@@ -13,6 +13,6 @@ export default async function CreateWorkoutPage() {
           { name: "", notes: "", sets: [{ weight: "", reps: "", rpe: "" }] },
         ],
       }}
-    ></WorkoutForm>
+    />
   );
 }

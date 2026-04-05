@@ -54,19 +54,15 @@ export default async function EditWorkoutPage({
 }) {
   const { id } = await params;
 
-  if (isNaN(+id)) return <WorkoutNotFound></WorkoutNotFound>;
+  if (isNaN(+id)) return <WorkoutNotFound />;
 
   const workout = await getWorkout(+id);
 
   if (!workout) {
-    return <WorkoutNotFound></WorkoutNotFound>;
+    return <WorkoutNotFound />;
   }
 
   return (
-    <WorkoutForm
-      initialValues={workout}
-      persistMode="update"
-      workoutId={+id}
-    ></WorkoutForm>
+    <WorkoutForm initialValues={workout} persistMode="update" workoutId={+id} />
   );
 }
