@@ -1,29 +1,8 @@
-import { auth } from "@clerk/nextjs/server";
-import { db } from "@/db/drizzle";
-import { Workout } from "@/lib/types";
-import { buildDuplicateWorkoutFormSeed } from "@/components/workout-form/form-model";
+import {
+  buildWorkoutFormSeed,
+} from "@/components/workout-form/form-model";
 import WorkoutForm from "@/components/workout-form/workout-form";
 import WorkoutNotFound from "@/components/workout-form/workout-not-found";
-
-async function getWorkout(id: number) {
-  const { userId, redirectToSignIn } = await auth();
-  if (!userId) redirectToSignIn();
-
-  const data: Workout | undefined = await db.query.workout.findFirst({
-    where: (workout, { eq, and }) =>
-      and(eq(workout.id, id), eq(workout.userId, userId!)),
-    with: {
-      exercises: {
-        with: {
-          sets: {
-            orderBy: (sets, { asc }) => [asc(sets.id)],
-          },
-        },
-      },
-    },
-  });
-  return data;
-}
 
 export default async function DuplicateWorkoutPage({
   params,
@@ -32,15 +11,18 @@ export default async function DuplicateWorkoutPage({
 }) {
   const { id } = await params;
 
-  if (isNaN(+id)) return <WorkoutNotFound />;
-
-  const workout = await getWorkout(+id);
-
-  if (!workout) {
+  if (isNaN(+id)) {
     return <WorkoutNotFound />;
   }
 
-  const workoutSeed = buildDuplicateWorkoutFormSeed(workout);
+  const workoutSeed = await buildWorkoutFormSeed({
+    kind: "duplicate",
+    workoutId: +id,
+  });
+
+  if (!workoutSeed) {
+    return <WorkoutNotFound />;
+  }
 
   return <WorkoutForm {...workoutSeed} />;
 }

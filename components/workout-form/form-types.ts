@@ -1,6 +1,7 @@
 import type { ExerciseThin, TWorkoutFormSchema } from "@/lib/types";
 
 export type PersistMode = "create" | "update";
+export type WorkoutFormSeedMode = "create" | "edit" | "duplicate";
 
 export type WorkoutDraft = TWorkoutFormSchema;
 

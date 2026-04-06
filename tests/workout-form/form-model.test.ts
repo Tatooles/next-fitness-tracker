@@ -1,8 +1,32 @@
-import { describe, expect, it } from "vitest";
-import {
-  buildDuplicateWorkoutFormSeed,
-} from "@/components/workout-form/form-model";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Workout } from "@/lib/types";
+
+const { authMock, findFirstMock } = vi.hoisted(() => ({
+  authMock: vi.fn(),
+  findFirstMock: vi.fn(),
+}));
+
+vi.mock("@clerk/nextjs/server", () => ({
+  auth: authMock,
+}));
+
+vi.mock("@/db/drizzle", () => ({
+  db: {
+    query: {
+      workout: {
+        findFirst: findFirstMock,
+      },
+    },
+  },
+}));
+
+import {
+  buildBlankWorkoutFormSeed,
+  buildDuplicateWorkoutFormSeed,
+  buildEditWorkoutFormSeed,
+  buildWorkoutFormSeed,
+  getWorkoutFormTodayDate,
+} from "@/components/workout-form/form-model";
 
 const workoutFixture: Workout = {
   id: 1,
@@ -25,13 +49,71 @@ const workoutFixture: Workout = {
   ],
 };
 
-describe("buildDuplicateWorkoutFormSeed", () => {
+describe("workout form seed builders", () => {
+  beforeEach(() => {
+    authMock.mockReset();
+    authMock.mockResolvedValue({
+      userId: "user-1",
+      redirectToSignIn: vi.fn(),
+    });
+    findFirstMock.mockReset();
+    vi.useRealTimers();
+  });
+
+  it("builds a blank create seed with today's date and one empty exercise row", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-04-05T12:00:00.000Z"));
+
+    expect(buildBlankWorkoutFormSeed()).toEqual({
+      persistMode: "create",
+      initialValues: {
+        name: "",
+        date: "2026-04-05",
+        notes: "",
+        durationMinutes: null,
+        exercises: [
+          {
+            name: "",
+            notes: "",
+            sets: [{ weight: "", reps: "", rpe: "" }],
+          },
+        ],
+      },
+    });
+  });
+
+  it("builds an edit seed that preserves the workout values and id", () => {
+    expect(buildEditWorkoutFormSeed(workoutFixture)).toEqual({
+      persistMode: "update",
+      workoutId: 1,
+      initialValues: {
+        name: "Push Day",
+        date: "2026-04-04",
+        notes: "Original notes",
+        durationMinutes: 70,
+        exercises: [
+          {
+            name: "Bench Press",
+            notes: "Original exercise notes",
+            sets: [
+              { weight: "225", reps: "5", rpe: "8" },
+              { weight: "235", reps: "3", rpe: "9" },
+            ],
+          },
+        ],
+      },
+    });
+  });
+
   it("builds a duplicate form seed from the helper pipeline", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-04-05T12:00:00.000Z"));
+
     expect(buildDuplicateWorkoutFormSeed(workoutFixture)).toEqual({
       persistMode: "create",
       initialValues: {
         name: "Copy of Push Day",
-        date: expect.any(String),
+        date: "2026-04-05",
         notes: "",
         durationMinutes: null,
         exercises: [
@@ -101,5 +183,38 @@ describe("buildDuplicateWorkoutFormSeed", () => {
       },
       templateValuesByExerciseName: {},
     });
+  });
+
+  it("formats today's date as YYYY-MM-DD", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-04-05T12:00:00.000Z"));
+
+    expect(getWorkoutFormTodayDate()).toBe("2026-04-05");
+  });
+
+  it("routes create mode through the shared builder without querying the database", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-04-05T12:00:00.000Z"));
+
+    await expect(buildWorkoutFormSeed({ kind: "create" })).resolves.toEqual(
+      buildBlankWorkoutFormSeed(),
+    );
+    expect(findFirstMock).not.toHaveBeenCalled();
+  });
+
+  it("returns an edit seed from the shared builder when the workout is found", async () => {
+    findFirstMock.mockResolvedValueOnce(workoutFixture);
+
+    await expect(
+      buildWorkoutFormSeed({ kind: "edit", workoutId: 1 }),
+    ).resolves.toEqual(buildEditWorkoutFormSeed(workoutFixture));
+  });
+
+  it("returns null from the shared builder when the workout is missing", async () => {
+    findFirstMock.mockResolvedValueOnce(null);
+
+    await expect(
+      buildWorkoutFormSeed({ kind: "duplicate", workoutId: 1 }),
+    ).resolves.toBeNull();
   });
 });

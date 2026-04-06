@@ -1,51 +1,8 @@
-import { auth } from "@clerk/nextjs/server";
-import { db } from "@/db/drizzle";
-import { Workout, TWorkoutFormSchema } from "@/lib/types";
+import {
+  buildWorkoutFormSeed,
+} from "@/components/workout-form/form-model";
 import WorkoutForm from "@/components/workout-form/workout-form";
 import WorkoutNotFound from "@/components/workout-form/workout-not-found";
-
-async function getWorkout(id: number) {
-  const { userId, redirectToSignIn } = await auth();
-  if (!userId) redirectToSignIn();
-
-  const data: Workout | undefined = await db.query.workout.findFirst({
-    where: (workout, { eq, and }) =>
-      and(eq(workout.id, id), eq(workout.userId, userId!)),
-    with: {
-      exercises: {
-        with: {
-          sets: {
-            orderBy: (sets, { asc }) => [asc(sets.id)],
-          },
-        },
-      },
-    },
-  });
-  return convertToFormType(data);
-}
-
-const convertToFormType = (
-  workout: Workout | undefined,
-): TWorkoutFormSchema | undefined => {
-  if (!workout) return undefined;
-  const convertedWorkout: TWorkoutFormSchema = {
-    name: workout.name,
-    date: workout.date,
-    notes: workout.notes,
-    durationMinutes: workout.durationMinutes,
-    exercises: workout.exercises.map((exercise) => ({
-      name: exercise.name,
-      notes: exercise.notes,
-      sets: exercise.sets.map((set) => ({
-        reps: set.reps,
-        weight: set.weight,
-        rpe: set.rpe,
-      })),
-    })),
-  };
-
-  return convertedWorkout;
-};
 
 export default async function EditWorkoutPage({
   params,
@@ -54,15 +11,18 @@ export default async function EditWorkoutPage({
 }) {
   const { id } = await params;
 
-  if (isNaN(+id)) return <WorkoutNotFound />;
-
-  const workout = await getWorkout(+id);
-
-  if (!workout) {
+  if (isNaN(+id)) {
     return <WorkoutNotFound />;
   }
 
-  return (
-    <WorkoutForm initialValues={workout} persistMode="update" workoutId={+id} />
-  );
+  const workoutSeed = await buildWorkoutFormSeed({
+    kind: "edit",
+    workoutId: +id,
+  });
+
+  if (!workoutSeed) {
+    return <WorkoutNotFound />;
+  }
+
+  return <WorkoutForm {...workoutSeed} />;
 }
