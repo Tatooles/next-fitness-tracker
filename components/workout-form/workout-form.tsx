@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Controller, useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -11,6 +10,7 @@ import WorkoutFormActionHeader, {
 } from "@/components/workout-form/workout-form-action-header";
 import { workoutFormSchema } from "@/lib/types";
 import type {
+  ExerciseTemplateValues,
   PersistMode,
   WorkoutDraft,
   WorkoutFormProps,
@@ -63,6 +63,12 @@ const getSaveStatus = ({
   return "saved";
 };
 
+type WorkoutFormSession = {
+  persistMode: PersistMode;
+  workoutId?: number;
+  templateValuesByExerciseName?: Record<string, ExerciseTemplateValues>;
+};
+
 export default function WorkoutForm({
   initialValues,
   persistMode,
@@ -71,7 +77,11 @@ export default function WorkoutForm({
 }: WorkoutFormProps) {
   const [hasSaveFailed, setHasSaveFailed] = useState(false);
   const [exercises, setExercises] = useState<string[]>([]);
-  const router = useRouter();
+  const [formSession, setFormSession] = useState<WorkoutFormSession>(() => ({
+    persistMode,
+    workoutId: "workoutId" in props ? props.workoutId : undefined,
+    templateValuesByExerciseName,
+  }));
   const normalizedWorkoutValue = useMemo(
     () => normalizeWorkoutForm(initialValues),
     [initialValues],
@@ -96,9 +106,8 @@ export default function WorkoutForm({
     control,
     name: "exercises",
   });
-  const updateWorkoutId = "workoutId" in props ? props.workoutId : undefined;
   const saveStatus = getSaveStatus({
-    persistMode,
+    persistMode: formSession.persistMode,
     hasSaveFailed,
     isDirty,
     isSubmitting,
@@ -140,8 +149,8 @@ export default function WorkoutForm({
     setHasSaveFailed(false);
 
     const result = await saveWorkout({
-      persistMode,
-      workoutId: updateWorkoutId,
+      persistMode: formSession.persistMode,
+      workoutId: formSession.workoutId,
       values: submittedSnapshot,
     });
 
@@ -151,13 +160,20 @@ export default function WorkoutForm({
     }
 
     setHasSaveFailed(false);
-
-    if (persistMode === "create") {
-      router.push(`/workouts/edit/${result.workoutId}`);
-      return;
-    }
-
     reset(submittedSnapshot);
+
+    if (formSession.persistMode === "create") {
+      setFormSession((currentSession) => ({
+        ...currentSession,
+        persistMode: "update",
+        workoutId: result.workoutId,
+      }));
+      window.history.replaceState(
+        window.history.state,
+        "",
+        `/workouts/edit/${result.workoutId}`,
+      );
+    }
   };
 
   return (
@@ -173,7 +189,7 @@ export default function WorkoutForm({
           {fields.map((field, index) => {
             const exerciseName = watchedExercises?.[index]?.name || "";
             const templateExercise = exerciseName
-              ? templateValuesByExerciseName?.[exerciseName]
+              ? formSession.templateValuesByExerciseName?.[exerciseName]
               : undefined;
 
             return (
@@ -189,9 +205,7 @@ export default function WorkoutForm({
                 onMoveDown={() => move(index, index + 1)}
                 isFirst={index === 0}
                 isLast={index === fields.length - 1}
-                workoutId={
-                  persistMode === "update" ? updateWorkoutId : undefined
-                }
+                workoutId={formSession.workoutId}
                 templateExercise={templateExercise}
               />
             );
