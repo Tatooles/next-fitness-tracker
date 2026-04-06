@@ -15,7 +15,6 @@ import type {
   WorkoutDraft,
   WorkoutFormProps,
 } from "@/components/workout-form/form-types";
-import { toast } from "sonner";
 import {
   Field,
   FieldError,
@@ -24,6 +23,7 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { saveWorkout } from "@/components/workout-form/save-workout";
 
 const cloneWorkoutForm = (values: WorkoutDraft) => structuredClone(values);
 const getTodayDate = () => new Date().toLocaleDateString("en-CA");
@@ -71,16 +71,13 @@ export default function WorkoutForm({
   templateValuesByExerciseName,
   ...props
 }: WorkoutFormProps) {
-  const [failedWorkoutValueToken, setFailedWorkoutValueToken] = useState<
-    WorkoutDraft | null
-  >(null);
+  const [hasSaveFailed, setHasSaveFailed] = useState(false);
   const [exercises, setExercises] = useState<string[]>([]);
   const router = useRouter();
   const normalizedWorkoutValue = useMemo(
     () => normalizeWorkoutForm(initialValues),
     [initialValues],
   );
-  const workoutValueToken = normalizedWorkoutValue;
   const form = useForm<WorkoutDraft>({
     resolver: zodResolver(workoutFormSchema),
     values: normalizedWorkoutValue,
@@ -101,7 +98,6 @@ export default function WorkoutForm({
     control,
     name: "exercises",
   });
-  const hasSaveFailed = failedWorkoutValueToken === workoutValueToken;
   const updateWorkoutId = "workoutId" in props ? props.workoutId : undefined;
   const saveStatus = getSaveStatus({
     persistMode,
@@ -131,7 +127,7 @@ export default function WorkoutForm({
           return;
         }
 
-        setFailedWorkoutValueToken(null);
+        setHasSaveFailed(false);
         unsubscribe();
       },
     });
@@ -143,93 +139,27 @@ export default function WorkoutForm({
 
   const onSubmit = async (values: WorkoutDraft) => {
     const submittedSnapshot = cloneWorkoutForm(values);
-    setFailedWorkoutValueToken(null);
+    setHasSaveFailed(false);
+
+    const result = await saveWorkout({
+      persistMode,
+      workoutId: updateWorkoutId,
+      values: submittedSnapshot,
+    });
+
+    if (!result.ok) {
+      setHasSaveFailed(true);
+      return;
+    }
+
+    setHasSaveFailed(false);
 
     if (persistMode === "create") {
-      const newWorkoutId = await createWorkout(submittedSnapshot);
-      if (newWorkoutId) {
-        router.push(`/workouts/edit/${newWorkoutId}`);
-      } else {
-        setFailedWorkoutValueToken(workoutValueToken);
-      }
-    } else {
-      if (!("workoutId" in props) || props.workoutId == null) {
-        throw new Error("WorkoutForm requires workoutId in update mode");
-      }
-
-      const wasSaved = await updateWorkout(props.workoutId, submittedSnapshot);
-
-      if (wasSaved) {
-        setFailedWorkoutValueToken(null);
-        reset(submittedSnapshot);
-      } else {
-        setFailedWorkoutValueToken(workoutValueToken);
-      }
+      router.push(`/workouts/edit/${result.workoutId}`);
+      return;
     }
-  };
 
-  /**
-   * Creates a new workout with the values from the form
-   *
-   * @param form the form values to create the workout with
-   * @returns the ID of the newly created workout, or null if creation failed
-   */
-  const createWorkout = async (
-    form: WorkoutDraft,
-  ): Promise<number | null> => {
-    try {
-      const response = await fetch("/api/workouts", {
-        method: "POST",
-        body: JSON.stringify(form),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        toast.error("Failed to create workout");
-        return null;
-      }
-
-      const data = await response.json();
-      return data.workoutId;
-    } catch (error) {
-      console.error("An error occurred while creating workout:", error);
-      toast.error("Failed to create workout");
-      return null;
-    }
-  };
-
-  /**
-   * Updates an existing workout with the values from the form
-   *
-   * @param id the id of the workout to update
-   * @param form the form values to update the workout with
-   */
-  const updateWorkout = async (
-    id: number,
-    form: WorkoutDraft,
-  ): Promise<boolean> => {
-    try {
-      const response = await fetch(`/api/workouts/${id}`, {
-        method: "PATCH",
-        body: JSON.stringify(form),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        toast.error("Failed to save workout");
-        return false;
-      }
-
-      return true;
-    } catch (error) {
-      console.error("An error occurred while updating exercise:", error);
-      toast.error("Failed to save workout");
-      return false;
-    }
+    reset(submittedSnapshot);
   };
 
   return (
