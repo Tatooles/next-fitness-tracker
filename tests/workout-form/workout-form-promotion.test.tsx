@@ -57,6 +57,15 @@ const workoutDraftFixture: WorkoutDraft = {
   ],
 };
 
+function buildWorkoutDraft(
+  overrides: Partial<WorkoutDraft> = {},
+): WorkoutDraft {
+  return {
+    ...structuredClone(workoutDraftFixture),
+    ...overrides,
+  };
+}
+
 function createFetchResponse(body: unknown, init?: ResponseInit) {
   return new Response(JSON.stringify(body), {
     status: 200,
@@ -123,6 +132,8 @@ describe("WorkoutForm promotion flow", () => {
     await user.clear(workoutNameInput);
     await user.type(workoutNameInput, "Promoted Push Day");
 
+    expect(screen.getByText("Not saved")).toBeTruthy();
+
     await user.click(screen.getByRole("button", { name: "Save" }));
 
     await screen.findByText("Saved");
@@ -157,6 +168,142 @@ describe("WorkoutForm promotion flow", () => {
     expect(getWorkoutSaveCalls(fetchMock)[1]?.[0]).toBe("/api/workouts/42");
     expect(getWorkoutSaveCalls(fetchMock)[1]?.[1]).toMatchObject({
       method: "PATCH",
+    });
+  });
+
+  it("preserves local edits when rerendered with equal-content props", async () => {
+    const user = userEvent.setup();
+    const createSeed = buildWorkoutDraft();
+    const { rerender } = render(
+      <WorkoutForm
+        initialValues={createSeed}
+        persistMode="update"
+        workoutId={17}
+      />,
+    );
+
+    await screen.findByTestId("exercise-item-0");
+    const workoutNameInput = screen.getByLabelText(
+      "Workout Name",
+    ) as HTMLInputElement;
+
+    await user.clear(workoutNameInput);
+    await user.type(workoutNameInput, "Edited Locally");
+
+    expect(screen.getByText("Unsaved changes")).toBeTruthy();
+    expect(workoutNameInput.value).toBe("Edited Locally");
+
+    rerender(
+      <WorkoutForm
+        initialValues={buildWorkoutDraft()}
+        persistMode="update"
+        workoutId={17}
+      />,
+    );
+
+    expect(screen.getByText("Unsaved changes")).toBeTruthy();
+    expect(
+      (screen.getByLabelText("Workout Name") as HTMLInputElement).value,
+    ).toBe("Edited Locally");
+  });
+
+  it("replaces the form when the external seed changes", async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(
+      <WorkoutForm
+        initialValues={buildWorkoutDraft()}
+        persistMode="create"
+      />,
+    );
+
+    const workoutNameInput = (await screen.findByLabelText(
+      "Workout Name",
+    )) as HTMLInputElement;
+
+    await user.clear(workoutNameInput);
+    await user.type(workoutNameInput, "Temporary edit");
+
+    expect(screen.getByText("Not saved")).toBeTruthy();
+
+    rerender(
+      <WorkoutForm
+        initialValues={buildWorkoutDraft({
+          name: "Leg Day",
+          date: "2026-04-08",
+        })}
+        persistMode="update"
+        workoutId={77}
+        templateValuesByExerciseName={{
+          "Bench Press": {
+            name: "Bench Press",
+            notes: "",
+            sets: [{ weight: "205", reps: "5", rpe: "8" }],
+          },
+        }}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("Saved")).toBeTruthy();
+      expect(
+        (screen.getByLabelText("Workout Name") as HTMLInputElement).value,
+      ).toBe("Leg Day");
+      expect(
+        screen.getByTestId("exercise-item-0").getAttribute("data-workout-id"),
+      ).toBe("77");
+      expect(
+        screen.getByTestId("exercise-item-0").getAttribute("data-has-template"),
+      ).toBe("true");
+    });
+  });
+
+  it("clears stale save failure state when a new external seed arrives", async () => {
+    const fetchMock = vi.mocked(fetch);
+    fetchMock.mockImplementation(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      const method = init?.method ?? "GET";
+
+      if (url === "/api/exercises" && method === "GET") {
+        return createFetchResponse(["Bench Press", "Overhead Press"]);
+      }
+
+      if (url === "/api/workouts" && method === "POST") {
+        return createFetchResponse({ error: "bad request" }, { status: 400 });
+      }
+
+      throw new Error(`Unexpected fetch request: ${method} ${url}`);
+    });
+
+    const user = userEvent.setup();
+    const { rerender } = render(
+      <WorkoutForm
+        initialValues={buildWorkoutDraft()}
+        persistMode="create"
+      />,
+    );
+
+    await screen.findByTestId("exercise-item-0");
+
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await screen.findByText("Save failed");
+
+    rerender(
+      <WorkoutForm
+        initialValues={buildWorkoutDraft({
+          name: "Recovered Seed",
+        })}
+        persistMode="update"
+        workoutId={88}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByText("Save failed")).toBeNull();
+      expect(screen.getByText("Saved")).toBeTruthy();
+      expect(
+        (screen.getByLabelText("Workout Name") as HTMLInputElement).value,
+      ).toBe("Recovered Seed");
     });
   });
 

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -10,10 +10,10 @@ import WorkoutFormActionHeader, {
 } from "@/components/workout-form/workout-form-action-header";
 import { workoutFormSchema } from "@/lib/types";
 import type {
-  ExerciseTemplateValues,
   PersistMode,
   WorkoutDraft,
   WorkoutFormProps,
+  WorkoutFormSeed,
 } from "@/components/workout-form/form-types";
 import {
   Field,
@@ -63,32 +63,63 @@ const getSaveStatus = ({
   return "saved";
 };
 
-type WorkoutFormSession = {
-  persistMode: PersistMode;
-  workoutId?: number;
-  templateValuesByExerciseName?: Record<string, ExerciseTemplateValues>;
+type WorkoutFormSession = Omit<WorkoutFormSeed, "initialValues">;
+
+type LocalCreatePromotion = {
+  sourceSeedKey: string;
+  workoutId: number;
 };
 
-export default function WorkoutForm({
+function getWorkoutFormSeedKey({
   initialValues,
-  persistMode,
-  templateValuesByExerciseName,
-  ...props
-}: WorkoutFormProps) {
-  const [hasSaveFailed, setHasSaveFailed] = useState(false);
+  formSession,
+}: {
+  initialValues: WorkoutDraft;
+  formSession: WorkoutFormSession;
+}): string {
+  return JSON.stringify({
+    initialValues,
+    persistMode: formSession.persistMode,
+    workoutId: formSession.workoutId,
+    templateValuesByExerciseName: formSession.templateValuesByExerciseName,
+  });
+}
+
+export default function WorkoutForm(props: WorkoutFormProps) {
+  const { initialValues, persistMode, templateValuesByExerciseName } = props;
+  const workoutId = "workoutId" in props ? props.workoutId : undefined;
+  const [failedSaveSeedKey, setFailedSaveSeedKey] = useState<string | null>(
+    null,
+  );
+  const [localCreatePromotion, setLocalCreatePromotion] =
+    useState<LocalCreatePromotion | null>(null);
   const [exercises, setExercises] = useState<string[]>([]);
-  const [formSession, setFormSession] = useState<WorkoutFormSession>(() => ({
-    persistMode,
-    workoutId: "workoutId" in props ? props.workoutId : undefined,
-    templateValuesByExerciseName,
-  }));
-  const normalizedWorkoutValue = useMemo(
+  const normalizedInitialValues = useMemo(
     () => normalizeWorkoutForm(initialValues),
     [initialValues],
   );
+  const incomingFormSession: WorkoutFormSession = {
+    persistMode,
+    workoutId,
+    templateValuesByExerciseName,
+  };
+  const incomingSeedKey = getWorkoutFormSeedKey({
+    initialValues: normalizedInitialValues,
+    formSession: incomingFormSession,
+  });
+  const formSession: WorkoutFormSession =
+    localCreatePromotion?.sourceSeedKey === incomingSeedKey
+      ? {
+          ...incomingFormSession,
+          persistMode: "update",
+          workoutId: localCreatePromotion.workoutId,
+        }
+      : incomingFormSession;
+  const hasSaveFailed = failedSaveSeedKey === incomingSeedKey;
+  const appliedSeedKeyRef = useRef(incomingSeedKey);
   const form = useForm<WorkoutDraft>({
     resolver: zodResolver(workoutFormSchema),
-    values: normalizedWorkoutValue,
+    defaultValues: normalizedInitialValues,
   });
   const {
     control,
@@ -123,6 +154,15 @@ export default function WorkoutForm({
   }, []);
 
   useEffect(() => {
+    if (incomingSeedKey === appliedSeedKeyRef.current) {
+      return;
+    }
+
+    appliedSeedKeyRef.current = incomingSeedKey;
+    reset(normalizedInitialValues);
+  }, [incomingSeedKey, normalizedInitialValues, reset]);
+
+  useEffect(() => {
     if (!hasSaveFailed) {
       return;
     }
@@ -134,7 +174,7 @@ export default function WorkoutForm({
           return;
         }
 
-        setHasSaveFailed(false);
+        setFailedSaveSeedKey(null);
         unsubscribe();
       },
     });
@@ -146,7 +186,7 @@ export default function WorkoutForm({
 
   const onSubmit = async (values: WorkoutDraft) => {
     const submittedSnapshot = cloneWorkoutForm(values);
-    setHasSaveFailed(false);
+    setFailedSaveSeedKey(null);
 
     const result = await saveWorkout({
       persistMode: formSession.persistMode,
@@ -155,19 +195,18 @@ export default function WorkoutForm({
     });
 
     if (!result.ok) {
-      setHasSaveFailed(true);
+      setFailedSaveSeedKey(incomingSeedKey);
       return;
     }
 
-    setHasSaveFailed(false);
+    setFailedSaveSeedKey(null);
     reset(submittedSnapshot);
 
     if (formSession.persistMode === "create") {
-      setFormSession((currentSession) => ({
-        ...currentSession,
-        persistMode: "update",
+      setLocalCreatePromotion({
+        sourceSeedKey: incomingSeedKey,
         workoutId: result.workoutId,
-      }));
+      });
       window.history.replaceState(
         window.history.state,
         "",
