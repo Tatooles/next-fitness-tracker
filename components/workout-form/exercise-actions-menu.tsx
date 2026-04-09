@@ -18,6 +18,7 @@ import {
 interface ExerciseActionsMenuProps {
   exerciseName: string;
   workoutId?: number;
+  clearFailedSaveState: () => void;
   onDelete: () => void;
   onMoveUp: () => void;
   onMoveDown: () => void;
@@ -28,6 +29,7 @@ interface ExerciseActionsMenuProps {
 export default function ExerciseActionsMenu({
   exerciseName,
   workoutId,
+  clearFailedSaveState,
   onDelete,
   onMoveUp,
   onMoveDown,
@@ -51,15 +53,33 @@ export default function ExerciseActionsMenu({
             View History
           </DropdownMenuItem>
         </ExerciseHistoryModal>
-        <DropdownMenuItem onClick={onMoveUp} disabled={isFirst}>
+        <DropdownMenuItem
+          onClick={() => {
+            clearFailedSaveState();
+            onMoveUp();
+          }}
+          disabled={isFirst}
+        >
           <ArrowUp />
           Move Up
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={onMoveDown} disabled={isLast}>
+        <DropdownMenuItem
+          onClick={() => {
+            clearFailedSaveState();
+            onMoveDown();
+          }}
+          disabled={isLast}
+        >
           <ArrowDown />
           Move Down
         </DropdownMenuItem>
-        <DropdownMenuItem variant="destructive" onClick={onDelete}>
+        <DropdownMenuItem
+          variant="destructive"
+          onClick={() => {
+            clearFailedSaveState();
+            onDelete();
+          }}
+        >
           <Trash2 />
           Delete Exercise
         </DropdownMenuItem>

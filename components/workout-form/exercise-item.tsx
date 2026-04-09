@@ -16,6 +16,7 @@ interface ExerciseItemProps {
   getValues: UseFormGetValues<WorkoutDraft>;
   exercises: string[];
   exerciseName: string;
+  clearFailedSaveState: () => void;
   onRemove: () => void;
   onMoveUp: () => void;
   onMoveDown: () => void;
@@ -31,6 +32,7 @@ export default function ExerciseItem({
   getValues,
   exercises,
   exerciseName,
+  clearFailedSaveState,
   onRemove,
   onMoveUp,
   onMoveDown,
@@ -50,12 +52,16 @@ export default function ExerciseItem({
               <div className="flex items-center gap-2">
                 <ExerciseSelector
                   value={field.value}
-                  onChange={field.onChange}
+                  onChange={(value) => {
+                    clearFailedSaveState();
+                    field.onChange(value);
+                  }}
                   exercises={exercises}
                 />
                 <ExerciseActionsMenu
                   exerciseName={exerciseName}
                   workoutId={workoutId}
+                  clearFailedSaveState={clearFailedSaveState}
                   onDelete={onRemove}
                   onMoveUp={onMoveUp}
                   onMoveDown={onMoveDown}
@@ -74,6 +80,7 @@ export default function ExerciseItem({
         control={control}
         getValues={getValues}
         templateExercise={templateExercise}
+        clearFailedSaveState={clearFailedSaveState}
       />
 
       <Controller
