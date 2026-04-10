@@ -2,7 +2,13 @@
 
 import React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { WorkoutDraft } from "@/components/workout-form/form-types";
 
@@ -77,37 +83,141 @@ function createFetchResponse(body: unknown, init?: ResponseInit) {
 }
 
 function getWorkoutSaveCalls(fetchMock: ReturnType<typeof vi.fn>) {
-  return fetchMock.mock.calls.filter(([url]) =>
-    typeof url === "string" && url.startsWith("/api/workouts"),
+  return fetchMock.mock.calls.filter(
+    ([url]) => typeof url === "string" && url.startsWith("/api/workouts"),
   );
 }
 
 describe("WorkoutForm promotion flow", () => {
   beforeEach(() => {
-    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
-      const url = String(input);
-      const method = init?.method ?? "GET";
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = String(input);
+        const method = init?.method ?? "GET";
 
-      if (url === "/api/exercises" && method === "GET") {
-        return createFetchResponse(["Bench Press", "Overhead Press"]);
-      }
+        if (url === "/api/exercises" && method === "GET") {
+          return createFetchResponse(["Bench Press", "Overhead Press"]);
+        }
 
-      if (url === "/api/workouts" && method === "POST") {
-        return createFetchResponse({ workoutId: 42 }, { status: 201 });
-      }
+        if (url === "/api/workouts" && method === "POST") {
+          return createFetchResponse({ workoutId: 42 }, { status: 201 });
+        }
 
-      if (url === "/api/workouts/42" && method === "PATCH") {
-        return createFetchResponse({ message: "Workout updated" });
-      }
+        if (url === "/api/workouts/42" && method === "PATCH") {
+          return createFetchResponse({ message: "Workout updated" });
+        }
 
-      throw new Error(`Unexpected fetch request: ${method} ${url}`);
-    }));
+        throw new Error(`Unexpected fetch request: ${method} ${url}`);
+      }),
+    );
   });
 
   afterEach(() => {
     cleanup();
+    vi.useRealTimers();
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
+  });
+
+  it("initializes a blank create date from the browser after mount", async () => {
+    vi.spyOn(Date.prototype, "toLocaleDateString").mockReturnValue(
+      "2026-04-06",
+    );
+
+    render(
+      <WorkoutForm
+        initialValues={buildWorkoutDraft({ date: "" })}
+        persistMode="create"
+      />,
+    );
+
+    const dateInput = (await screen.findByLabelText(
+      "Date",
+    )) as HTMLInputElement;
+
+    await waitFor(() => {
+      expect(dateInput.value).toBe(new Date().toLocaleDateString("en-CA"));
+    });
+  });
+
+  it("initializes a blank duplicate date from the browser after mount", async () => {
+    vi.spyOn(Date.prototype, "toLocaleDateString").mockReturnValue(
+      "2026-04-06",
+    );
+
+    render(
+      <WorkoutForm
+        initialValues={buildWorkoutDraft({ date: "" })}
+        persistMode="create"
+        templateValuesByExerciseName={{
+          "Bench Press": {
+            name: "Bench Press",
+            notes: "",
+            sets: [{ weight: "200", reps: "6", rpe: "7" }],
+          },
+        }}
+      />,
+    );
+
+    const dateInput = (await screen.findByLabelText(
+      "Date",
+    )) as HTMLInputElement;
+
+    await waitFor(() => {
+      expect(dateInput.value).toBe(new Date().toLocaleDateString("en-CA"));
+    });
+  });
+
+  it("does not auto-fill a supplied update date", async () => {
+    vi.spyOn(Date.prototype, "toLocaleDateString").mockReturnValue(
+      "2026-04-06",
+    );
+
+    render(
+      <WorkoutForm
+        initialValues={buildWorkoutDraft({ date: "2026-04-08" })}
+        persistMode="update"
+        workoutId={17}
+      />,
+    );
+
+    const dateInput = (await screen.findByLabelText(
+      "Date",
+    )) as HTMLInputElement;
+
+    await waitFor(() => {
+      expect(dateInput.value).toBe("2026-04-08");
+    });
+  });
+
+  it("does not re-fill a cleared create date on rerender with the same seed", async () => {
+    vi.spyOn(Date.prototype, "toLocaleDateString").mockReturnValue(
+      "2026-04-06",
+    );
+
+    const createProps = {
+      initialValues: buildWorkoutDraft({ date: "" }),
+      persistMode: "create" as const,
+    };
+    const { rerender } = render(<WorkoutForm {...createProps} />);
+
+    const dateInput = (await screen.findByLabelText(
+      "Date",
+    )) as HTMLInputElement;
+
+    await waitFor(() => {
+      expect(dateInput.value).toBe(new Date().toLocaleDateString("en-CA"));
+    });
+
+    fireEvent.change(dateInput, { target: { value: "" } });
+    expect(dateInput.value).toBe("");
+
+    rerender(<WorkoutForm {...createProps} />);
+
+    await waitFor(() => {
+      expect(dateInput.value).toBe("");
+    });
   });
 
   it("promotes create mode to update mode in place after the first save", async () => {
@@ -115,10 +225,7 @@ describe("WorkoutForm promotion flow", () => {
     const user = userEvent.setup();
 
     render(
-      <WorkoutForm
-        initialValues={workoutDraftFixture}
-        persistMode="create"
-      />,
+      <WorkoutForm initialValues={workoutDraftFixture} persistMode="create" />,
     );
 
     await screen.findByTestId("exercise-item-0");
@@ -210,10 +317,7 @@ describe("WorkoutForm promotion flow", () => {
   it("replaces the form when the external seed changes", async () => {
     const user = userEvent.setup();
     const { rerender } = render(
-      <WorkoutForm
-        initialValues={buildWorkoutDraft()}
-        persistMode="create"
-      />,
+      <WorkoutForm initialValues={buildWorkoutDraft()} persistMode="create" />,
     );
 
     const workoutNameInput = (await screen.findByLabelText(
@@ -259,27 +363,26 @@ describe("WorkoutForm promotion flow", () => {
 
   it("clears stale save failure state when a new external seed arrives", async () => {
     const fetchMock = vi.mocked(fetch);
-    fetchMock.mockImplementation(async (input: RequestInfo | URL, init?: RequestInit) => {
-      const url = String(input);
-      const method = init?.method ?? "GET";
+    fetchMock.mockImplementation(
+      async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = String(input);
+        const method = init?.method ?? "GET";
 
-      if (url === "/api/exercises" && method === "GET") {
-        return createFetchResponse(["Bench Press", "Overhead Press"]);
-      }
+        if (url === "/api/exercises" && method === "GET") {
+          return createFetchResponse(["Bench Press", "Overhead Press"]);
+        }
 
-      if (url === "/api/workouts" && method === "POST") {
-        return createFetchResponse({ error: "bad request" }, { status: 400 });
-      }
+        if (url === "/api/workouts" && method === "POST") {
+          return createFetchResponse({ error: "bad request" }, { status: 400 });
+        }
 
-      throw new Error(`Unexpected fetch request: ${method} ${url}`);
-    });
+        throw new Error(`Unexpected fetch request: ${method} ${url}`);
+      },
+    );
 
     const user = userEvent.setup();
     const { rerender } = render(
-      <WorkoutForm
-        initialValues={buildWorkoutDraft()}
-        persistMode="create"
-      />,
+      <WorkoutForm initialValues={buildWorkoutDraft()} persistMode="create" />,
     );
 
     await screen.findByTestId("exercise-item-0");

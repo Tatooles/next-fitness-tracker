@@ -25,7 +25,6 @@ import {
   buildDuplicateWorkoutFormSeed,
   buildEditWorkoutFormSeed,
   buildWorkoutFormSeed,
-  getWorkoutFormTodayDate,
 } from "@/components/workout-form/form-model";
 
 const workoutFixture: Workout = {
@@ -60,15 +59,12 @@ describe("workout form seed builders", () => {
     vi.useRealTimers();
   });
 
-  it("builds a blank create seed with today's date and one empty exercise row", () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date("2026-04-05T12:00:00.000Z"));
-
+  it("builds a blank create seed with one empty exercise row", () => {
     expect(buildBlankWorkoutFormSeed()).toEqual({
       persistMode: "create",
       initialValues: {
         name: "",
-        date: "2026-04-05",
+        date: "",
         notes: "",
         durationMinutes: null,
         exercises: [
@@ -106,14 +102,11 @@ describe("workout form seed builders", () => {
   });
 
   it("builds a duplicate form seed from the helper pipeline", () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date("2026-04-05T12:00:00.000Z"));
-
     expect(buildDuplicateWorkoutFormSeed(workoutFixture)).toEqual({
       persistMode: "create",
       initialValues: {
         name: "Copy of Push Day",
-        date: "2026-04-05",
+        date: "",
         notes: "",
         durationMinutes: null,
         exercises: [
@@ -150,7 +143,9 @@ describe("workout form seed builders", () => {
             ...workoutFixture.exercises[0],
             id: 12,
             notes: "second",
-            sets: [{ id: 121, weight: "245", reps: "2", rpe: "9.5", exerciseId: 12 }],
+            sets: [
+              { id: 121, weight: "245", reps: "2", rpe: "9.5", exerciseId: 12 },
+            ],
           },
         ],
       }).templateValuesByExerciseName,
@@ -176,7 +171,7 @@ describe("workout form seed builders", () => {
       persistMode: "create",
       initialValues: {
         name: "Copy of Push Day",
-        date: expect.any(String),
+        date: "",
         notes: "",
         durationMinutes: null,
         exercises: [],
@@ -185,17 +180,7 @@ describe("workout form seed builders", () => {
     });
   });
 
-  it("formats today's date as YYYY-MM-DD", () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date("2026-04-05T12:00:00.000Z"));
-
-    expect(getWorkoutFormTodayDate()).toBe("2026-04-05");
-  });
-
   it("routes create mode through the shared builder without querying the database", async () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date("2026-04-05T12:00:00.000Z"));
-
     await expect(buildWorkoutFormSeed({ kind: "create" })).resolves.toEqual(
       buildBlankWorkoutFormSeed(),
     );

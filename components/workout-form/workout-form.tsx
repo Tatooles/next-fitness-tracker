@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Controller, useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -26,12 +26,7 @@ import { Input } from "@/components/ui/input";
 import { saveWorkout } from "@/components/workout-form/save-workout";
 
 const cloneWorkoutForm = (values: WorkoutDraft) => structuredClone(values);
-const getTodayDate = () => new Date().toLocaleDateString("en-CA");
-
-const normalizeWorkoutForm = (values: WorkoutDraft): WorkoutDraft => ({
-  ...values,
-  date: values.date || getTodayDate(),
-});
+const getBrowserTodayDate = () => new Date().toLocaleDateString("en-CA");
 
 const getSaveStatus = ({
   persistMode,
@@ -94,17 +89,13 @@ export default function WorkoutForm(props: WorkoutFormProps) {
   const [localCreatePromotion, setLocalCreatePromotion] =
     useState<LocalCreatePromotion | null>(null);
   const [exercises, setExercises] = useState<string[]>([]);
-  const normalizedInitialValues = useMemo(
-    () => normalizeWorkoutForm(initialValues),
-    [initialValues],
-  );
   const incomingFormSession: WorkoutFormSession = {
     persistMode,
     workoutId,
     templateValuesByExerciseName,
   };
   const incomingSeedKey = getWorkoutFormSeedKey({
-    initialValues: normalizedInitialValues,
+    initialValues,
     formSession: incomingFormSession,
   });
   const formSession: WorkoutFormSession =
@@ -117,15 +108,17 @@ export default function WorkoutForm(props: WorkoutFormProps) {
       : incomingFormSession;
   const hasSaveFailed = failedSaveSeedKey === incomingSeedKey;
   const appliedSeedKeyRef = useRef(incomingSeedKey);
+  const initializedDateSeedKeyRef = useRef<string | null>(null);
   const form = useForm<WorkoutDraft>({
     resolver: zodResolver(workoutFormSchema),
-    defaultValues: normalizedInitialValues,
+    defaultValues: initialValues,
   });
   const {
     control,
     getValues,
     handleSubmit,
     reset,
+    setValue,
     subscribe,
     formState: { isDirty, isSubmitting },
   } = form;
@@ -159,8 +152,29 @@ export default function WorkoutForm(props: WorkoutFormProps) {
     }
 
     appliedSeedKeyRef.current = incomingSeedKey;
-    reset(normalizedInitialValues);
-  }, [incomingSeedKey, normalizedInitialValues, reset]);
+    reset(initialValues);
+  }, [incomingSeedKey, initialValues, reset]);
+
+  useEffect(() => {
+    if (formSession.persistMode !== "create") {
+      return;
+    }
+
+    if (initializedDateSeedKeyRef.current === incomingSeedKey) {
+      return;
+    }
+
+    if (getValues("date")) {
+      initializedDateSeedKeyRef.current = incomingSeedKey;
+      return;
+    }
+
+    initializedDateSeedKeyRef.current = incomingSeedKey;
+    setValue("date", getBrowserTodayDate(), {
+      shouldDirty: false,
+      shouldTouch: false,
+    });
+  }, [formSession.persistMode, getValues, incomingSeedKey, setValue]);
 
   useEffect(() => {
     if (!hasSaveFailed) {

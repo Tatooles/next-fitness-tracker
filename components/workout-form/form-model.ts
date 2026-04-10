@@ -16,10 +16,6 @@ function cloneWorkoutDraft(values: WorkoutDraft): WorkoutDraft {
   return structuredClone(values);
 }
 
-export function getWorkoutFormTodayDate(): string {
-  return new Date().toLocaleDateString("en-CA");
-}
-
 function toWorkoutDraft(workout: Workout): WorkoutDraft {
   return {
     name: workout.name,
@@ -41,7 +37,7 @@ function toWorkoutDraft(workout: Workout): WorkoutDraft {
 function toDuplicateWorkoutDraft(workout: Workout): WorkoutDraft {
   return {
     name: `Copy of ${workout.name}`,
-    date: getWorkoutFormTodayDate(),
+    date: "",
     notes: "",
     durationMinutes: null,
     exercises: workout.exercises.map((exercise) => ({
@@ -115,7 +111,7 @@ export function buildBlankWorkoutFormSeed(): CreateWorkoutFormSeed {
     persistMode: "create",
     initialValues: {
       name: "",
-      date: getWorkoutFormTodayDate(),
+      date: "",
       notes: "",
       durationMinutes: null,
       exercises: [
