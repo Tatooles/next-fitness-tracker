@@ -11,7 +11,6 @@ import WorkoutFormActionHeader, {
 import { workoutFormSchema } from "@/lib/types";
 import type {
   PersistMode,
-  SaveState,
   WorkoutDraft,
   WorkoutFormProps,
   WorkoutFormSeed,
@@ -36,31 +35,29 @@ const normalizeWorkoutForm = (values: WorkoutDraft): WorkoutDraft => ({
 
 const getSaveStatus = ({
   persistMode,
+  hasSaveFailed,
   isDirty,
-  saveState,
+  isSubmitting,
 }: {
   persistMode: PersistMode;
+  hasSaveFailed: boolean;
   isDirty: boolean;
-  saveState: SaveState;
+  isSubmitting: boolean;
 }): WorkoutSaveStatus => {
-  if (saveState === "saving") {
+  if (isSubmitting) {
     return "saving";
   }
 
-  if (saveState === "failed") {
+  if (hasSaveFailed) {
     return "failed";
-  }
-
-  if (isDirty && persistMode === "update") {
-    return "unsaved";
-  }
-
-  if (saveState === "saved") {
-    return "saved";
   }
 
   if (persistMode === "create") {
     return "not_saved";
+  }
+
+  if (isDirty) {
+    return "unsaved";
   }
 
   return "saved";
@@ -71,11 +68,6 @@ type WorkoutFormSession = Omit<WorkoutFormSeed, "initialValues">;
 type LocalCreatePromotion = {
   sourceSeedKey: string;
   workoutId: number;
-};
-
-type SaveStateSnapshot = {
-  seedKey: string;
-  value: SaveState;
 };
 
 function getWorkoutFormSeedKey({
@@ -96,6 +88,9 @@ function getWorkoutFormSeedKey({
 export default function WorkoutForm(props: WorkoutFormProps) {
   const { initialValues, persistMode, templateValuesByExerciseName } = props;
   const workoutId = "workoutId" in props ? props.workoutId : undefined;
+  const [failedSaveSeedKey, setFailedSaveSeedKey] = useState<string | null>(
+    null,
+  );
   const [localCreatePromotion, setLocalCreatePromotion] =
     useState<LocalCreatePromotion | null>(null);
   const [exercises, setExercises] = useState<string[]>([]);
@@ -112,11 +107,6 @@ export default function WorkoutForm(props: WorkoutFormProps) {
     initialValues: normalizedInitialValues,
     formSession: incomingFormSession,
   });
-  const [saveStateSnapshot, setSaveStateSnapshot] =
-    useState<SaveStateSnapshot>({
-      seedKey: incomingSeedKey,
-      value: "idle",
-    });
   const formSession: WorkoutFormSession =
     localCreatePromotion?.sourceSeedKey === incomingSeedKey
       ? {
@@ -125,6 +115,7 @@ export default function WorkoutForm(props: WorkoutFormProps) {
           workoutId: localCreatePromotion.workoutId,
         }
       : incomingFormSession;
+  const hasSaveFailed = failedSaveSeedKey === incomingSeedKey;
   const appliedSeedKeyRef = useRef(incomingSeedKey);
   const form = useForm<WorkoutDraft>({
     resolver: zodResolver(workoutFormSchema),
@@ -135,6 +126,7 @@ export default function WorkoutForm(props: WorkoutFormProps) {
     getValues,
     handleSubmit,
     reset,
+    subscribe,
     formState: { isDirty, isSubmitting },
   } = form;
   const { fields, append, remove, move } = useFieldArray({
@@ -145,27 +137,12 @@ export default function WorkoutForm(props: WorkoutFormProps) {
     control,
     name: "exercises",
   });
-  const effectiveSaveState =
-    saveStateSnapshot.seedKey === incomingSeedKey
-      ? saveStateSnapshot.value
-      : "idle";
   const saveStatus = getSaveStatus({
     persistMode: formSession.persistMode,
+    hasSaveFailed,
     isDirty,
-    saveState: effectiveSaveState,
+    isSubmitting,
   });
-
-  const clearFailedSaveState = () => {
-    if (
-      saveStateSnapshot.seedKey === incomingSeedKey &&
-      saveStateSnapshot.value === "failed"
-    ) {
-      setSaveStateSnapshot({
-        seedKey: incomingSeedKey,
-        value: "idle",
-      });
-    }
-  };
 
   useEffect(() => {
     async function fetchExercises() {
@@ -185,12 +162,31 @@ export default function WorkoutForm(props: WorkoutFormProps) {
     reset(normalizedInitialValues);
   }, [incomingSeedKey, normalizedInitialValues, reset]);
 
+  useEffect(() => {
+    if (!hasSaveFailed) {
+      return;
+    }
+
+    const unsubscribe = subscribe({
+      formState: { values: true },
+      callback: ({ name, type }) => {
+        if (!name || type === "blur") {
+          return;
+        }
+
+        setFailedSaveSeedKey(null);
+        unsubscribe();
+      },
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [hasSaveFailed, subscribe]);
+
   const onSubmit = async (values: WorkoutDraft) => {
     const submittedSnapshot = cloneWorkoutForm(values);
-    setSaveStateSnapshot({
-      seedKey: incomingSeedKey,
-      value: "saving",
-    });
+    setFailedSaveSeedKey(null);
 
     const result = await saveWorkout({
       persistMode: formSession.persistMode,
@@ -199,18 +195,12 @@ export default function WorkoutForm(props: WorkoutFormProps) {
     });
 
     if (!result.ok) {
-      setSaveStateSnapshot({
-        seedKey: incomingSeedKey,
-        value: "failed",
-      });
+      setFailedSaveSeedKey(incomingSeedKey);
       return;
     }
 
+    setFailedSaveSeedKey(null);
     reset(submittedSnapshot);
-    setSaveStateSnapshot({
-      seedKey: incomingSeedKey,
-      value: "saved",
-    });
 
     if (formSession.persistMode === "create") {
       setLocalCreatePromotion({
@@ -226,13 +216,7 @@ export default function WorkoutForm(props: WorkoutFormProps) {
   };
 
   return (
-    <form
-      noValidate
-      onSubmit={handleSubmit(onSubmit)}
-      onInputCapture={clearFailedSaveState}
-      onChangeCapture={clearFailedSaveState}
-      aria-busy={isSubmitting}
-    >
+    <form noValidate onSubmit={handleSubmit(onSubmit)} aria-busy={isSubmitting}>
       <WorkoutFormActionHeader saveStatus={saveStatus} />
 
       <FieldSet disabled={isSubmitting} className="mx-auto max-w-2xl p-4">
@@ -255,7 +239,6 @@ export default function WorkoutForm(props: WorkoutFormProps) {
                 getValues={getValues}
                 exercises={exercises}
                 exerciseName={exerciseName}
-                clearFailedSaveState={clearFailedSaveState}
                 onRemove={() => remove(index)}
                 onMoveUp={() => move(index, index - 1)}
                 onMoveDown={() => move(index, index + 1)}
@@ -270,14 +253,13 @@ export default function WorkoutForm(props: WorkoutFormProps) {
           <Button
             type="button"
             variant="outline"
-            onClick={() => {
-              clearFailedSaveState();
+            onClick={() =>
               append({
                 name: "",
                 notes: "",
                 sets: [{ weight: "", reps: "", rpe: "" }],
-              });
-            }}
+              })
+            }
           >
             Add Exercise
           </Button>

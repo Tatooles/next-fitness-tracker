@@ -14,7 +14,6 @@ interface FormSetsProps {
   control: Control<WorkoutDraft>;
   getValues: UseFormGetValues<WorkoutDraft>;
   templateExercise?: ExerciseTemplateValues;
-  clearFailedSaveState: () => void;
 }
 
 export default function FormSets({
@@ -22,7 +21,6 @@ export default function FormSets({
   control,
   getValues,
   templateExercise,
-  clearFailedSaveState,
 }: FormSetsProps) {
   const { fields, remove, append } = useFieldArray({
     name: `exercises.${exerciseIndex}.sets`,
@@ -77,10 +75,7 @@ export default function FormSets({
             type="button"
             variant="ghost"
             size="icon"
-            onClick={() => {
-              clearFailedSaveState();
-              remove(index);
-            }}
+            onClick={() => remove(index)}
             className="hover:bg-destructive/10 hover:text-destructive text-red-600 transition-colors"
           >
             <Trash2 size={20} />
@@ -93,14 +88,13 @@ export default function FormSets({
           variant="outline"
           size="sm"
           className="border-green-500 text-green-500 hover:bg-green-500 hover:text-white"
-          onClick={() => {
-            clearFailedSaveState();
+          onClick={() =>
             append({
               weight: "",
               reps: "",
               rpe: "",
-            });
-          }}
+            })
+          }
         >
           Add set
         </Button>
@@ -110,8 +104,7 @@ export default function FormSets({
             variant="outline"
             size="sm"
             className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
-            onClick={() => {
-              clearFailedSaveState();
+            onClick={() =>
               append({
                 weight: getValues(
                   `exercises.${exerciseIndex}.sets.${fields.length - 1}.weight`,
@@ -122,8 +115,8 @@ export default function FormSets({
                 rpe: getValues(
                   `exercises.${exerciseIndex}.sets.${fields.length - 1}.rpe`,
                 ),
-              });
-            }}
+              })
+            }
           >
             Clone set
           </Button>

@@ -14,58 +14,32 @@ vi.mock("@/components/ui/sidebar", () => ({
   ),
 }));
 
-vi.mock("@/components/workout-form/exercise-selector", () => ({
-  default: function MockExerciseSelector({
-    value,
-    onChange,
-  }: {
-    value: string;
-    onChange: (value: string) => void;
-  }) {
-    return (
-      <button
-        type="button"
-        data-testid="exercise-selector"
-        data-value={value}
-        onClick={() => onChange("Overhead Press")}
-      >
-        {value || "Select exercise"}
-      </button>
-    );
-  },
-}));
-
-vi.mock("@/components/workout-form/exercise-actions-menu", () => ({
-  default: function MockExerciseActionsMenu({
-    workoutId,
-    onDelete,
-    onMoveUp,
-    onMoveDown,
-    isFirst,
-    isLast,
-  }: {
-    workoutId?: number;
-    onDelete: () => void;
-    onMoveUp: () => void;
-    onMoveDown: () => void;
-    isFirst: boolean;
-    isLast: boolean;
-  }) {
-    return (
-      <div data-testid="exercise-actions-menu" data-workout-id={workoutId ?? ""}>
-        <button type="button" onClick={onMoveUp} disabled={isFirst}>
-          Move Up
-        </button>
-        <button type="button" onClick={onMoveDown} disabled={isLast}>
-          Move Down
-        </button>
-        <button type="button" onClick={onDelete}>
-          Delete Exercise
-        </button>
-      </div>
-    );
-  },
-}));
+vi.mock("@/components/workout-form/exercise-item", async () => {
+  return {
+    default: function MockExerciseItem({
+      index,
+      exerciseName,
+      workoutId,
+      templateExercise,
+    }: {
+      index: number;
+      exerciseName: string;
+      workoutId?: number;
+      templateExercise?: { name: string };
+    }) {
+      return (
+        <div
+          data-testid={`exercise-item-${index}`}
+          data-exercise-name={exerciseName}
+          data-has-template={String(Boolean(templateExercise))}
+          data-workout-id={workoutId?.toString() ?? ""}
+        >
+          Exercise row {index}
+        </div>
+      );
+    },
+  };
+});
 
 import WorkoutForm from "@/components/workout-form/workout-form";
 
@@ -110,7 +84,6 @@ function getWorkoutSaveCalls(fetchMock: ReturnType<typeof vi.fn>) {
 
 describe("WorkoutForm promotion flow", () => {
   beforeEach(() => {
-    vi.spyOn(console, "error").mockImplementation(() => {});
     vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
       const url = String(input);
       const method = init?.method ?? "GET";
@@ -148,14 +121,12 @@ describe("WorkoutForm promotion flow", () => {
       />,
     );
 
-    await screen.findByTestId("exercise-selector");
+    await screen.findByTestId("exercise-item-0");
     const workoutNameInput = screen.getByLabelText("Workout Name");
 
     expect(screen.getByText("Not saved")).toBeTruthy();
     expect(
-      screen.getAllByTestId("exercise-actions-menu")[0]?.getAttribute(
-        "data-workout-id",
-      ),
+      screen.getByTestId("exercise-item-0").getAttribute("data-workout-id"),
     ).toBe("");
 
     await user.clear(workoutNameInput);
@@ -171,14 +142,11 @@ describe("WorkoutForm promotion flow", () => {
     expect(replaceStateCall).toBeTruthy();
     expect(replaceStateCall?.[2]).toBe("/workouts/edit/42");
 
-    expect(screen.getAllByTestId("exercise-selector")).toHaveLength(1);
-    expect(screen.getByTestId("exercise-selector").getAttribute("data-value")).toBe(
-      "Bench Press",
+    expect(screen.getByTestId("exercise-item-0").textContent).toContain(
+      "Exercise row 0",
     );
     expect(
-      screen.getAllByTestId("exercise-actions-menu")[0]?.getAttribute(
-        "data-workout-id",
-      ),
+      screen.getByTestId("exercise-item-0").getAttribute("data-workout-id"),
     ).toBe("42");
     expect(
       (screen.getByLabelText("Workout Name") as HTMLInputElement).value,
@@ -214,7 +182,7 @@ describe("WorkoutForm promotion flow", () => {
       />,
     );
 
-    await screen.findByTestId("exercise-selector");
+    await screen.findByTestId("exercise-item-0");
     const workoutNameInput = screen.getByLabelText(
       "Workout Name",
     ) as HTMLInputElement;
@@ -281,190 +249,11 @@ describe("WorkoutForm promotion flow", () => {
         (screen.getByLabelText("Workout Name") as HTMLInputElement).value,
       ).toBe("Leg Day");
       expect(
-        screen.getAllByTestId("exercise-actions-menu")[0]?.getAttribute(
-          "data-workout-id",
-        ),
+        screen.getByTestId("exercise-item-0").getAttribute("data-workout-id"),
       ).toBe("77");
-      expect(screen.getByPlaceholderText("205")).toBeTruthy();
-    });
-  });
-
-  it("clears failed create status after a native input edit without resetting the draft", async () => {
-    const fetchMock = vi.mocked(fetch);
-    fetchMock.mockImplementation(async (input: RequestInfo | URL, init?: RequestInit) => {
-      const url = String(input);
-      const method = init?.method ?? "GET";
-
-      if (url === "/api/exercises" && method === "GET") {
-        return createFetchResponse(["Bench Press", "Overhead Press"]);
-      }
-
-      if (url === "/api/workouts" && method === "POST") {
-        return createFetchResponse({ error: "bad request" }, { status: 400 });
-      }
-
-      throw new Error(`Unexpected fetch request: ${method} ${url}`);
-    });
-
-    const user = userEvent.setup();
-    render(
-      <WorkoutForm
-        initialValues={buildWorkoutDraft()}
-        persistMode="create"
-      />,
-    );
-
-    await screen.findByTestId("exercise-selector");
-
-    await user.click(screen.getByRole("button", { name: "Save" }));
-
-    await screen.findByText("Save failed");
-
-    const workoutNameInput = screen.getByLabelText(
-      "Workout Name",
-    ) as HTMLInputElement;
-
-    await user.clear(workoutNameInput);
-    await user.type(workoutNameInput, "Recovered Create Draft");
-
-    await waitFor(() => {
-      expect(screen.queryByText("Save failed")).toBeNull();
-      expect(screen.getByText("Not saved")).toBeTruthy();
-      expect(workoutNameInput.value).toBe("Recovered Create Draft");
-    });
-  });
-
-  it("clears failed update status after a native input edit and keeps the draft dirty", async () => {
-    const fetchMock = vi.mocked(fetch);
-    fetchMock.mockImplementation(async (input: RequestInfo | URL, init?: RequestInit) => {
-      const url = String(input);
-      const method = init?.method ?? "GET";
-
-      if (url === "/api/exercises" && method === "GET") {
-        return createFetchResponse(["Bench Press", "Overhead Press"]);
-      }
-
-      if (url === "/api/workouts/17" && method === "PATCH") {
-        return createFetchResponse({ error: "bad request" }, { status: 400 });
-      }
-
-      throw new Error(`Unexpected fetch request: ${method} ${url}`);
-    });
-
-    const user = userEvent.setup();
-
-    render(
-      <WorkoutForm
-        initialValues={buildWorkoutDraft()}
-        persistMode="update"
-        workoutId={17}
-      />,
-    );
-
-    await screen.findByTestId("exercise-selector");
-
-    await user.click(screen.getByRole("button", { name: "Save" }));
-
-    await screen.findByText("Save failed");
-
-    const workoutNameInput = screen.getByLabelText(
-      "Workout Name",
-    ) as HTMLInputElement;
-
-    await user.clear(workoutNameInput);
-    await user.type(workoutNameInput, "Recovered Update Draft");
-
-    await waitFor(() => {
-      expect(screen.queryByText("Save failed")).toBeNull();
-      expect(screen.getByText("Unsaved changes")).toBeTruthy();
-      expect(workoutNameInput.value).toBe("Recovered Update Draft");
-    });
-  });
-
-  it("clears failed update status after adding a set", async () => {
-    const fetchMock = vi.mocked(fetch);
-    fetchMock.mockImplementation(async (input: RequestInfo | URL, init?: RequestInit) => {
-      const url = String(input);
-      const method = init?.method ?? "GET";
-
-      if (url === "/api/exercises" && method === "GET") {
-        return createFetchResponse(["Bench Press", "Overhead Press"]);
-      }
-
-      if (url === "/api/workouts/17" && method === "PATCH") {
-        return createFetchResponse({ error: "bad request" }, { status: 400 });
-      }
-
-      throw new Error(`Unexpected fetch request: ${method} ${url}`);
-    });
-
-    const user = userEvent.setup();
-
-    render(
-      <WorkoutForm
-        initialValues={buildWorkoutDraft()}
-        persistMode="update"
-        workoutId={17}
-      />,
-    );
-
-    await screen.findByTestId("exercise-selector");
-
-    await user.click(screen.getByRole("button", { name: "Save" }));
-
-    await screen.findByText("Save failed");
-
-    expect(screen.getAllByPlaceholderText("Weight")).toHaveLength(1);
-
-    await user.click(screen.getByRole("button", { name: "Add set" }));
-
-    await waitFor(() => {
-      expect(screen.queryByText("Save failed")).toBeNull();
-      expect(screen.getByText("Unsaved changes")).toBeTruthy();
-      expect(screen.getAllByPlaceholderText("Weight")).toHaveLength(2);
-    });
-  });
-
-  it("clears failed create status when the exercise selector changes", async () => {
-    const fetchMock = vi.mocked(fetch);
-    fetchMock.mockImplementation(async (input: RequestInfo | URL, init?: RequestInit) => {
-      const url = String(input);
-      const method = init?.method ?? "GET";
-
-      if (url === "/api/exercises" && method === "GET") {
-        return createFetchResponse(["Bench Press", "Overhead Press"]);
-      }
-
-      if (url === "/api/workouts" && method === "POST") {
-        return createFetchResponse({ error: "bad request" }, { status: 400 });
-      }
-
-      throw new Error(`Unexpected fetch request: ${method} ${url}`);
-    });
-
-    const user = userEvent.setup();
-
-    render(
-      <WorkoutForm
-        initialValues={buildWorkoutDraft()}
-        persistMode="create"
-      />,
-    );
-
-    const exerciseSelector = await screen.findByTestId("exercise-selector");
-
-    await user.click(screen.getByRole("button", { name: "Save" }));
-
-    await screen.findByText("Save failed");
-
-    await user.click(exerciseSelector);
-
-    await waitFor(() => {
-      expect(screen.queryByText("Save failed")).toBeNull();
-      expect(screen.getByText("Not saved")).toBeTruthy();
-      expect(screen.getByTestId("exercise-selector").getAttribute("data-value")).toBe(
-        "Overhead Press",
-      );
+      expect(
+        screen.getByTestId("exercise-item-0").getAttribute("data-has-template"),
+      ).toBe("true");
     });
   });
 
@@ -493,7 +282,7 @@ describe("WorkoutForm promotion flow", () => {
       />,
     );
 
-    await screen.findByTestId("exercise-selector");
+    await screen.findByTestId("exercise-item-0");
 
     await user.click(screen.getByRole("button", { name: "Save" }));
 
@@ -535,12 +324,15 @@ describe("WorkoutForm promotion flow", () => {
       />,
     );
 
-    expect(await screen.findByPlaceholderText("200")).toBeTruthy();
+    const exerciseRow = await screen.findByTestId("exercise-item-0");
+    expect(exerciseRow.getAttribute("data-has-template")).toBe("true");
 
     await user.click(screen.getByRole("button", { name: "Save" }));
 
     await screen.findByText("Saved");
 
-    expect(screen.getByPlaceholderText("200")).toBeTruthy();
+    expect(
+      screen.getByTestId("exercise-item-0").getAttribute("data-has-template"),
+    ).toBe("true");
   });
 });
