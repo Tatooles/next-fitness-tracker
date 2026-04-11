@@ -220,6 +220,33 @@ describe("WorkoutForm promotion flow", () => {
     });
   });
 
+  it("does not submit a duplicate-style create form when date stays blank", async () => {
+    vi.spyOn(Date.prototype, "toLocaleDateString").mockReturnValue("");
+
+    const user = userEvent.setup();
+    render(
+      <WorkoutForm
+        initialValues={buildWorkoutDraft({ date: "" })}
+        persistMode="create"
+        templateValuesByExerciseName={{
+          "Bench Press": {
+            name: "Bench Press",
+            notes: "",
+            sets: [{ weight: "200", reps: "6", rpe: "7" }],
+          },
+        }}
+      />,
+    );
+
+    await screen.findByTestId("exercise-item-0");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await screen.findByText("Workout date is required");
+
+    const fetchMock = vi.mocked(fetch);
+    expect(getWorkoutSaveCalls(fetchMock)).toHaveLength(0);
+  });
+
   it("promotes create mode to update mode in place after the first save", async () => {
     const replaceStateSpy = vi.spyOn(window.history, "replaceState");
     const user = userEvent.setup();
