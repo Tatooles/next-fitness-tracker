@@ -47,7 +47,7 @@ export default async function WorkoutsPage() {
           <span>Create Workout</span>
         </Link>
       </Button>
-      <Workouts workouts={workouts}></Workouts>
+      <Workouts workouts={workouts} />
     </div>
   );
 }

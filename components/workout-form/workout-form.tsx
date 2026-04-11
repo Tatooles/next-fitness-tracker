@@ -1,6 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { Controller, useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -9,12 +8,15 @@ import WorkoutFormHeader from "@/components/workout-form/workout-form-header";
 import WorkoutFormActionHeader, {
   WorkoutSaveStatus,
 } from "@/components/workout-form/workout-form-action-header";
-import {
-  workoutFormSchema,
-  TWorkoutFormSchema,
-  ExerciseThin,
-} from "@/lib/types";
-import { toast } from "sonner";
+import { workoutFormSchema } from "@/lib/types";
+import type {
+  PersistMode,
+  ExerciseTemplateValues,
+  ExerciseTemplateValuesByName,
+  WorkoutDraft,
+  WorkoutFormProps,
+  WorkoutFormSeed,
+} from "@/components/workout-form/form-types";
 import {
   Field,
   FieldError,
@@ -23,25 +25,18 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { saveWorkout } from "@/components/workout-form/save-workout";
 
-const cloneWorkoutForm = (values: TWorkoutFormSchema) =>
-  structuredClone(values);
-const getTodayDate = () => new Date().toLocaleDateString("en-CA");
-
-const normalizeWorkoutForm = (
-  values: TWorkoutFormSchema,
-): TWorkoutFormSchema => ({
-  ...values,
-  date: values.date || getTodayDate(),
-});
+const cloneWorkoutForm = (values: WorkoutDraft) => structuredClone(values);
+const getBrowserTodayDate = () => new Date().toLocaleDateString("en-CA");
 
 const getSaveStatus = ({
-  editMode,
+  persistMode,
   hasSaveFailed,
   isDirty,
   isSubmitting,
 }: {
-  editMode: boolean;
+  persistMode: PersistMode;
   hasSaveFailed: boolean;
   isDirty: boolean;
   isSubmitting: boolean;
@@ -54,7 +49,7 @@ const getSaveStatus = ({
     return "failed";
   }
 
-  if (!editMode) {
+  if (persistMode === "create") {
     return "not_saved";
   }
 
@@ -65,37 +60,85 @@ const getSaveStatus = ({
   return "saved";
 };
 
-interface WorkoutFormProps {
-  editMode: boolean;
-  workoutValue: TWorkoutFormSchema;
+type WorkoutFormSession = Omit<WorkoutFormSeed, "initialValues">;
+
+type LocalCreatePromotion = {
+  sourceSeedKey: string;
   workoutId: number;
-  placeholderValues?: ExerciseThin[];
+};
+
+function getWorkoutFormSeedKey({
+  initialValues,
+  formSession,
+}: {
+  initialValues: WorkoutDraft;
+  formSession: WorkoutFormSession;
+}): string {
+  return JSON.stringify({
+    initialValues,
+    persistMode: formSession.persistMode,
+    workoutId: formSession.workoutId,
+    templateValuesByExerciseName: formSession.templateValuesByExerciseName,
+  });
 }
 
-export default function WorkoutForm({
-  editMode,
-  workoutValue,
-  workoutId,
-  placeholderValues,
-}: WorkoutFormProps) {
-  const [failedWorkoutValueToken, setFailedWorkoutValueToken] =
-    useState<TWorkoutFormSchema | null>(null);
-  const [exercises, setExercises] = useState<string[]>([]);
-  const router = useRouter();
-  const normalizedWorkoutValue = useMemo(
-    () => normalizeWorkoutForm(workoutValue),
-    [workoutValue],
+function getTemplateExerciseByName({
+  exerciseName,
+  templateValuesByExerciseName,
+}: {
+  exerciseName: string;
+  templateValuesByExerciseName?: ExerciseTemplateValuesByName;
+}): ExerciseTemplateValues | undefined {
+  if (!exerciseName || !templateValuesByExerciseName) {
+    return undefined;
+  }
+
+  if (!Object.hasOwn(templateValuesByExerciseName, exerciseName)) {
+    return undefined;
+  }
+
+  return templateValuesByExerciseName[exerciseName];
+}
+
+export default function WorkoutForm(props: WorkoutFormProps) {
+  const { initialValues, persistMode, templateValuesByExerciseName } = props;
+  const workoutId = "workoutId" in props ? props.workoutId : undefined;
+  const [failedSaveSeedKey, setFailedSaveSeedKey] = useState<string | null>(
+    null,
   );
-  const workoutValueToken = normalizedWorkoutValue;
-  const form = useForm<TWorkoutFormSchema>({
+  const [localCreatePromotion, setLocalCreatePromotion] =
+    useState<LocalCreatePromotion | null>(null);
+  const [exercises, setExercises] = useState<string[]>([]);
+  const incomingFormSession: WorkoutFormSession = {
+    persistMode,
+    workoutId,
+    templateValuesByExerciseName,
+  };
+  const incomingSeedKey = getWorkoutFormSeedKey({
+    initialValues,
+    formSession: incomingFormSession,
+  });
+  const formSession: WorkoutFormSession =
+    localCreatePromotion?.sourceSeedKey === incomingSeedKey
+      ? {
+          ...incomingFormSession,
+          persistMode: "update",
+          workoutId: localCreatePromotion.workoutId,
+        }
+      : incomingFormSession;
+  const hasSaveFailed = failedSaveSeedKey === incomingSeedKey;
+  const appliedSeedKeyRef = useRef(incomingSeedKey);
+  const initializedDateSeedKeyRef = useRef<string | null>(null);
+  const form = useForm<WorkoutDraft>({
     resolver: zodResolver(workoutFormSchema),
-    values: normalizedWorkoutValue,
+    defaultValues: initialValues,
   });
   const {
     control,
     getValues,
     handleSubmit,
     reset,
+    setValue,
     subscribe,
     formState: { isDirty, isSubmitting },
   } = form;
@@ -107,9 +150,8 @@ export default function WorkoutForm({
     control,
     name: "exercises",
   });
-  const hasSaveFailed = failedWorkoutValueToken === workoutValueToken;
   const saveStatus = getSaveStatus({
-    editMode,
+    persistMode: formSession.persistMode,
     hasSaveFailed,
     isDirty,
     isSubmitting,
@@ -125,6 +167,36 @@ export default function WorkoutForm({
   }, []);
 
   useEffect(() => {
+    if (incomingSeedKey === appliedSeedKeyRef.current) {
+      return;
+    }
+
+    appliedSeedKeyRef.current = incomingSeedKey;
+    reset(initialValues);
+  }, [incomingSeedKey, initialValues, reset]);
+
+  useEffect(() => {
+    if (formSession.persistMode !== "create") {
+      return;
+    }
+
+    if (initializedDateSeedKeyRef.current === incomingSeedKey) {
+      return;
+    }
+
+    if (getValues("date")) {
+      initializedDateSeedKeyRef.current = incomingSeedKey;
+      return;
+    }
+
+    initializedDateSeedKeyRef.current = incomingSeedKey;
+    setValue("date", getBrowserTodayDate(), {
+      shouldDirty: false,
+      shouldTouch: false,
+    });
+  }, [formSession.persistMode, getValues, incomingSeedKey, setValue]);
+
+  useEffect(() => {
     if (!hasSaveFailed) {
       return;
     }
@@ -136,7 +208,7 @@ export default function WorkoutForm({
           return;
         }
 
-        setFailedWorkoutValueToken(null);
+        setFailedSaveSeedKey(null);
         unsubscribe();
       },
     });
@@ -146,90 +218,34 @@ export default function WorkoutForm({
     };
   }, [hasSaveFailed, subscribe]);
 
-  const onSubmit = async (values: TWorkoutFormSchema) => {
+  const onSubmit = async (values: WorkoutDraft) => {
     const submittedSnapshot = cloneWorkoutForm(values);
-    setFailedWorkoutValueToken(null);
+    setFailedSaveSeedKey(null);
 
-    if (!editMode) {
-      const newWorkoutId = await createWorkout(submittedSnapshot);
-      if (newWorkoutId) {
-        router.push(`/workouts/edit/${newWorkoutId}`);
-      } else {
-        setFailedWorkoutValueToken(workoutValueToken);
-      }
-    } else {
-      const wasSaved = await updateWorkout(workoutId, submittedSnapshot);
+    const result = await saveWorkout({
+      persistMode: formSession.persistMode,
+      workoutId: formSession.workoutId,
+      values: submittedSnapshot,
+    });
 
-      if (wasSaved) {
-        setFailedWorkoutValueToken(null);
-        reset(submittedSnapshot);
-      } else {
-        setFailedWorkoutValueToken(workoutValueToken);
-      }
+    if (!result.ok) {
+      setFailedSaveSeedKey(incomingSeedKey);
+      return;
     }
-  };
 
-  /**
-   * Creates a new workout with the values from the form
-   *
-   * @param form the form values to create the workout with
-   * @returns the ID of the newly created workout, or null if creation failed
-   */
-  const createWorkout = async (
-    form: TWorkoutFormSchema,
-  ): Promise<number | null> => {
-    try {
-      const response = await fetch("/api/workouts", {
-        method: "POST",
-        body: JSON.stringify(form),
-        headers: {
-          "Content-Type": "application/json",
-        },
+    setFailedSaveSeedKey(null);
+    reset(submittedSnapshot);
+
+    if (formSession.persistMode === "create") {
+      setLocalCreatePromotion({
+        sourceSeedKey: incomingSeedKey,
+        workoutId: result.workoutId,
       });
-
-      if (!response.ok) {
-        toast.error("Failed to create workout");
-        return null;
-      }
-
-      const data = await response.json();
-      return data.workoutId;
-    } catch (error) {
-      console.error("An error occurred while creating workout:", error);
-      toast.error("Failed to create workout");
-      return null;
-    }
-  };
-
-  /**
-   * Updates an existing workout with the values from the form
-   *
-   * @param id the id of the workout to update
-   * @param form the form values to update the workout with
-   */
-  const updateWorkout = async (
-    id: number,
-    form: TWorkoutFormSchema,
-  ): Promise<boolean> => {
-    try {
-      const response = await fetch(`/api/workouts/${id}`, {
-        method: "PATCH",
-        body: JSON.stringify(form),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        toast.error("Failed to save workout");
-        return false;
-      }
-
-      return true;
-    } catch (error) {
-      console.error("An error occurred while updating exercise:", error);
-      toast.error("Failed to save workout");
-      return false;
+      window.history.replaceState(
+        window.history.state,
+        "",
+        `/workouts/edit/${result.workoutId}`,
+      );
     }
   };
 
@@ -243,23 +259,32 @@ export default function WorkoutForm({
         <FieldSet>
           <FieldLegend>Exercises</FieldLegend>
 
-          {fields.map((field, index) => (
-            <ExerciseItem
-              key={field.id}
-              index={index}
-              control={control}
-              getValues={getValues}
-              exercises={exercises}
-              exerciseName={watchedExercises?.[index]?.name || ""}
-              onRemove={() => remove(index)}
-              onMoveUp={() => move(index, index - 1)}
-              onMoveDown={() => move(index, index + 1)}
-              isFirst={index === 0}
-              isLast={index === fields.length - 1}
-              workoutId={workoutId}
-              placeholderValues={placeholderValues}
-            />
-          ))}
+          {fields.map((field, index) => {
+            const exerciseName = watchedExercises?.[index]?.name || "";
+            const templateExercise = getTemplateExerciseByName({
+              exerciseName,
+              templateValuesByExerciseName:
+                formSession.templateValuesByExerciseName,
+            });
+
+            return (
+              <ExerciseItem
+                key={field.id}
+                index={index}
+                control={control}
+                getValues={getValues}
+                exercises={exercises}
+                exerciseName={exerciseName}
+                onRemove={() => remove(index)}
+                onMoveUp={() => move(index, index - 1)}
+                onMoveDown={() => move(index, index + 1)}
+                isFirst={index === 0}
+                isLast={index === fields.length - 1}
+                workoutId={formSession.workoutId}
+                templateExercise={templateExercise}
+              />
+            );
+          })}
 
           <Button
             type="button"

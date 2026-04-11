@@ -119,7 +119,11 @@ describe("workout route handlers", () => {
       authState.userId = null;
 
       const response = await POST(
-        createJsonRequest("http://localhost/api/workouts", "POST", validPayload()),
+        createJsonRequest(
+          "http://localhost/api/workouts",
+          "POST",
+          validPayload(),
+        ),
       );
 
       expect(response.status).toBe(401);
@@ -136,6 +140,22 @@ describe("workout route handlers", () => {
         createJsonRequest("http://localhost/api/workouts", "POST", {
           ...validPayload(),
           name: "",
+        }),
+      );
+
+      expect(response.status).toBe(400);
+      await expect(getCounts(database)).resolves.toEqual({
+        workouts: 0,
+        exercises: 0,
+        sets: 0,
+      });
+    });
+
+    it("returns 400 for blank dates without writing rows", async () => {
+      const response = await POST(
+        createJsonRequest("http://localhost/api/workouts", "POST", {
+          ...validPayload(),
+          date: "",
         }),
       );
 
@@ -297,6 +317,42 @@ describe("workout route handlers", () => {
       expect(response.status).toBe(400);
     });
 
+    it("returns 400 for blank update dates and leaves the workout unchanged", async () => {
+      const workoutId = await seedWorkout(database, {
+        userId: "user-1",
+        date: "2026-04-02",
+        name: "Original Workout",
+        notes: "Original notes",
+        exercises: [],
+      });
+
+      const response = await PATCH(
+        createJsonRequest(
+          `http://localhost/api/workouts/${workoutId}`,
+          "PATCH",
+          {
+            ...validPayload(),
+            date: "",
+            name: "Should Not Save",
+          },
+        ),
+        routeParams(workoutId),
+      );
+
+      expect(response.status).toBe(400);
+
+      const unchangedWorkout = await database.db.query.workout.findFirst({
+        where: eq(workout.id, workoutId),
+      });
+
+      expect(unchangedWorkout).toMatchObject({
+        id: workoutId,
+        date: "2026-04-02",
+        name: "Original Workout",
+        notes: "Original notes",
+      });
+    });
+
     it("returns 404 and leaves data unchanged for unowned workouts", async () => {
       const workoutId = await seedWorkout(database, {
         userId: "user-2",
@@ -356,7 +412,11 @@ describe("workout route handlers", () => {
 
     it("returns 404 for missing workouts", async () => {
       const response = await PATCH(
-        createJsonRequest("http://localhost/api/workouts/9999", "PATCH", validPayload()),
+        createJsonRequest(
+          "http://localhost/api/workouts/9999",
+          "PATCH",
+          validPayload(),
+        ),
         routeParams(9999),
       );
 
@@ -390,7 +450,9 @@ describe("workout route handlers", () => {
       );
 
       expect(response.status).toBe(200);
-      await expect(response.text()).resolves.toBe("Workout successfully deleted");
+      await expect(response.text()).resolves.toBe(
+        "Workout successfully deleted",
+      );
       await expect(getCounts(database)).resolves.toEqual({
         workouts: 0,
         exercises: 0,
@@ -516,9 +578,7 @@ async function getCounts(database: RouteTestDatabase) {
   const [exerciseCount] = await database.db
     .select({ value: count() })
     .from(exercise);
-  const [setCount] = await database.db
-    .select({ value: count() })
-    .from(set);
+  const [setCount] = await database.db.select({ value: count() }).from(set);
 
   return {
     workouts: workoutCount.value,
