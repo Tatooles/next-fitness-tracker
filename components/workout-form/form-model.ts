@@ -6,6 +6,7 @@ import type { Workout } from "@/lib/types";
 import type {
   CreateWorkoutFormSeed,
   ExerciseTemplateValues,
+  ExerciseTemplateValuesByName,
   UpdateWorkoutFormProps,
   WorkoutDraft,
   WorkoutFormSeed,
@@ -69,12 +70,13 @@ function zeroWorkoutSetValues(workout: WorkoutDraft): WorkoutDraft {
 
 function toTemplateValuesByExerciseName(
   exercises: ExerciseTemplateValues[],
-): Record<string, ExerciseTemplateValues> {
-  const templateValuesByExerciseName: Record<string, ExerciseTemplateValues> =
-    {};
+): ExerciseTemplateValuesByName {
+  const templateValuesByExerciseName = Object.create(
+    null,
+  ) as ExerciseTemplateValuesByName;
 
   for (const exercise of exercises) {
-    if (!(exercise.name in templateValuesByExerciseName)) {
+    if (!Object.hasOwn(templateValuesByExerciseName, exercise.name)) {
       templateValuesByExerciseName[exercise.name] = exercise;
     }
   }

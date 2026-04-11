@@ -133,6 +133,46 @@ describe("workout form seed builders", () => {
     });
   });
 
+  it("stores reserved exercise names in a null-prototype template map", () => {
+    const duplicateSeed = buildDuplicateWorkoutFormSeed({
+      ...workoutFixture,
+      exercises: [
+        {
+          ...workoutFixture.exercises[0],
+          id: 21,
+          name: "toString",
+        },
+        {
+          ...workoutFixture.exercises[0],
+          id: 22,
+          name: "constructor",
+        },
+        {
+          ...workoutFixture.exercises[0],
+          id: 23,
+          name: "__proto__",
+        },
+      ],
+    });
+
+    expect(
+      Object.getPrototypeOf(duplicateSeed.templateValuesByExerciseName),
+    ).toBeNull();
+    expect(duplicateSeed.templateValuesByExerciseName?.toString).toMatchObject({
+      name: "toString",
+    });
+    expect(
+      duplicateSeed.templateValuesByExerciseName?.constructor,
+    ).toMatchObject({
+      name: "constructor",
+    });
+    expect(duplicateSeed.templateValuesByExerciseName?.__proto__).toMatchObject(
+      {
+        name: "__proto__",
+      },
+    );
+  });
+
   it("keeps the first matching exercise when duplicate names exist", () => {
     expect(
       buildDuplicateWorkoutFormSeed({
@@ -158,6 +198,37 @@ describe("workout form seed builders", () => {
           { weight: "235", reps: "3", rpe: "9" },
         ],
       },
+    });
+  });
+
+  it("keeps the first reserved-name exercise when duplicates exist", () => {
+    expect(
+      buildDuplicateWorkoutFormSeed({
+        ...workoutFixture,
+        exercises: [
+          {
+            ...workoutFixture.exercises[0],
+            id: 21,
+            name: "toString",
+          },
+          {
+            ...workoutFixture.exercises[0],
+            id: 22,
+            name: "toString",
+            notes: "second",
+            sets: [
+              { id: 221, weight: "245", reps: "2", rpe: "9.5", exerciseId: 22 },
+            ],
+          },
+        ],
+      }).templateValuesByExerciseName?.toString,
+    ).toEqual({
+      name: "toString",
+      notes: "",
+      sets: [
+        { weight: "225", reps: "5", rpe: "8" },
+        { weight: "235", reps: "3", rpe: "9" },
+      ],
     });
   });
 

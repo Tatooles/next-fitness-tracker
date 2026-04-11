@@ -11,6 +11,8 @@ import WorkoutFormActionHeader, {
 import { workoutFormSchema } from "@/lib/types";
 import type {
   PersistMode,
+  ExerciseTemplateValues,
+  ExerciseTemplateValuesByName,
   WorkoutDraft,
   WorkoutFormProps,
   WorkoutFormSeed,
@@ -78,6 +80,24 @@ function getWorkoutFormSeedKey({
     workoutId: formSession.workoutId,
     templateValuesByExerciseName: formSession.templateValuesByExerciseName,
   });
+}
+
+function getTemplateExerciseByName({
+  exerciseName,
+  templateValuesByExerciseName,
+}: {
+  exerciseName: string;
+  templateValuesByExerciseName?: ExerciseTemplateValuesByName;
+}): ExerciseTemplateValues | undefined {
+  if (!exerciseName || !templateValuesByExerciseName) {
+    return undefined;
+  }
+
+  if (!Object.hasOwn(templateValuesByExerciseName, exerciseName)) {
+    return undefined;
+  }
+
+  return templateValuesByExerciseName[exerciseName];
 }
 
 export default function WorkoutForm(props: WorkoutFormProps) {
@@ -241,9 +261,11 @@ export default function WorkoutForm(props: WorkoutFormProps) {
 
           {fields.map((field, index) => {
             const exerciseName = watchedExercises?.[index]?.name || "";
-            const templateExercise = exerciseName
-              ? formSession.templateValuesByExerciseName?.[exerciseName]
-              : undefined;
+            const templateExercise = getTemplateExerciseByName({
+              exerciseName,
+              templateValuesByExerciseName:
+                formSession.templateValuesByExerciseName,
+            });
 
             return (
               <ExerciseItem

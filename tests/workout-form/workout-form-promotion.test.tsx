@@ -10,7 +10,10 @@ import {
   waitFor,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type { WorkoutDraft } from "@/components/workout-form/form-types";
+import type {
+  ExerciseTemplateValuesByName,
+  WorkoutDraft,
+} from "@/components/workout-form/form-types";
 
 vi.mock("@/components/ui/sidebar", () => ({
   SidebarTrigger: (props: React.ComponentProps<"button">) => (
@@ -245,6 +248,58 @@ describe("WorkoutForm promotion flow", () => {
 
     const fetchMock = vi.mocked(fetch);
     expect(getWorkoutSaveCalls(fetchMock)).toHaveLength(0);
+  });
+
+  it("does not treat inherited toString as a duplicate template", async () => {
+    const inheritedTemplateMap = {} as ExerciseTemplateValuesByName;
+
+    render(
+      <WorkoutForm
+        initialValues={buildWorkoutDraft({
+          exercises: [
+            {
+              name: "toString",
+              notes: "",
+              sets: [{ weight: "", reps: "", rpe: "" }],
+            },
+          ],
+        })}
+        persistMode="create"
+        templateValuesByExerciseName={inheritedTemplateMap}
+      />,
+    );
+
+    const exerciseRow = await screen.findByTestId("exercise-item-0");
+    expect(exerciseRow.getAttribute("data-has-template")).toBe("false");
+  });
+
+  it("uses an own toString duplicate template when provided", async () => {
+    const templateValuesByExerciseName = {
+      toString: {
+        name: "toString",
+        notes: "",
+        sets: [{ weight: "200", reps: "6", rpe: "7" }],
+      },
+    } as ExerciseTemplateValuesByName;
+
+    render(
+      <WorkoutForm
+        initialValues={buildWorkoutDraft({
+          exercises: [
+            {
+              name: "toString",
+              notes: "",
+              sets: [{ weight: "", reps: "", rpe: "" }],
+            },
+          ],
+        })}
+        persistMode="create"
+        templateValuesByExerciseName={templateValuesByExerciseName}
+      />,
+    );
+
+    const exerciseRow = await screen.findByTestId("exercise-item-0");
+    expect(exerciseRow.getAttribute("data-has-template")).toBe("true");
   });
 
   it("promotes create mode to update mode in place after the first save", async () => {
