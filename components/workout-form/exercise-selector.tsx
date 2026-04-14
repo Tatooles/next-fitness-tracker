@@ -31,9 +31,37 @@ export default function ExerciseSelector({
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const displayValue = value || "Select exercise";
+  const trimmedSearchValue = searchValue.trim();
+  const normalizedSearchValue = trimmedSearchValue.toLocaleLowerCase();
+  const filteredExercises =
+    normalizedSearchValue === ""
+      ? exercises
+      : exercises.filter((exercise) =>
+          exercise.toLocaleLowerCase().includes(normalizedSearchValue),
+        );
+  const hasExactExistingMatch = exercises.some(
+    (exercise) =>
+      exercise.trim().toLocaleLowerCase() === normalizedSearchValue,
+  );
+  const shouldShowCreateOption =
+    trimmedSearchValue.length > 0 && !hasExactExistingMatch;
+
+  function handleOpenChange(nextOpen: boolean) {
+    setOpen(nextOpen);
+
+    if (!nextOpen) {
+      setSearchValue("");
+    }
+  }
+
+  function handleExerciseSelect(nextValue: string) {
+    onChange(nextValue);
+    setSearchValue("");
+    setOpen(false);
+  }
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -50,35 +78,34 @@ export default function ExerciseSelector({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full p-0" align="start">
-        <Command>
+        <Command shouldFilter={false}>
           <CommandInput
-            placeholder="Search exercise..."
+            placeholder="Search or add exercise..."
             className="h-11 text-base"
             onInput={(e) => setSearchValue(e.currentTarget.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && searchValue.trim() !== "") {
-                e.preventDefault();
-                onChange(searchValue);
-                setOpen(false);
-              }
-            }}
           />
           <CommandList>
-            <CommandEmpty>No exercise found.</CommandEmpty>
+            <CommandEmpty>No matching exercises.</CommandEmpty>
             <CommandGroup>
-              {exercises.map((exercise) => (
+              {filteredExercises.map((exercise) => (
                 <CommandItem
                   value={exercise}
                   key={exercise}
-                  onSelect={() => {
-                    onChange(exercise);
-                    setOpen(false);
-                  }}
+                  onSelect={() => handleExerciseSelect(exercise)}
                   className="hover:bg-primary/10 cursor-pointer text-base transition-colors"
                 >
                   {exercise}
                 </CommandItem>
               ))}
+              {shouldShowCreateOption && (
+                <CommandItem
+                  value={trimmedSearchValue}
+                  onSelect={() => handleExerciseSelect(trimmedSearchValue)}
+                  className="hover:bg-primary/10 cursor-pointer text-base transition-colors"
+                >
+                  Add &quot;{trimmedSearchValue}&quot;
+                </CommandItem>
+              )}
             </CommandGroup>
           </CommandList>
         </Command>
