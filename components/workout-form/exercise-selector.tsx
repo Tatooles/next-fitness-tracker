@@ -47,16 +47,15 @@ export default function ExerciseSelector({
     trimmedSearchValue.length > 0 && !hasExactExistingMatch;
 
   function handleOpenChange(nextOpen: boolean) {
-    setOpen(nextOpen);
-
-    if (!nextOpen) {
+    if (nextOpen) {
       setSearchValue("");
     }
+
+    setOpen(nextOpen);
   }
 
   function handleExerciseSelect(nextValue: string) {
     onChange(nextValue);
-    setSearchValue("");
     setOpen(false);
   }
 
