@@ -7,10 +7,13 @@ import Workouts from "@/components/workouts";
 import { Plus } from "lucide-react";
 
 async function getWorkouts() {
-  try {
-    const { userId, redirectToSignIn } = await auth();
-    if (!userId) redirectToSignIn();
+  const { userId, redirectToSignIn } = await auth();
 
+  if (!userId) {
+    redirectToSignIn();
+  }
+
+  try {
     const data: Workout[] = await db.query.workout.findMany({
       where: (workout, { eq }) => eq(workout.userId, userId!),
       with: {
@@ -30,7 +33,7 @@ async function getWorkouts() {
 
     return data;
   } catch (error) {
-    console.log("An error ocurred while fetching workout data", error);
+    console.error("Failed to fetch workouts", error);
     return [];
   }
 }
