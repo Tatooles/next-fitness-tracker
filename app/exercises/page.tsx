@@ -6,10 +6,13 @@ import { exercise, workout, set } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 async function getExercises() {
-  try {
-    const { userId, redirectToSignIn } = await auth();
-    if (!userId) redirectToSignIn();
+  const { userId, redirectToSignIn } = await auth();
 
+  if (!userId) {
+    redirectToSignIn();
+  }
+
+  try {
     const exerciseData = await db
       .select()
       .from(exercise)
@@ -19,7 +22,7 @@ async function getExercises() {
 
     return exerciseData;
   } catch (error) {
-    console.log("An error occurred while fetching workout data:", error);
+    console.error("Failed to fetch exercises", error);
     return [];
   }
 }
