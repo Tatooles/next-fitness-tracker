@@ -6,6 +6,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarRouteTrigger } from "@/components/sidebar-route-trigger";
 import { Toaster } from "@/components/ui/sonner";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 
 const appName = "Lifting Log";
@@ -65,6 +66,7 @@ export default function RootLayout({
             <Toaster richColors position="top-center" />
           </ThemeProvider>
           <SpeedInsights />
+          <Analytics />
         </ClerkProvider>
       </body>
     </html>
