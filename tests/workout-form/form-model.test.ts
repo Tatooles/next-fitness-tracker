@@ -133,7 +133,7 @@ describe("workout form seed builders", () => {
     });
   });
 
-  it("stores reserved exercise names in a null-prototype template map", () => {
+  it("stores reserved exercise names in a plain-object template map", () => {
     const duplicateSeed = buildDuplicateWorkoutFormSeed({
       ...workoutFixture,
       exercises: [
@@ -157,7 +157,7 @@ describe("workout form seed builders", () => {
 
     expect(
       Object.getPrototypeOf(duplicateSeed.templateValuesByExerciseName),
-    ).toBeNull();
+    ).toBe(Object.prototype);
     expect(duplicateSeed.templateValuesByExerciseName?.toString).toMatchObject({
       name: "toString",
     });
