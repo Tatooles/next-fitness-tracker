@@ -35,8 +35,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# DB
-migrations/
-
 # clerk configuration (can include secrets)
 /.clerk/
