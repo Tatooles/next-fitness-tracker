@@ -14,6 +14,7 @@ export type ExerciseTemplateValuesByName = Record<
 export type WorkoutFormSeed = {
   initialValues: WorkoutDraft;
   persistMode: PersistMode;
+  exerciseNames: string[];
   workoutId?: number;
   templateValuesByExerciseName?: ExerciseTemplateValuesByName;
 };
@@ -27,12 +28,14 @@ export type SaveState = "idle" | "saving" | "saved" | "failed";
 export type CreateWorkoutFormProps = {
   initialValues: WorkoutDraft;
   persistMode: "create";
+  exerciseNames: string[];
   templateValuesByExerciseName?: ExerciseTemplateValuesByName;
 };
 
 export type UpdateWorkoutFormProps = {
   initialValues: WorkoutDraft;
   persistMode: "update";
+  exerciseNames: string[];
   workoutId: number;
   templateValuesByExerciseName?: ExerciseTemplateValuesByName;
 };

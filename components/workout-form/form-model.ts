@@ -1,8 +1,10 @@
 import "server-only";
 
 import { auth } from "@clerk/nextjs/server";
+import { eq } from "drizzle-orm";
 import { db } from "@/db/drizzle";
 import type { Workout } from "@/lib/types";
+import { exercise, workout as workoutTable } from "@/db/schema";
 import type {
   CreateWorkoutFormSeed,
   ExerciseTemplateValues,
@@ -71,32 +73,48 @@ function zeroWorkoutSetValues(workout: WorkoutDraft): WorkoutDraft {
 function toTemplateValuesByExerciseName(
   exercises: ExerciseTemplateValues[],
 ): ExerciseTemplateValuesByName {
-  const templateValuesByExerciseName = {} as ExerciseTemplateValuesByName;
+  const templateValuesByExerciseName = Object.create(
+    null,
+  ) as ExerciseTemplateValuesByName;
 
   for (const exercise of exercises) {
     if (!Object.hasOwn(templateValuesByExerciseName, exercise.name)) {
-      Object.defineProperty(templateValuesByExerciseName, exercise.name, {
-        value: exercise,
-        enumerable: true,
-        writable: true,
-        configurable: true,
-      });
+      templateValuesByExerciseName[exercise.name] = exercise;
     }
   }
 
   return templateValuesByExerciseName;
 }
 
-async function getOwnedWorkout(workoutId: number): Promise<Workout | null> {
+async function getSignedInUserId(): Promise<string> {
   const { userId, redirectToSignIn } = await auth();
 
   if (!userId) {
     redirectToSignIn();
   }
 
-  const workout = await db.query.workout.findFirst({
+  return userId!;
+}
+
+async function getExerciseNames(userId: string): Promise<string[]> {
+  const exerciseNames = await db
+    .selectDistinct({ name: exercise.name })
+    .from(workoutTable)
+    .innerJoin(exercise, eq(exercise.workoutId, workoutTable.id))
+    .where(eq(workoutTable.userId, userId));
+
+  return exerciseNames
+    .map((row) => row.name)
+    .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+}
+
+async function getOwnedWorkout(
+  userId: string,
+  workoutId: number,
+): Promise<Workout | null> {
+  const ownedWorkout = await db.query.workout.findFirst({
     where: (workout, { eq, and }) =>
-      and(eq(workout.id, workoutId), eq(workout.userId, userId!)),
+      and(eq(workout.id, workoutId), eq(workout.userId, userId)),
     with: {
       exercises: {
         with: {
@@ -108,12 +126,15 @@ async function getOwnedWorkout(workoutId: number): Promise<Workout | null> {
     },
   });
 
-  return workout ?? null;
+  return ownedWorkout ?? null;
 }
 
-export function buildBlankWorkoutFormSeed(): CreateWorkoutFormSeed {
+export function buildBlankWorkoutFormSeed(
+  exerciseNames: string[] = [],
+): CreateWorkoutFormSeed {
   return {
     persistMode: "create",
+    exerciseNames,
     initialValues: {
       name: "",
       date: "",
@@ -132,21 +153,25 @@ export function buildBlankWorkoutFormSeed(): CreateWorkoutFormSeed {
 
 export function buildEditWorkoutFormSeed(
   workout: Workout,
+  exerciseNames: string[] = [],
 ): UpdateWorkoutFormProps {
   return {
     persistMode: "update",
     workoutId: workout.id,
+    exerciseNames,
     initialValues: toWorkoutDraft(workout),
   };
 }
 
 export function buildDuplicateWorkoutFormSeed(
   workout: Workout,
+  exerciseNames: string[] = [],
 ): CreateWorkoutFormSeed {
   const workoutTemplate = toDuplicateWorkoutDraft(workout);
 
   return {
     persistMode: "create",
+    exerciseNames,
     initialValues: zeroWorkoutSetValues(workoutTemplate),
     templateValuesByExerciseName: toTemplateValuesByExerciseName(
       workoutTemplate.exercises,
@@ -173,23 +198,28 @@ export async function buildWorkoutFormSeed({
   kind: WorkoutFormSeedMode;
   workoutId?: number;
 }): Promise<WorkoutFormSeed | null> {
+  const userId = await getSignedInUserId();
+
   if (kind === "create") {
-    return buildBlankWorkoutFormSeed();
+    return buildBlankWorkoutFormSeed(await getExerciseNames(userId));
   }
 
   if (workoutId == null) {
     throw new Error(`buildWorkoutFormSeed requires workoutId for ${kind}`);
   }
 
-  const workout = await getOwnedWorkout(workoutId);
+  const [workout, exerciseNames] = await Promise.all([
+    getOwnedWorkout(userId, workoutId),
+    getExerciseNames(userId),
+  ]);
 
   if (!workout) {
     return null;
   }
 
   if (kind === "edit") {
-    return buildEditWorkoutFormSeed(workout);
+    return buildEditWorkoutFormSeed(workout, exerciseNames);
   }
 
-  return buildDuplicateWorkoutFormSeed(workout);
+  return buildDuplicateWorkoutFormSeed(workout, exerciseNames);
 }

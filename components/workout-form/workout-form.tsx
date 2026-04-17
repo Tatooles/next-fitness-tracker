@@ -76,6 +76,7 @@ function getWorkoutFormSeedKey({
 }): string {
   return JSON.stringify({
     initialValues,
+    exerciseNames: formSession.exerciseNames,
     persistMode: formSession.persistMode,
     workoutId: formSession.workoutId,
     templateValuesByExerciseName: formSession.templateValuesByExerciseName,
@@ -101,16 +102,21 @@ function getTemplateExerciseByName({
 }
 
 export default function WorkoutForm(props: WorkoutFormProps) {
-  const { initialValues, persistMode, templateValuesByExerciseName } = props;
+  const {
+    initialValues,
+    persistMode,
+    templateValuesByExerciseName,
+    exerciseNames,
+  } = props;
   const workoutId = "workoutId" in props ? props.workoutId : undefined;
   const [failedSaveSeedKey, setFailedSaveSeedKey] = useState<string | null>(
     null,
   );
   const [localCreatePromotion, setLocalCreatePromotion] =
     useState<LocalCreatePromotion | null>(null);
-  const [exercises, setExercises] = useState<string[]>([]);
   const incomingFormSession: WorkoutFormSession = {
     persistMode,
+    exerciseNames,
     workoutId,
     templateValuesByExerciseName,
   };
@@ -156,15 +162,6 @@ export default function WorkoutForm(props: WorkoutFormProps) {
     isDirty,
     isSubmitting,
   });
-
-  useEffect(() => {
-    async function fetchExercises() {
-      const response = await fetch("/api/exercises");
-      const data: string[] = await response.json();
-      setExercises(data);
-    }
-    fetchExercises();
-  }, []);
 
   useEffect(() => {
     if (incomingSeedKey === appliedSeedKeyRef.current) {
@@ -273,7 +270,7 @@ export default function WorkoutForm(props: WorkoutFormProps) {
                 index={index}
                 control={control}
                 getValues={getValues}
-                exercises={exercises}
+                exercises={formSession.exerciseNames}
                 exerciseName={exerciseName}
                 onRemove={() => remove(index)}
                 onMoveUp={() => move(index, index - 1)}
