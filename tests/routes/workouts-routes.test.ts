@@ -87,6 +87,7 @@ describe("workout route handlers", () => {
       const workouts = await database.db.query.workout.findMany({
         with: {
           exercises: {
+            orderBy: (exercisesTable, { asc }) => [asc(exercisesTable.id)],
             with: {
               sets: {
                 orderBy: (setsTable, { asc }) => [asc(setsTable.id)],
@@ -235,6 +236,7 @@ describe("workout route handlers", () => {
         where: eq(workout.id, workoutId),
         with: {
           exercises: {
+            orderBy: (exercisesTable, { asc }) => [asc(exercisesTable.id)],
             with: {
               sets: true,
             },
@@ -391,6 +393,7 @@ describe("workout route handlers", () => {
         where: eq(workout.id, workoutId),
         with: {
           exercises: {
+            orderBy: (exercisesTable, { asc }) => [asc(exercisesTable.id)],
             with: {
               sets: true,
             },

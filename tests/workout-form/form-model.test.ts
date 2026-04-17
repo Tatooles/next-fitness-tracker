@@ -264,6 +264,21 @@ describe("workout form seed builders", () => {
     await expect(
       buildWorkoutFormSeed({ kind: "edit", workoutId: 1 }),
     ).resolves.toEqual(buildEditWorkoutFormSeed(workoutFixture));
+
+    expect(findFirstMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        with: expect.objectContaining({
+          exercises: expect.objectContaining({
+            orderBy: expect.any(Function),
+            with: expect.objectContaining({
+              sets: expect.objectContaining({
+                orderBy: expect.any(Function),
+              }),
+            }),
+          }),
+        }),
+      }),
+    );
   });
 
   it("returns null from the shared builder when the workout is missing", async () => {
