@@ -73,13 +73,16 @@ function zeroWorkoutSetValues(workout: WorkoutDraft): WorkoutDraft {
 function toTemplateValuesByExerciseName(
   exercises: ExerciseTemplateValues[],
 ): ExerciseTemplateValuesByName {
-  const templateValuesByExerciseName = Object.create(
-    null,
-  ) as ExerciseTemplateValuesByName;
+  const templateValuesByExerciseName = {} as ExerciseTemplateValuesByName;
 
   for (const exercise of exercises) {
     if (!Object.hasOwn(templateValuesByExerciseName, exercise.name)) {
-      templateValuesByExerciseName[exercise.name] = exercise;
+      Object.defineProperty(templateValuesByExerciseName, exercise.name, {
+        value: exercise,
+        enumerable: true,
+        writable: true,
+        configurable: true,
+      });
     }
   }
 

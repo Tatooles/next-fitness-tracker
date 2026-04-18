@@ -445,6 +445,11 @@ describe("workout route handlers", () => {
               { weight: "245", reps: "6", rpe: "9" },
             ],
           },
+          {
+            name: "Lat Pulldown",
+            notes: "Full stretch",
+            sets: [{ weight: "160", reps: "10", rpe: "8" }],
+          },
         ],
       });
 
@@ -467,6 +472,11 @@ describe("workout route handlers", () => {
               { weight: "225", reps: "8", rpe: "8" },
               { weight: "245", reps: "6", rpe: "9" },
             ],
+          },
+          {
+            name: "Lat Pulldown",
+            notes: "Full stretch",
+            sets: [{ weight: "160", reps: "10", rpe: "8" }],
           },
         ],
       });

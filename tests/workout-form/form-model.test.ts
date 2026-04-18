@@ -194,7 +194,7 @@ describe("workout form seed builders", () => {
 
     expect(
       Object.getPrototypeOf(duplicateSeed.templateValuesByExerciseName),
-    ).toBeNull();
+    ).toBe(Object.prototype);
     expect(duplicateSeed.templateValuesByExerciseName?.toString).toMatchObject({
       name: "toString",
     });
@@ -287,7 +287,7 @@ describe("workout form seed builders", () => {
     expect(duplicateSeed.templateValuesByExerciseName).toEqual({});
     expect(
       Object.getPrototypeOf(duplicateSeed.templateValuesByExerciseName),
-    ).toBeNull();
+    ).toBe(Object.prototype);
   });
 
   it("routes create mode through the shared builder and loads exercise names", async () => {

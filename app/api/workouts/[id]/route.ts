@@ -35,6 +35,7 @@ export async function GET(
       ),
     with: {
       exercises: {
+        orderBy: (exercises, { asc }) => [asc(exercises.id)],
         with: {
           sets: {
             orderBy: (sets, { asc }) => [asc(sets.id)],
