@@ -1,9 +1,20 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Workout } from "@/lib/types";
 
-const { authMock, findFirstMock } = vi.hoisted(() => ({
+const {
+  authMock,
+  findFirstMock,
+  selectDistinctMock,
+  selectDistinctFromMock,
+  selectDistinctInnerJoinMock,
+  selectDistinctWhereMock,
+} = vi.hoisted(() => ({
   authMock: vi.fn(),
   findFirstMock: vi.fn(),
+  selectDistinctMock: vi.fn(),
+  selectDistinctFromMock: vi.fn(),
+  selectDistinctInnerJoinMock: vi.fn(),
+  selectDistinctWhereMock: vi.fn(),
 }));
 
 vi.mock("@clerk/nextjs/server", () => ({
@@ -17,6 +28,7 @@ vi.mock("@/db/drizzle", () => ({
         findFirst: findFirstMock,
       },
     },
+    selectDistinct: selectDistinctMock,
   },
 }));
 
@@ -48,6 +60,8 @@ const workoutFixture: Workout = {
   ],
 };
 
+const exerciseNamesFixture = ["Bench Press", "Overhead Press"];
+
 describe("workout form seed builders", () => {
   beforeEach(() => {
     authMock.mockReset();
@@ -56,12 +70,29 @@ describe("workout form seed builders", () => {
       redirectToSignIn: vi.fn(),
     });
     findFirstMock.mockReset();
+    selectDistinctMock.mockReset();
+    selectDistinctFromMock.mockReset();
+    selectDistinctInnerJoinMock.mockReset();
+    selectDistinctWhereMock.mockReset();
+    selectDistinctWhereMock.mockResolvedValue(
+      exerciseNamesFixture.toReversed().map((name) => ({ name })),
+    );
+    selectDistinctInnerJoinMock.mockReturnValue({
+      where: selectDistinctWhereMock,
+    });
+    selectDistinctFromMock.mockReturnValue({
+      innerJoin: selectDistinctInnerJoinMock,
+    });
+    selectDistinctMock.mockReturnValue({
+      from: selectDistinctFromMock,
+    });
     vi.useRealTimers();
   });
 
   it("builds a blank create seed with one empty exercise row", () => {
-    expect(buildBlankWorkoutFormSeed()).toEqual({
+    expect(buildBlankWorkoutFormSeed(exerciseNamesFixture)).toEqual({
       persistMode: "create",
+      exerciseNames: exerciseNamesFixture,
       initialValues: {
         name: "",
         date: "",
@@ -79,9 +110,12 @@ describe("workout form seed builders", () => {
   });
 
   it("builds an edit seed that preserves the workout values and id", () => {
-    expect(buildEditWorkoutFormSeed(workoutFixture)).toEqual({
+    expect(
+      buildEditWorkoutFormSeed(workoutFixture, exerciseNamesFixture),
+    ).toEqual({
       persistMode: "update",
       workoutId: 1,
+      exerciseNames: exerciseNamesFixture,
       initialValues: {
         name: "Push Day",
         date: "2026-04-04",
@@ -102,8 +136,11 @@ describe("workout form seed builders", () => {
   });
 
   it("builds a duplicate form seed from the helper pipeline", () => {
-    expect(buildDuplicateWorkoutFormSeed(workoutFixture)).toEqual({
+    expect(
+      buildDuplicateWorkoutFormSeed(workoutFixture, exerciseNamesFixture),
+    ).toEqual({
       persistMode: "create",
+      exerciseNames: exerciseNamesFixture,
       initialValues: {
         name: "Copy of Push Day",
         date: "",
@@ -133,7 +170,7 @@ describe("workout form seed builders", () => {
     });
   });
 
-  it("stores reserved exercise names in a plain-object template map", () => {
+  it("stores reserved exercise names in a null-prototype template map", () => {
     const duplicateSeed = buildDuplicateWorkoutFormSeed({
       ...workoutFixture,
       exercises: [
@@ -233,29 +270,32 @@ describe("workout form seed builders", () => {
   });
 
   it("returns empty template values when there are no exercises", () => {
-    expect(
-      buildDuplicateWorkoutFormSeed({
-        ...workoutFixture,
-        exercises: [],
-      }),
-    ).toEqual({
-      persistMode: "create",
-      initialValues: {
-        name: "Copy of Push Day",
-        date: "",
-        notes: "",
-        durationMinutes: null,
-        exercises: [],
-      },
-      templateValuesByExerciseName: {},
+    const duplicateSeed = buildDuplicateWorkoutFormSeed({
+      ...workoutFixture,
+      exercises: [],
     });
+
+    expect(duplicateSeed.persistMode).toBe("create");
+    expect(duplicateSeed.exerciseNames).toEqual([]);
+    expect(duplicateSeed.initialValues).toEqual({
+      name: "Copy of Push Day",
+      date: "",
+      notes: "",
+      durationMinutes: null,
+      exercises: [],
+    });
+    expect(duplicateSeed.templateValuesByExerciseName).toEqual({});
+    expect(
+      Object.getPrototypeOf(duplicateSeed.templateValuesByExerciseName),
+    ).toBe(Object.prototype);
   });
 
-  it("routes create mode through the shared builder without querying the database", async () => {
+  it("routes create mode through the shared builder and loads exercise names", async () => {
     await expect(buildWorkoutFormSeed({ kind: "create" })).resolves.toEqual(
-      buildBlankWorkoutFormSeed(),
+      buildBlankWorkoutFormSeed(exerciseNamesFixture),
     );
     expect(findFirstMock).not.toHaveBeenCalled();
+    expect(selectDistinctMock).toHaveBeenCalledTimes(1);
   });
 
   it("returns an edit seed from the shared builder when the workout is found", async () => {
@@ -263,8 +303,9 @@ describe("workout form seed builders", () => {
 
     await expect(
       buildWorkoutFormSeed({ kind: "edit", workoutId: 1 }),
-    ).resolves.toEqual(buildEditWorkoutFormSeed(workoutFixture));
-
+    ).resolves.toEqual(
+      buildEditWorkoutFormSeed(workoutFixture, exerciseNamesFixture),
+    );
     expect(findFirstMock).toHaveBeenCalledWith(
       expect.objectContaining({
         with: expect.objectContaining({
@@ -287,5 +328,6 @@ describe("workout form seed builders", () => {
     await expect(
       buildWorkoutFormSeed({ kind: "duplicate", workoutId: 1 }),
     ).resolves.toBeNull();
+    expect(selectDistinctMock).toHaveBeenCalledTimes(1);
   });
 });

@@ -2,9 +2,11 @@ import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db/drizzle";
 import { Button } from "@/components/ui/button";
-import { Workout } from "@/lib/types";
+import { WorkoutSummary } from "@/lib/types";
 import Workouts from "@/components/workouts";
 import { Plus } from "lucide-react";
+import { desc, eq } from "drizzle-orm";
+import { workout } from "@/db/schema";
 
 async function getWorkouts() {
   const { userId, redirectToSignIn } = await auth();
@@ -14,23 +16,17 @@ async function getWorkouts() {
   }
 
   try {
-    const data: Workout[] = await db.query.workout.findMany({
-      where: (workout, { eq }) => eq(workout.userId, userId!),
-      with: {
-        exercises: {
-          orderBy: (exercises, { asc }) => [asc(exercises.id)],
-          with: {
-            sets: {
-              orderBy: (sets, { asc }) => [asc(sets.id)],
-            },
-          },
-        },
-      },
-    });
-
-    data.sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-    );
+    const data: WorkoutSummary[] = await db
+      .select({
+        id: workout.id,
+        name: workout.name,
+        notes: workout.notes,
+        durationMinutes: workout.durationMinutes,
+        date: workout.date,
+      })
+      .from(workout)
+      .where(eq(workout.userId, userId!))
+      .orderBy(desc(workout.date));
 
     return data;
   } catch (error) {

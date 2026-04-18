@@ -61,7 +61,11 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild size="lg" className="text-base">
-                    <Link href={item.url} onClick={handleLinkClick}>
+                    <Link
+                      href={item.url}
+                      onClick={handleLinkClick}
+                      prefetch={item.url === "/exercises" ? false : undefined}
+                    >
                       <item.icon className="size-5!" />
                       <span>{item.title}</span>
                     </Link>

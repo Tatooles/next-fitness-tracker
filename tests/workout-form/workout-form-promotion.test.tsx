@@ -66,6 +66,8 @@ const workoutDraftFixture: WorkoutDraft = {
   ],
 };
 
+const exerciseNamesFixture = ["Bench Press", "Overhead Press"];
+
 function buildWorkoutDraft(
   overrides: Partial<WorkoutDraft> = {},
 ): WorkoutDraft {
@@ -99,10 +101,6 @@ describe("WorkoutForm promotion flow", () => {
         const url = String(input);
         const method = init?.method ?? "GET";
 
-        if (url === "/api/exercises" && method === "GET") {
-          return createFetchResponse(["Bench Press", "Overhead Press"]);
-        }
-
         if (url === "/api/workouts" && method === "POST") {
           return createFetchResponse({ workoutId: 42 }, { status: 201 });
         }
@@ -132,6 +130,7 @@ describe("WorkoutForm promotion flow", () => {
       <WorkoutForm
         initialValues={buildWorkoutDraft({ date: "" })}
         persistMode="create"
+        exerciseNames={exerciseNamesFixture}
       />,
     );
 
@@ -153,6 +152,7 @@ describe("WorkoutForm promotion flow", () => {
       <WorkoutForm
         initialValues={buildWorkoutDraft({ date: "" })}
         persistMode="create"
+        exerciseNames={exerciseNamesFixture}
         templateValuesByExerciseName={{
           "Bench Press": {
             name: "Bench Press",
@@ -181,6 +181,7 @@ describe("WorkoutForm promotion flow", () => {
       <WorkoutForm
         initialValues={buildWorkoutDraft({ date: "2026-04-08" })}
         persistMode="update"
+        exerciseNames={exerciseNamesFixture}
         workoutId={17}
       />,
     );
@@ -202,6 +203,7 @@ describe("WorkoutForm promotion flow", () => {
     const createProps = {
       initialValues: buildWorkoutDraft({ date: "" }),
       persistMode: "create" as const,
+      exerciseNames: exerciseNamesFixture,
     };
     const { rerender } = render(<WorkoutForm {...createProps} />);
 
@@ -231,6 +233,7 @@ describe("WorkoutForm promotion flow", () => {
       <WorkoutForm
         initialValues={buildWorkoutDraft({ date: "" })}
         persistMode="create"
+        exerciseNames={exerciseNamesFixture}
         templateValuesByExerciseName={{
           "Bench Press": {
             name: "Bench Press",
@@ -265,6 +268,7 @@ describe("WorkoutForm promotion flow", () => {
           ],
         })}
         persistMode="create"
+        exerciseNames={exerciseNamesFixture}
         templateValuesByExerciseName={inheritedTemplateMap}
       />,
     );
@@ -294,6 +298,7 @@ describe("WorkoutForm promotion flow", () => {
           ],
         })}
         persistMode="create"
+        exerciseNames={exerciseNamesFixture}
         templateValuesByExerciseName={templateValuesByExerciseName}
       />,
     );
@@ -307,7 +312,11 @@ describe("WorkoutForm promotion flow", () => {
     const user = userEvent.setup();
 
     render(
-      <WorkoutForm initialValues={workoutDraftFixture} persistMode="create" />,
+      <WorkoutForm
+        initialValues={workoutDraftFixture}
+        persistMode="create"
+        exerciseNames={exerciseNamesFixture}
+      />,
     );
 
     await screen.findByTestId("exercise-item-0");
@@ -367,6 +376,7 @@ describe("WorkoutForm promotion flow", () => {
       <WorkoutForm
         initialValues={createSeed}
         persistMode="update"
+        exerciseNames={exerciseNamesFixture}
         workoutId={17}
       />,
     );
@@ -386,6 +396,7 @@ describe("WorkoutForm promotion flow", () => {
       <WorkoutForm
         initialValues={buildWorkoutDraft()}
         persistMode="update"
+        exerciseNames={exerciseNamesFixture}
         workoutId={17}
       />,
     );
@@ -399,7 +410,11 @@ describe("WorkoutForm promotion flow", () => {
   it("replaces the form when the external seed changes", async () => {
     const user = userEvent.setup();
     const { rerender } = render(
-      <WorkoutForm initialValues={buildWorkoutDraft()} persistMode="create" />,
+      <WorkoutForm
+        initialValues={buildWorkoutDraft()}
+        persistMode="create"
+        exerciseNames={exerciseNamesFixture}
+      />,
     );
 
     const workoutNameInput = (await screen.findByLabelText(
@@ -418,6 +433,7 @@ describe("WorkoutForm promotion flow", () => {
           date: "2026-04-08",
         })}
         persistMode="update"
+        exerciseNames={exerciseNamesFixture}
         workoutId={77}
         templateValuesByExerciseName={{
           "Bench Press": {
@@ -450,10 +466,6 @@ describe("WorkoutForm promotion flow", () => {
         const url = String(input);
         const method = init?.method ?? "GET";
 
-        if (url === "/api/exercises" && method === "GET") {
-          return createFetchResponse(["Bench Press", "Overhead Press"]);
-        }
-
         if (url === "/api/workouts" && method === "POST") {
           return createFetchResponse({ error: "bad request" }, { status: 400 });
         }
@@ -464,7 +476,11 @@ describe("WorkoutForm promotion flow", () => {
 
     const user = userEvent.setup();
     const { rerender } = render(
-      <WorkoutForm initialValues={buildWorkoutDraft()} persistMode="create" />,
+      <WorkoutForm
+        initialValues={buildWorkoutDraft()}
+        persistMode="create"
+        exerciseNames={exerciseNamesFixture}
+      />,
     );
 
     await screen.findByTestId("exercise-item-0");
@@ -479,6 +495,7 @@ describe("WorkoutForm promotion flow", () => {
           name: "Recovered Seed",
         })}
         persistMode="update"
+        exerciseNames={exerciseNamesFixture}
         workoutId={88}
       />,
     );
@@ -499,6 +516,7 @@ describe("WorkoutForm promotion flow", () => {
       <WorkoutForm
         initialValues={workoutDraftFixture}
         persistMode="create"
+        exerciseNames={exerciseNamesFixture}
         templateValuesByExerciseName={{
           "Bench Press": {
             name: "Bench Press",

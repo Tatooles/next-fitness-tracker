@@ -30,18 +30,15 @@ export async function GET(request: NextRequest) {
   try {
     const rows = await db
       .select({
-        exercise,
         workout,
+        exercise,
         set,
       })
-      .from(exercise)
-      .innerJoin(workout, eq(exercise.workoutId, workout.id))
+      .from(workout)
+      .innerJoin(exercise, eq(exercise.workoutId, workout.id))
       .leftJoin(set, eq(set.exerciseId, exercise.id))
       .where(
-        and(
-          eq(workout.userId, userId),
-          eq(exercise.name, trimmedExerciseName),
-        ),
+        and(eq(workout.userId, userId), eq(exercise.name, trimmedExerciseName)),
       )
       .orderBy(desc(workout.date), asc(set.id));
 

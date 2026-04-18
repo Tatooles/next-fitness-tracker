@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Dialog,
   DialogContent,
@@ -5,10 +7,45 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useEffect, useState } from "react";
+import { useAuth } from "@clerk/nextjs";
+import { useState } from "react";
+import useSWR from "swr";
 import { GroupedExercise } from "@/app/api/exercises/history/route";
 import ExerciseInstanceItem from "./exercise-instance-item";
 import { Spinner } from "@/components/ui/spinner";
+
+function getExerciseHistoryKey({
+  exerciseName,
+  userId,
+}: {
+  exerciseName: string;
+  userId: string | null | undefined;
+}) {
+  return ["exercise-history", userId ?? "signed-out", exerciseName] as const;
+}
+
+async function getExerciseHistory(exerciseName: string) {
+  const response = await fetch(
+    `/api/exercises/history?name=${encodeURIComponent(exerciseName)}`,
+  );
+
+  if (!response.ok) {
+    let errorMessage = `Failed to fetch data: ${response.status} ${response.statusText}`;
+
+    try {
+      const errorBody = (await response.json()) as { error?: string };
+      if (errorBody.error) {
+        errorMessage = errorBody.error;
+      }
+    } catch (jsonError) {
+      console.error("Failed to parse error JSON:", jsonError);
+    }
+
+    throw new Error(errorMessage);
+  }
+
+  return (await response.json()) as GroupedExercise[];
+}
 
 export default function ExerciseHistoryModal({
   exerciseName,
@@ -19,65 +56,27 @@ export default function ExerciseHistoryModal({
   filterOutWorkoutId?: number;
   children: React.ReactNode;
 }) {
+  const { userId } = useAuth();
   const [open, setOpen] = useState(false);
-  const [exerciseHistory, setExerciseHistory] = useState<GroupedExercise[]>([]);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const { data, error, isLoading } = useSWR(
+    open ? getExerciseHistoryKey({ exerciseName, userId }) : null,
+    () => getExerciseHistory(exerciseName),
+    {
+      dedupingInterval: 0,
+    },
+  );
+
+  const exerciseHistory = (data ?? []).filter(
+    (exercise) => exercise.workoutId !== filterOutWorkoutId,
+  );
+  const errorMessage =
+    error instanceof Error
+      ? error.message
+      : "An unexpected error occurred. Please try again.";
 
   const handleOpenChange = (newOpen: boolean) => {
     setOpen(newOpen);
-    if (newOpen) {
-      setLoading(true);
-      setExerciseHistory([]);
-      setError("");
-    }
   };
-
-  useEffect(() => {
-    if (open) {
-      fetch(`/api/exercises/history?name=${encodeURIComponent(exerciseName)}`)
-        .then(async (res) => {
-          if (!res.ok) {
-            let errorMessage = `Failed to fetch data: ${res.status} ${res.statusText}`;
-            try {
-              const errData = await res.json();
-              if (errData && errData.error) {
-                errorMessage = errData.error;
-              }
-            } catch (jsonError) {
-              console.error("Failed to parse error JSON:", jsonError);
-            }
-            throw new Error(errorMessage);
-          }
-          return res.json();
-        })
-        .then((data) => {
-          if (data.error) {
-            setError(data.error);
-            setExerciseHistory([]);
-          } else {
-            setExerciseHistory(
-              (data as GroupedExercise[]).filter(
-                (exercise) => exercise.workoutId !== filterOutWorkoutId,
-              ),
-            );
-          }
-        })
-        .catch((err) => {
-          console.error(
-            "An error occurred while fetching exercise history:",
-            err,
-          );
-          setError(
-            err.message || "An unexpected error occurred. Please try again.",
-          );
-          setExerciseHistory([]);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
-  }, [open, exerciseName, filterOutWorkoutId]);
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -90,26 +89,26 @@ export default function ExerciseHistoryModal({
         </DialogHeader>
 
         <div className="flex min-h-36 items-center justify-center">
-          {loading && (
+          {isLoading && (
             <div className="flex h-full items-center justify-center pt-4">
               <Spinner />
             </div>
           )}
 
-          {!loading && error && (
+          {!isLoading && error && (
             <div className="bg-destructive/10 text-destructive rounded-md p-4 text-center text-sm">
               <p className="mb-1 font-semibold">Unable to Load History</p>
-              <p>{error}</p>
+              <p>{errorMessage}</p>
             </div>
           )}
 
-          {!loading && !error && exerciseHistory.length === 0 && (
+          {!isLoading && !error && exerciseHistory.length === 0 && (
             <p className="text-muted-foreground py-10 text-center">
               No history found for this exercise.
             </p>
           )}
 
-          {!loading && !error && exerciseHistory.length > 0 && (
+          {!isLoading && !error && exerciseHistory.length > 0 && (
             <div className="max-h-[calc(80vh-8rem)] space-y-4 overflow-y-auto px-6 pb-6">
               {exerciseHistory.map((exercise: GroupedExercise) => (
                 <ExerciseInstanceItem
