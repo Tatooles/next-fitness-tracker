@@ -67,6 +67,15 @@ export async function createRouteTestDatabase(): Promise<RouteTestDatabase> {
       exercise_id INTEGER NOT NULL REFERENCES exercise(id) ON DELETE CASCADE
     )
   `);
+  await client.execute(
+    "CREATE INDEX workout_user_date_idx ON workout(user_id, date)",
+  );
+  await client.execute(
+    "CREATE INDEX exercise_workout_name_idx ON exercise(workout_id, name)",
+  );
+  await client.execute(
+    'CREATE INDEX set_exercise_id_id_idx ON "set"(exercise_id, id)',
+  );
 
   return {
     client,
