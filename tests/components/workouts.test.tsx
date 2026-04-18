@@ -225,8 +225,39 @@ describe("Workouts", () => {
     vi.unstubAllGlobals();
   });
 
-  it("loads workout details once and reuses them on reopen", async () => {
+  it("revalidates workout details when the accordion is reopened", async () => {
     const user = userEvent.setup();
+    const fetchMock = vi.mocked(fetch);
+    fetchMock
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify(workoutDetailsFixture), {
+          status: 200,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }),
+      )
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            ...workoutDetailsFixture,
+            exercises: [
+              {
+                ...workoutDetailsFixture.exercises[0],
+                id: 11,
+                name: "Incline Press",
+              },
+            ],
+          } satisfies Workout),
+          {
+            status: 200,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
+        ),
+      );
+
     render(
       <SWRConfig value={{ provider: () => new Map() }}>
         <Workouts workouts={workoutSummaryFixture} />
@@ -237,8 +268,6 @@ describe("Workouts", () => {
     await user.click(trigger);
 
     expect(await screen.findByText("Bench Press detail")).toBeTruthy();
-
-    const fetchMock = vi.mocked(fetch);
     expect(fetchMock).toHaveBeenCalledTimes(1);
 
     await user.click(trigger);
@@ -247,8 +276,8 @@ describe("Workouts", () => {
     await user.click(trigger);
 
     await waitFor(() => {
-      expect(screen.getByText("Bench Press detail")).toBeTruthy();
+      expect(screen.getByText("Incline Press detail")).toBeTruthy();
     });
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 });

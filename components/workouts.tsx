@@ -72,16 +72,15 @@ function WorkoutDetails({
     isOpen ? getWorkoutDetailsKey(workout.id) : null,
     () => fetchWorkoutDetails(workout.id),
     {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-      shouldRetryOnError: false,
+      dedupingInterval: 0,
     },
   );
   const errorMessage =
     error instanceof Error ? error.message : "Failed to load workout details.";
   const duration = formatWorkoutDuration(
-    typeof workout.durationMinutes === "number" ? workout.durationMinutes : null,
+    typeof workout.durationMinutes === "number"
+      ? workout.durationMinutes
+      : null,
   );
 
   const handleCopyWorkout = () => {

@@ -52,10 +52,7 @@ export default function ExerciseHistoryModal({
     open ? getExerciseHistoryKey(exerciseName) : null,
     () => getExerciseHistory(exerciseName),
     {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-      shouldRetryOnError: false,
+      dedupingInterval: 0,
     },
   );
 

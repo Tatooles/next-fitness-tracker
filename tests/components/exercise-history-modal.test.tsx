@@ -132,8 +132,62 @@ describe("ExerciseHistoryModal", () => {
     vi.unstubAllGlobals();
   });
 
-  it("fetches history once, filters it, and reuses the cached response on reopen", async () => {
+  it("revalidates exercise history when the modal is reopened", async () => {
     const user = userEvent.setup();
+    const fetchMock = vi.mocked(fetch);
+    fetchMock
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify([
+            {
+              date: "2026-04-04",
+              notes: "Filtered out",
+              workoutId: 10,
+              workoutName: "Filtered Workout",
+              sets: [],
+            },
+            {
+              date: "2026-04-02",
+              notes: "Keep this one",
+              workoutId: 11,
+              workoutName: "Visible Workout",
+              sets: [],
+            },
+          ]),
+          {
+            status: 200,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
+        ),
+      )
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify([
+            {
+              date: "2026-04-04",
+              notes: "Filtered out",
+              workoutId: 10,
+              workoutName: "Filtered Workout",
+              sets: [],
+            },
+            {
+              date: "2026-04-05",
+              notes: "Updated history",
+              workoutId: 12,
+              workoutName: "Newest Workout",
+              sets: [],
+            },
+          ]),
+          {
+            status: 200,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
+        ),
+      );
 
     render(
       <SWRConfig value={{ provider: () => new Map() }}>
@@ -150,8 +204,6 @@ describe("ExerciseHistoryModal", () => {
 
     expect(await screen.findByText("Visible Workout")).toBeTruthy();
     expect(screen.queryByText("Filtered Workout")).toBeNull();
-
-    const fetchMock = vi.mocked(fetch);
     expect(fetchMock).toHaveBeenCalledTimes(1);
 
     await user.click(screen.getByRole("button", { name: "Close dialog" }));
@@ -160,9 +212,10 @@ describe("ExerciseHistoryModal", () => {
     await user.click(screen.getByRole("button", { name: "Open history" }));
 
     await waitFor(() => {
-      expect(screen.getByText("Visible Workout")).toBeTruthy();
+      expect(screen.getByText("Newest Workout")).toBeTruthy();
     });
+    expect(screen.queryByText("Visible Workout")).toBeNull();
     expect(screen.queryByText("Filtered Workout")).toBeNull();
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 });
