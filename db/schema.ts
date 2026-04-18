@@ -24,6 +24,7 @@ export const exercise = sqliteTable(
     id: integer("id").primaryKey(),
     name: text("name", { length: 256 }).notNull(),
     notes: text("notes").notNull(),
+    supersetGroupId: text("superset_group_id"),
     workoutId: integer("workout_id")
       .references(() => workout.id, { onDelete: "cascade" })
       .notNull(),

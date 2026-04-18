@@ -15,6 +15,13 @@
       "when": 1776388599841,
       "tag": "0001_add_indexes",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1776546869558,
+      "tag": "0002_harsh_shiva",
+      "breakpoints": true
     }
   ]
 }

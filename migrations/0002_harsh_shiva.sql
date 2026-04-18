@@ -1,0 +1,1 @@
+ALTER TABLE `exercise` ADD `superset_group_id` text;
