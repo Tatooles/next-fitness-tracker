@@ -117,6 +117,7 @@ async function getOwnedWorkout(
       and(eq(workout.id, workoutId), eq(workout.userId, userId)),
     with: {
       exercises: {
+        orderBy: (exercises, { asc }) => [asc(exercises.id)],
         with: {
           sets: {
             orderBy: (sets, { asc }) => [asc(sets.id)],
