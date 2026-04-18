@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Dialog,
   DialogContent,
@@ -5,14 +7,21 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useAuth } from "@clerk/nextjs";
 import { useState } from "react";
 import useSWR from "swr";
 import { GroupedExercise } from "@/app/api/exercises/history/route";
 import ExerciseInstanceItem from "./exercise-instance-item";
 import { Spinner } from "@/components/ui/spinner";
 
-function getExerciseHistoryKey(exerciseName: string) {
-  return `exercise-history:${exerciseName}`;
+function getExerciseHistoryKey({
+  exerciseName,
+  userId,
+}: {
+  exerciseName: string;
+  userId: string | null | undefined;
+}) {
+  return ["exercise-history", userId ?? "signed-out", exerciseName] as const;
 }
 
 async function getExerciseHistory(exerciseName: string) {
@@ -47,9 +56,10 @@ export default function ExerciseHistoryModal({
   filterOutWorkoutId?: number;
   children: React.ReactNode;
 }) {
+  const { userId } = useAuth();
   const [open, setOpen] = useState(false);
   const { data, error, isLoading } = useSWR(
-    open ? getExerciseHistoryKey(exerciseName) : null,
+    open ? getExerciseHistoryKey({ exerciseName, userId }) : null,
     () => getExerciseHistory(exerciseName),
     {
       dedupingInterval: 0,

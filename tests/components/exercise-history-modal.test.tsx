@@ -6,6 +6,18 @@ import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { SWRConfig } from "swr";
 
+const { authState } = vi.hoisted(() => ({
+  authState: {
+    userId: "user-1" as string | null,
+  },
+}));
+
+vi.mock("@clerk/nextjs", () => ({
+  useAuth: () => ({
+    userId: authState.userId,
+  }),
+}));
+
 vi.mock("@/components/exercise/exercise-instance-item", () => ({
   default: ({
     exercise,
@@ -88,6 +100,7 @@ import ExerciseHistoryModal from "@/components/exercise/exercise-history-modal";
 
 describe("ExerciseHistoryModal", () => {
   beforeEach(() => {
+    authState.userId = "user-1";
     vi.stubGlobal(
       "fetch",
       vi.fn(async (input: RequestInfo | URL) => {
@@ -217,5 +230,89 @@ describe("ExerciseHistoryModal", () => {
     expect(screen.queryByText("Visible Workout")).toBeNull();
     expect(screen.queryByText("Filtered Workout")).toBeNull();
     expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("scopes cached history by signed-in user", async () => {
+    const user = userEvent.setup();
+    const fetchMock = vi.mocked(fetch);
+    let resolveSecondResponse: ((response: Response) => void) | null = null;
+    const secondResponse = new Promise<Response>((resolve) => {
+      resolveSecondResponse = resolve;
+    });
+
+    fetchMock
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify([
+            {
+              date: "2026-04-02",
+              notes: "First account history",
+              workoutId: 11,
+              workoutName: "User One Workout",
+              sets: [],
+            },
+          ]),
+          {
+            status: 200,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
+        ),
+      )
+      .mockReturnValueOnce(secondResponse);
+
+    const cache = new Map();
+    const { rerender } = render(
+      <SWRConfig value={{ provider: () => cache }}>
+        <ExerciseHistoryModal exerciseName="Bench Press Cache Test">
+          <button type="button">Open history</button>
+        </ExerciseHistoryModal>
+      </SWRConfig>,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Open history" }));
+    expect(await screen.findByText("User One Workout")).toBeTruthy();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+
+    await user.click(screen.getByRole("button", { name: "Close dialog" }));
+    authState.userId = "user-2";
+
+    rerender(
+      <SWRConfig value={{ provider: () => cache }}>
+        <ExerciseHistoryModal exerciseName="Bench Press Cache Test">
+          <button type="button">Open history</button>
+        </ExerciseHistoryModal>
+      </SWRConfig>,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Open history" }));
+    expect(screen.queryByText("User One Workout")).toBeNull();
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+
+    resolveSecondResponse?.(
+      new Response(
+        JSON.stringify([
+          {
+            date: "2026-04-03",
+            notes: "Second account history",
+            workoutId: 12,
+            workoutName: "User Two Workout",
+            sets: [],
+          },
+        ]),
+        {
+          status: 200,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      ),
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("User Two Workout")).toBeTruthy();
+    });
+    expect(screen.queryByText("User One Workout")).toBeNull();
   });
 });
