@@ -34,7 +34,7 @@ vi.mock("@/db/drizzle", () => ({
 }));
 
 import { POST } from "@/app/api/workouts/route";
-import { PATCH, DELETE } from "@/app/api/workouts/[id]/route";
+import { DELETE, GET, PATCH } from "@/app/api/workouts/[id]/route";
 
 describe("workout route handlers", () => {
   let database: RouteTestDatabase;
@@ -422,6 +422,104 @@ describe("workout route handlers", () => {
 
       expect(response.status).toBe(404);
       await expect(response.json()).resolves.toEqual({
+        error: "Workout not found",
+      });
+    });
+  });
+
+  describe("GET /api/workouts/:id", () => {
+    it("returns the owned workout with nested exercises and sets", async () => {
+      const workoutId = await seedWorkout(database, {
+        userId: "user-1",
+        name: "Pull Day",
+        notes: "Heavy rows",
+        exercises: [
+          {
+            name: "Barbell Row",
+            notes: "Straps on top set",
+            sets: [
+              { weight: "225", reps: "8", rpe: "8" },
+              { weight: "245", reps: "6", rpe: "9" },
+            ],
+          },
+        ],
+      });
+
+      const response = await GET(
+        new NextRequest(`http://localhost/api/workouts/${workoutId}`),
+        routeParams(workoutId),
+      );
+
+      expect(response.status).toBe(200);
+      await expect(response.json()).resolves.toMatchObject({
+        id: workoutId,
+        userId: "user-1",
+        name: "Pull Day",
+        notes: "Heavy rows",
+        exercises: [
+          {
+            name: "Barbell Row",
+            notes: "Straps on top set",
+            sets: [
+              { weight: "225", reps: "8", rpe: "8" },
+              { weight: "245", reps: "6", rpe: "9" },
+            ],
+          },
+        ],
+      });
+    });
+
+    it("returns 401 for unauthenticated detail requests", async () => {
+      const workoutId = await seedWorkout(database, {
+        userId: "user-1",
+        exercises: [],
+      });
+      authState.userId = null;
+
+      const response = await GET(
+        new NextRequest(`http://localhost/api/workouts/${workoutId}`),
+        routeParams(workoutId),
+      );
+
+      expect(response.status).toBe(401);
+      await expect(response.json()).resolves.toEqual({ error: "Unauthorized" });
+    });
+
+    it("returns 400 for invalid detail IDs", async () => {
+      const response = await GET(
+        new NextRequest("http://localhost/api/workouts/not-a-number"),
+        routeParams("not-a-number"),
+      );
+
+      expect(response.status).toBe(400);
+      await expect(response.json()).resolves.toEqual({
+        error: "Invalid workout id",
+      });
+    });
+
+    it("returns 404 for unowned or missing workouts", async () => {
+      const workoutId = await seedWorkout(database, {
+        userId: "user-2",
+        exercises: [],
+      });
+
+      const unownedResponse = await GET(
+        new NextRequest(`http://localhost/api/workouts/${workoutId}`),
+        routeParams(workoutId),
+      );
+
+      expect(unownedResponse.status).toBe(404);
+      await expect(unownedResponse.json()).resolves.toEqual({
+        error: "Workout not found",
+      });
+
+      const missingResponse = await GET(
+        new NextRequest("http://localhost/api/workouts/9999"),
+        routeParams(9999),
+      );
+
+      expect(missingResponse.status).toBe(404);
+      await expect(missingResponse.json()).resolves.toEqual({
         error: "Workout not found",
       });
     });

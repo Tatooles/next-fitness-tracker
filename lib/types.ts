@@ -10,6 +10,14 @@ export interface Workout {
   exercises: ExerciseInstance[];
 }
 
+export interface WorkoutSummary {
+  id: number;
+  name: string;
+  notes: string;
+  durationMinutes: number | null;
+  date: string;
+}
+
 // Reps and sets are strings because they can be a range
 export interface ExerciseInstance {
   id: number;

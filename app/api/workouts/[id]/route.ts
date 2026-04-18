@@ -2,6 +2,7 @@ import { and, eq, inArray } from "drizzle-orm";
 import { db } from "@/db/drizzle";
 import { exercise, set, workout } from "@/db/schema";
 import { NextRequest, NextResponse } from "next/server";
+import { Workout } from "@/lib/types";
 import { workoutFormSchema } from "@/lib/types";
 import {
   jsonError,
@@ -10,6 +11,45 @@ import {
   requireOwnedWorkout,
   requireUserId,
 } from "@/lib/api/route-helpers";
+
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const userIdResult = await requireUserId();
+  if (!userIdResult.ok) {
+    return userIdResult.response;
+  }
+
+  const { id } = await params;
+  const workoutIdResult = parsePositiveIntParam(id, "workout id");
+  if (!workoutIdResult.ok) {
+    return workoutIdResult.response;
+  }
+
+  const ownedWorkout: Workout | undefined = await db.query.workout.findFirst({
+    where: (workout, { and, eq }) =>
+      and(
+        eq(workout.id, workoutIdResult.value),
+        eq(workout.userId, userIdResult.value),
+      ),
+    with: {
+      exercises: {
+        with: {
+          sets: {
+            orderBy: (sets, { asc }) => [asc(sets.id)],
+          },
+        },
+      },
+    },
+  });
+
+  if (!ownedWorkout) {
+    return jsonError("Workout not found", 404);
+  }
+
+  return NextResponse.json(ownedWorkout);
+}
 
 export async function DELETE(
   _request: NextRequest,
