@@ -192,8 +192,17 @@ const workoutDetailsFixture: Workout = {
       id: 10,
       name: "Bench Press",
       notes: "Paused",
+      supersetGroupId: "superset-a",
       workoutId: 1,
       sets: [{ id: 100, exerciseId: 10, weight: "225", reps: "5", rpe: "8" }],
+    },
+    {
+      id: 11,
+      name: "Chest Supported Row",
+      notes: "",
+      supersetGroupId: "superset-a",
+      workoutId: 1,
+      sets: [{ id: 101, exerciseId: 11, weight: "180", reps: "8", rpe: "8" }],
     },
   ],
 };
@@ -279,5 +288,20 @@ describe("Workouts", () => {
       expect(screen.getByText("Incline Press detail")).toBeTruthy();
     });
     expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("shows a Superset heading once for adjacent grouped exercises", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <SWRConfig value={{ provider: () => new Map() }}>
+        <Workouts workouts={workoutSummaryFixture} />
+      </SWRConfig>,
+    );
+
+    await user.click(screen.getByRole("button", { name: /Push Day/i }));
+
+    expect(await screen.findByText("Superset")).toBeTruthy();
+    expect(screen.getAllByText(/detail$/)).toHaveLength(2);
   });
 });

@@ -3,6 +3,7 @@ import { db } from "@/db/drizzle";
 import { Workout } from "@/lib/types";
 import { NextRequest } from "next/server";
 import { jsonError, requireUserId } from "@/lib/api/route-helpers";
+import { groupExercisesForDisplay } from "@/lib/superset-utils";
 
 const EXPORT_FORMATS = {
   xlsx: {
@@ -55,13 +56,19 @@ export async function GET(request: NextRequest) {
   const input = [] as string[][];
   for (const workout of data) {
     input.push([workout.name]);
-    for (const exercise of workout.exercises) {
-      input.push([exercise.name]);
-      for (const set of exercise.sets) {
-        input.push([set.reps, set.weight]);
+    for (const block of groupExercisesForDisplay(workout.exercises)) {
+      if (block.kind === "superset") {
+        input.push(["Superset"]);
       }
-      input.push([exercise.notes]);
-      input.push([]);
+
+      for (const exercise of block.exercises) {
+        input.push([exercise.name]);
+        for (const set of exercise.sets) {
+          input.push([set.reps, set.weight]);
+        }
+        input.push([exercise.notes]);
+        input.push([]);
+      }
     }
     input.push([]);
     input.push([]);

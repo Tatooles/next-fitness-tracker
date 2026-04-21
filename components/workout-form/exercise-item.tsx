@@ -19,8 +19,14 @@ interface ExerciseItemProps {
   onRemove: () => void;
   onMoveUp: () => void;
   onMoveDown: () => void;
+  onStartSupersetWithNext: () => void;
+  onJoinPreviousSuperset: () => void;
+  onRemoveFromSuperset: () => void;
   isFirst: boolean;
   isLast: boolean;
+  canStartSupersetWithNext: boolean;
+  canJoinPreviousSuperset: boolean;
+  isInSuperset: boolean;
   workoutId?: number;
   templateExercise?: ExerciseTemplateValues;
 }
@@ -34,8 +40,14 @@ export default function ExerciseItem({
   onRemove,
   onMoveUp,
   onMoveDown,
+  onStartSupersetWithNext,
+  onJoinPreviousSuperset,
+  onRemoveFromSuperset,
   isFirst,
   isLast,
+  canStartSupersetWithNext,
+  canJoinPreviousSuperset,
+  isInSuperset,
   workoutId,
   templateExercise,
 }: ExerciseItemProps) {
@@ -59,8 +71,14 @@ export default function ExerciseItem({
                   onDelete={onRemove}
                   onMoveUp={onMoveUp}
                   onMoveDown={onMoveDown}
+                  onStartSupersetWithNext={onStartSupersetWithNext}
+                  onJoinPreviousSuperset={onJoinPreviousSuperset}
+                  onRemoveFromSuperset={onRemoveFromSuperset}
                   isFirst={isFirst}
                   isLast={isLast}
+                  canStartSupersetWithNext={canStartSupersetWithNext}
+                  canJoinPreviousSuperset={canJoinPreviousSuperset}
+                  isInSuperset={isInSuperset}
                 />
               </div>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}

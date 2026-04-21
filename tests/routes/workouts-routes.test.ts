@@ -64,6 +64,7 @@ describe("workout route handlers", () => {
             {
               name: "Bench Press",
               notes: "Felt good",
+              supersetGroupId: "superset-a",
               sets: [
                 { weight: "225", reps: "5", rpe: "8" },
                 { weight: "235", reps: "3", rpe: "9" },
@@ -72,6 +73,7 @@ describe("workout route handlers", () => {
             {
               name: "Overhead Press",
               notes: "",
+              supersetGroupId: "superset-a",
               sets: [{ weight: "135", reps: "5", rpe: "8" }],
             },
           ],
@@ -109,6 +111,7 @@ describe("workout route handlers", () => {
       expect(workouts[0].exercises[0]).toMatchObject({
         name: "Bench Press",
         notes: "Felt good",
+        supersetGroupId: "superset-a",
       });
       expect(workouts[0].exercises[0].sets).toHaveLength(2);
       expect(workouts[0].exercises[1]).toMatchObject({
@@ -219,7 +222,14 @@ describe("workout route handlers", () => {
               {
                 name: "Deadlift",
                 notes: "Top single",
+                supersetGroupId: "superset-b",
                 sets: [{ weight: "405", reps: "1", rpe: "8.5" }],
+              },
+              {
+                name: "Pull Up",
+                notes: "Strict",
+                supersetGroupId: "superset-b",
+                sets: [{ weight: "bodyweight", reps: "8", rpe: "8" }],
               },
             ],
           },
@@ -252,16 +262,60 @@ describe("workout route handlers", () => {
         durationMinutes: 55,
         date: "2026-04-03",
       });
-      expect(updatedWorkout?.exercises).toHaveLength(1);
+      expect(updatedWorkout?.exercises).toHaveLength(2);
       expect(updatedWorkout?.exercises[0]).toMatchObject({
         name: "Deadlift",
         notes: "Top single",
+        supersetGroupId: "superset-b",
       });
       expect(updatedWorkout?.exercises[0].sets).toHaveLength(1);
       expect(updatedWorkout?.exercises[0].sets[0]).toMatchObject({
         weight: "405",
         reps: "1",
         rpe: "8.5",
+      });
+      expect(updatedWorkout?.exercises[1]).toMatchObject({
+        name: "Pull Up",
+        notes: "Strict",
+        supersetGroupId: "superset-b",
+      });
+    });
+
+    it("returns 400 for non-adjacent superset groups", async () => {
+      const response = await POST(
+        createJsonRequest("http://localhost/api/workouts", "POST", {
+          date: "2026-04-02",
+          name: "Push Day",
+          notes: "",
+          durationMinutes: 60,
+          exercises: [
+            {
+              name: "Bench Press",
+              notes: "",
+              supersetGroupId: "superset-a",
+              sets: [{ weight: "225", reps: "5", rpe: "8" }],
+            },
+            {
+              name: "Lateral Raise",
+              notes: "",
+              supersetGroupId: null,
+              sets: [{ weight: "20", reps: "15", rpe: "9" }],
+            },
+            {
+              name: "Cable Row",
+              notes: "",
+              supersetGroupId: "superset-a",
+              sets: [{ weight: "160", reps: "10", rpe: "8" }],
+            },
+          ],
+        }),
+      );
+
+      expect(response.status).toBe(400);
+      await expect(getCounts(database)).resolves.toEqual({
+        workouts: 0,
+        exercises: 0,
+        sets: 0,
       });
     });
 
@@ -440,6 +494,7 @@ describe("workout route handlers", () => {
           {
             name: "Barbell Row",
             notes: "Straps on top set",
+            supersetGroupId: "superset-c",
             sets: [
               { weight: "225", reps: "8", rpe: "8" },
               { weight: "245", reps: "6", rpe: "9" },
@@ -448,6 +503,7 @@ describe("workout route handlers", () => {
           {
             name: "Lat Pulldown",
             notes: "Full stretch",
+            supersetGroupId: "superset-c",
             sets: [{ weight: "160", reps: "10", rpe: "8" }],
           },
         ],
@@ -468,6 +524,7 @@ describe("workout route handlers", () => {
           {
             name: "Barbell Row",
             notes: "Straps on top set",
+            supersetGroupId: "superset-c",
             sets: [
               { weight: "225", reps: "8", rpe: "8" },
               { weight: "245", reps: "6", rpe: "9" },
@@ -476,6 +533,7 @@ describe("workout route handlers", () => {
           {
             name: "Lat Pulldown",
             notes: "Full stretch",
+            supersetGroupId: "superset-c",
             sets: [{ weight: "160", reps: "10", rpe: "8" }],
           },
         ],
@@ -676,6 +734,7 @@ function validPayload() {
       {
         name: "Bench Press",
         notes: "",
+        supersetGroupId: null,
         sets: [{ weight: "225", reps: "5", rpe: "8" }],
       },
     ],

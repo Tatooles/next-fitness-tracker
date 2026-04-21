@@ -28,6 +28,7 @@ import ExerciseInstanceItem from "@/components/exercise/exercise-instance-item";
 import { Workout, WorkoutSummary } from "@/lib/types";
 import { formatDate, formatWorkoutDuration } from "@/lib/utils";
 import { copyWorkoutToClipboard } from "@/lib/workout-utils";
+import { groupExercisesForDisplay } from "@/lib/superset-utils";
 import { Copy, Files, Pencil, Trash2 } from "lucide-react";
 
 function getAccordionItemValue(workoutId: number) {
@@ -216,14 +217,35 @@ function WorkoutDetails({
         )}
         {!isLoading && !error && data ? (
           <div className="space-y-4">
-            {data.exercises.map((exercise) => (
-              <ExerciseInstanceItem
-                exercise={exercise}
-                showName={true}
-                showDate={false}
-                key={exercise.id}
-              />
-            ))}
+            {groupExercisesForDisplay(data.exercises).map((block) =>
+              block.kind === "superset" ? (
+                <div
+                  key={`superset-${block.startIndex}-${block.supersetGroupId}`}
+                  className="space-y-3 rounded-xl border border-dashed border-yellow-500/40 bg-yellow-500/5 p-3 dark:border-yellow-400/35 dark:bg-yellow-400/5"
+                >
+                  <div className="text-xs font-semibold uppercase tracking-[0.2em] text-yellow-700 dark:text-yellow-300">
+                    Superset
+                  </div>
+                  <div className="space-y-4">
+                    {block.exercises.map((exercise) => (
+                      <ExerciseInstanceItem
+                        exercise={exercise}
+                        showName={true}
+                        showDate={false}
+                        key={exercise.id}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <ExerciseInstanceItem
+                  exercise={block.exercises[0]}
+                  showName={true}
+                  showDate={false}
+                  key={block.exercises[0].id}
+                />
+              ),
+            )}
           </div>
         ) : null}
       </AccordionContent>
