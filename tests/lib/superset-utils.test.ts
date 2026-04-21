@@ -120,6 +120,29 @@ describe("superset utilities", () => {
     ]);
   });
 
+  it("clears a split superset when a standalone exercise moves into the middle of it", () => {
+    const updated = moveExerciseBlock(
+      [
+        { ...exercises[0], supersetGroupId: "superset-a" },
+        { ...exercises[1], supersetGroupId: "superset-a" },
+        exercises[2],
+      ],
+      2,
+      "up",
+    );
+
+    expect(updated.map((exercise) => exercise.name)).toEqual([
+      "Bench Press",
+      "Bicep Curl",
+      "Chest Supported Row",
+    ]);
+    expect(updated.map((exercise) => exercise.supersetGroupId)).toEqual([
+      null,
+      null,
+      null,
+    ]);
+  });
+
   it("normalizes a leftover singleton group when deleting a grouped exercise", () => {
     const updated = removeExerciseAtIndex(
       [

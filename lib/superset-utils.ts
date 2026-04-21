@@ -184,7 +184,7 @@ export function moveExerciseBlock<T extends ExerciseWithSupersetGroup>(
 
   nextExercises.splice(insertionIndex, 0, ...block);
 
-  return nextExercises;
+  return normalizeSupersetGroups(nextExercises);
 }
 
 export function groupExercisesForDisplay<T extends ExerciseWithSupersetGroup>(
