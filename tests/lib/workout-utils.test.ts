@@ -62,11 +62,14 @@ describe("copyWorkoutToClipboard", () => {
     });
   });
 
-  it("adds a Superset heading before grouped exercises", async () => {
+  it("adds explicit superset boundaries around grouped exercises", async () => {
     await copyWorkoutToClipboard(workoutFixture);
 
-    expect(writeTextMock).toHaveBeenCalledWith(expect.stringContaining("\nSuperset\nBench Press\n"));
-    expect(writeTextMock).toHaveBeenCalledWith(expect.stringContaining("Chest Supported Row"));
+    expect(writeTextMock).toHaveBeenCalledWith(
+      expect.stringContaining(
+        "\nSuperset\nBench Press\nSet 1: 225 lbs x 5 reps @ RPE 8\n\nChest Supported Row\nSet 1: 180 lbs x 8 reps @ RPE 8\n\nEnd Superset\n\nBicep Curl\n",
+      ),
+    );
     expect(toastSuccessMock).toHaveBeenCalledTimes(1);
   });
 });

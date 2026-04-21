@@ -56,6 +56,10 @@ export const copyWorkoutToClipboard = async (workout: Workout) => {
         text += "\n";
       });
 
+      if (block.kind === "superset") {
+        text += "End Superset\n";
+      }
+
       if (idx === blocks.length - 1) {
         text = text.trimEnd();
         return;
