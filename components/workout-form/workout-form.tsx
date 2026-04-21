@@ -362,9 +362,9 @@ export default function WorkoutForm(props: WorkoutFormProps) {
             return (
               <div
                 key={`superset-${renderExercises[block.startIndex]?.id ?? block.startIndex}`}
-                className="space-y-3 rounded-xl border border-dashed p-3"
+                className="space-y-3 rounded-xl border border-dashed border-yellow-500/40 bg-yellow-500/5 p-3 dark:border-yellow-400/35 dark:bg-yellow-400/5"
               >
-                <div className="text-muted-foreground text-xs font-semibold uppercase tracking-[0.2em]">
+                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-yellow-700 dark:text-yellow-300">
                   Superset
                 </div>
                 <div className="space-y-4">{blockContent}</div>
