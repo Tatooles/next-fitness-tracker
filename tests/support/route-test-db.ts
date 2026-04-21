@@ -14,6 +14,7 @@ export interface SeedWorkoutInput {
   exercises?: {
     name: string;
     notes?: string;
+    supersetGroupId?: string | null;
     sets?: {
       reps: string;
       weight: string;
@@ -55,6 +56,7 @@ export async function createRouteTestDatabase(): Promise<RouteTestDatabase> {
       id INTEGER PRIMARY KEY,
       name TEXT NOT NULL,
       notes TEXT NOT NULL,
+      superset_group_id TEXT,
       workout_id INTEGER NOT NULL REFERENCES workout(id) ON DELETE CASCADE
     )
   `);
@@ -117,6 +119,7 @@ export async function seedWorkout(
         workoutId: insertedWorkout.id,
         name: exerciseInput.name,
         notes: exerciseInput.notes ?? "",
+        supersetGroupId: exerciseInput.supersetGroupId ?? null,
       })
       .returning({ id: schema.exercise.id });
 

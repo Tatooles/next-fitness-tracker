@@ -51,6 +51,7 @@ const workoutFixture: Workout = {
       id: 11,
       name: "Bench Press",
       notes: "Original exercise notes",
+      supersetGroupId: "superset-a",
       workoutId: 1,
       sets: [
         { id: 111, weight: "225", reps: "5", rpe: "8", exerciseId: 11 },
@@ -102,6 +103,7 @@ describe("workout form seed builders", () => {
           {
             name: "",
             notes: "",
+            supersetGroupId: null,
             sets: [{ weight: "", reps: "", rpe: "" }],
           },
         ],
@@ -125,6 +127,7 @@ describe("workout form seed builders", () => {
           {
             name: "Bench Press",
             notes: "Original exercise notes",
+            supersetGroupId: "superset-a",
             sets: [
               { weight: "225", reps: "5", rpe: "8" },
               { weight: "235", reps: "3", rpe: "9" },
@@ -150,6 +153,7 @@ describe("workout form seed builders", () => {
           {
             name: "Bench Press",
             notes: "",
+            supersetGroupId: "superset-a",
             sets: [
               { weight: "", reps: "", rpe: "" },
               { weight: "", reps: "", rpe: "" },
@@ -161,6 +165,7 @@ describe("workout form seed builders", () => {
         "Bench Press": {
           name: "Bench Press",
           notes: "",
+          supersetGroupId: "superset-a",
           sets: [
             { weight: "225", reps: "5", rpe: "8" },
             { weight: "235", reps: "3", rpe: "9" },
@@ -178,16 +183,19 @@ describe("workout form seed builders", () => {
           ...workoutFixture.exercises[0],
           id: 21,
           name: "toString",
+          supersetGroupId: "reserved-group",
         },
         {
           ...workoutFixture.exercises[0],
           id: 22,
           name: "constructor",
+          supersetGroupId: "reserved-group",
         },
         {
           ...workoutFixture.exercises[0],
           id: 23,
           name: "__proto__",
+          supersetGroupId: "reserved-group",
         },
       ],
     });
@@ -197,15 +205,18 @@ describe("workout form seed builders", () => {
     ).toBe(Object.prototype);
     expect(duplicateSeed.templateValuesByExerciseName?.toString).toMatchObject({
       name: "toString",
+      supersetGroupId: "reserved-group",
     });
     expect(
       duplicateSeed.templateValuesByExerciseName?.constructor,
     ).toMatchObject({
       name: "constructor",
+      supersetGroupId: "reserved-group",
     });
     expect(duplicateSeed.templateValuesByExerciseName?.__proto__).toMatchObject(
       {
         name: "__proto__",
+        supersetGroupId: "reserved-group",
       },
     );
   });
@@ -230,6 +241,7 @@ describe("workout form seed builders", () => {
       "Bench Press": {
         name: "Bench Press",
         notes: "",
+        supersetGroupId: "superset-a",
         sets: [
           { weight: "225", reps: "5", rpe: "8" },
           { weight: "235", reps: "3", rpe: "9" },
@@ -247,12 +259,14 @@ describe("workout form seed builders", () => {
             ...workoutFixture.exercises[0],
             id: 21,
             name: "toString",
+            supersetGroupId: "reserved-group",
           },
           {
             ...workoutFixture.exercises[0],
             id: 22,
             name: "toString",
             notes: "second",
+            supersetGroupId: "reserved-group",
             sets: [
               { id: 221, weight: "245", reps: "2", rpe: "9.5", exerciseId: 22 },
             ],
@@ -261,6 +275,7 @@ describe("workout form seed builders", () => {
       }).templateValuesByExerciseName?.toString,
     ).toEqual({
       name: "toString",
+      supersetGroupId: "reserved-group",
       notes: "",
       sets: [
         { weight: "225", reps: "5", rpe: "8" },

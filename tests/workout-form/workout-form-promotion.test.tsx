@@ -61,6 +61,7 @@ const workoutDraftFixture: WorkoutDraft = {
     {
       name: "Bench Press",
       notes: "Pause the first rep",
+      supersetGroupId: null,
       sets: [{ weight: "225", reps: "5", rpe: "8" }],
     },
   ],
@@ -157,6 +158,7 @@ describe("WorkoutForm promotion flow", () => {
           "Bench Press": {
             name: "Bench Press",
             notes: "",
+            supersetGroupId: null,
             sets: [{ weight: "200", reps: "6", rpe: "7" }],
           },
         }}
@@ -238,6 +240,7 @@ describe("WorkoutForm promotion flow", () => {
           "Bench Press": {
             name: "Bench Press",
             notes: "",
+            supersetGroupId: null,
             sets: [{ weight: "200", reps: "6", rpe: "7" }],
           },
         }}
@@ -263,6 +266,7 @@ describe("WorkoutForm promotion flow", () => {
             {
               name: "toString",
               notes: "",
+              supersetGroupId: null,
               sets: [{ weight: "", reps: "", rpe: "" }],
             },
           ],
@@ -282,6 +286,7 @@ describe("WorkoutForm promotion flow", () => {
       toString: {
         name: "toString",
         notes: "",
+        supersetGroupId: null,
         sets: [{ weight: "200", reps: "6", rpe: "7" }],
       },
     } as ExerciseTemplateValuesByName;
@@ -293,6 +298,7 @@ describe("WorkoutForm promotion flow", () => {
             {
               name: "toString",
               notes: "",
+              supersetGroupId: null,
               sets: [{ weight: "", reps: "", rpe: "" }],
             },
           ],
@@ -439,6 +445,7 @@ describe("WorkoutForm promotion flow", () => {
           "Bench Press": {
             name: "Bench Press",
             notes: "",
+            supersetGroupId: null,
             sets: [{ weight: "205", reps: "5", rpe: "8" }],
           },
         }}
@@ -521,6 +528,7 @@ describe("WorkoutForm promotion flow", () => {
           "Bench Press": {
             name: "Bench Press",
             notes: "",
+            supersetGroupId: null,
             sets: [{ weight: "200", reps: "6", rpe: "7" }],
           },
         }}

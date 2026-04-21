@@ -22,6 +22,7 @@ const workoutDraftFixture: WorkoutDraft = {
     {
       name: "Bench Press",
       notes: "Pause the first rep",
+      supersetGroupId: "superset-a",
       sets: [{ weight: "225", reps: "5", rpe: "8" }],
     },
   ],

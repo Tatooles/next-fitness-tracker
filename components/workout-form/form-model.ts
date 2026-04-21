@@ -28,6 +28,7 @@ function toWorkoutDraft(workout: Workout): WorkoutDraft {
     exercises: workout.exercises.map((exercise) => ({
       name: exercise.name,
       notes: exercise.notes,
+      supersetGroupId: exercise.supersetGroupId,
       sets: exercise.sets.map((set) => ({
         reps: set.reps,
         weight: set.weight,
@@ -46,6 +47,7 @@ function toDuplicateWorkoutDraft(workout: Workout): WorkoutDraft {
     exercises: workout.exercises.map((exercise) => ({
       name: exercise.name,
       notes: "",
+      supersetGroupId: exercise.supersetGroupId,
       sets: exercise.sets.map((set) => ({
         reps: set.reps,
         weight: set.weight,
@@ -148,6 +150,7 @@ export function buildBlankWorkoutFormSeed(
         {
           name: "",
           notes: "",
+          supersetGroupId: null,
           sets: [{ weight: "", reps: "", rpe: "" }],
         },
       ],

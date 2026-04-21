@@ -48,6 +48,7 @@ export async function POST(request: NextRequest) {
             workoutId: newWorkout.id,
             name: exerciseData.name,
             notes: exerciseData.notes,
+            supersetGroupId: exerciseData.supersetGroupId,
           })
           .returning();
 

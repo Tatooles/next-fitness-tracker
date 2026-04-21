@@ -23,6 +23,7 @@ export interface ExerciseInstance {
   id: number;
   name: string;
   notes: string;
+  supersetGroupId: string | null;
   workoutId: number;
   sets: Set[];
   // It would make sense for ExerciseInstance to contain date :/
@@ -31,6 +32,7 @@ export interface ExerciseInstance {
 export interface ExerciseThin {
   name: string;
   notes: string;
+  supersetGroupId: string | null;
   sets: {
     weight: string;
     reps: string;
@@ -44,6 +46,7 @@ export interface DateExercise {
   id?: number | null;
   name?: string | null;
   notes?: string | null;
+  supersetGroupId?: string | null;
   workoutId?: number | null;
   workoutName?: string | null;
   sets: Set[];
@@ -74,24 +77,71 @@ const workoutDateSchema = z
   .min(1, "Workout date is required")
   .regex(/^\d{4}-\d{2}-\d{2}$/, "Workout date must be in YYYY-MM-DD format");
 
-export const workoutFormSchema = z.object({
-  date: workoutDateSchema,
-  name: z.string().min(1, "Workout name must be at least 1 character").max(50),
+const workoutExerciseSchema = z.object({
+  name: z.string().min(1, "Exercise name must be at least 1 character"),
   notes: z.string(),
-  durationMinutes: nullableDurationMinutesSchema,
-  exercises: z
+  supersetGroupId: z.string().trim().min(1).nullable(),
+  sets: z
     .object({
-      name: z.string().min(1, "Exercise name must be at least 1 character"),
-      notes: z.string(),
-      sets: z
-        .object({
-          weight: z.string(),
-          reps: z.string(),
-          rpe: z.string(),
-        })
-        .array(),
+      weight: z.string(),
+      reps: z.string(),
+      rpe: z.string(),
     })
     .array(),
 });
+
+function addSupersetValidation(
+  exercises: z.infer<typeof workoutExerciseSchema>[],
+  context: z.RefinementCtx,
+) {
+  const groupIndices = new Map<string, number[]>();
+
+  exercises.forEach((exercise, index) => {
+    if (!exercise.supersetGroupId) {
+      return;
+    }
+
+    const indices = groupIndices.get(exercise.supersetGroupId) ?? [];
+    indices.push(index);
+    groupIndices.set(exercise.supersetGroupId, indices);
+  });
+
+  for (const [supersetGroupId, indices] of groupIndices) {
+    if (indices.length < 2) {
+      context.addIssue({
+        code: "custom",
+        message: `Superset group "${supersetGroupId}" must include at least 2 exercises`,
+        path: ["exercises", indices[0], "supersetGroupId"],
+      });
+      continue;
+    }
+
+    for (let index = 1; index < indices.length; index += 1) {
+      if (indices[index] !== indices[index - 1] + 1) {
+        context.addIssue({
+          code: "custom",
+          message: `Superset group "${supersetGroupId}" exercises must stay adjacent`,
+          path: ["exercises", indices[index], "supersetGroupId"],
+        });
+        break;
+      }
+    }
+  }
+}
+
+export const workoutFormSchema = z
+  .object({
+    date: workoutDateSchema,
+    name: z
+      .string()
+      .min(1, "Workout name must be at least 1 character")
+      .max(50),
+    notes: z.string(),
+    durationMinutes: nullableDurationMinutesSchema,
+    exercises: workoutExerciseSchema.array(),
+  })
+  .superRefine(({ exercises }, context) => {
+    addSupersetValidation(exercises, context);
+  });
 
 export type TWorkoutFormSchema = z.infer<typeof workoutFormSchema>;

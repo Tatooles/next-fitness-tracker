@@ -1,6 +1,35 @@
 import { Workout, ExerciseInstance } from "@/lib/types";
 import { formatDate, formatWorkoutDuration } from "@/lib/utils";
+import { groupExercisesForDisplay } from "@/lib/superset-utils";
 import { toast } from "sonner";
+
+function formatExerciseText(exercise: ExerciseInstance) {
+  let text = `${exercise.name}\n`;
+
+  exercise.sets.forEach((set, setIdx) => {
+    text += `Set ${setIdx + 1}: `;
+
+    if (set.weight) {
+      text += `${set.weight} lbs`;
+    }
+
+    if (set.reps) {
+      text += ` x ${set.reps} reps`;
+    }
+
+    if (set.rpe) {
+      text += ` @ RPE ${set.rpe}`;
+    }
+
+    text += "\n";
+  });
+
+  if (exercise.notes && exercise.notes.trim()) {
+    text += `Notes: ${exercise.notes}\n`;
+  }
+
+  return text;
+}
 
 export const copyWorkoutToClipboard = async (workout: Workout) => {
   try {
@@ -15,37 +44,24 @@ export const copyWorkoutToClipboard = async (workout: Workout) => {
       text += `Notes: ${workout.notes}\n\n`;
     }
 
-    workout.exercises.forEach((exercise: ExerciseInstance, idx: number) => {
-      text += `${exercise.name}\n`;
+    const blocks = groupExercisesForDisplay(workout.exercises);
 
-      // Add sets
-      exercise.sets.forEach((set, setIdx) => {
-        text += `Set ${setIdx + 1}: `;
+    blocks.forEach((block, idx) => {
+      if (block.kind === "superset") {
+        text += "Superset\n";
+      }
 
-        if (set.weight) {
-          text += `${set.weight} lbs`;
-        }
-
-        if (set.reps) {
-          text += ` x ${set.reps} reps`;
-        }
-
-        if (set.rpe) {
-          text += ` @ RPE ${set.rpe}`;
-        }
-
+      block.exercises.forEach((exercise) => {
+        text += formatExerciseText(exercise);
         text += "\n";
       });
 
-      // Add notes after sets if they exist
-      if (exercise.notes && exercise.notes.trim()) {
-        text += `Notes: ${exercise.notes}\n`;
+      if (idx === blocks.length - 1) {
+        text = text.trimEnd();
+        return;
       }
 
-      // Add blank line between exercises (but not after the last one)
-      if (idx < workout.exercises.length - 1) {
-        text += "\n";
-      }
+      text += "\n";
     });
 
     // Copy to clipboard

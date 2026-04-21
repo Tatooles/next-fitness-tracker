@@ -26,6 +26,14 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { saveWorkout } from "@/components/workout-form/save-workout";
+import {
+  groupExercisesForDisplay,
+  joinSupersetWithPrevious,
+  moveExerciseBlock,
+  removeExerciseAtIndex,
+  removeExerciseFromSuperset,
+  startSupersetWithNext,
+} from "@/lib/superset-utils";
 
 const cloneWorkoutForm = (values: WorkoutDraft) => structuredClone(values);
 const getBrowserTodayDate = () => new Date().toLocaleDateString("en-CA");
@@ -148,7 +156,7 @@ export default function WorkoutForm(props: WorkoutFormProps) {
     subscribe,
     formState: { isDirty, isSubmitting },
   } = form;
-  const { fields, append, remove, move } = useFieldArray({
+  const { fields, append, replace } = useFieldArray({
     control,
     name: "exercises",
   });
@@ -156,6 +164,13 @@ export default function WorkoutForm(props: WorkoutFormProps) {
     control,
     name: "exercises",
   });
+  const currentExercises = watchedExercises ?? getValues("exercises");
+  const renderExercises = fields.map((field, index) => ({
+    id: field.id,
+    name: currentExercises[index]?.name ?? "",
+    supersetGroupId: currentExercises[index]?.supersetGroupId ?? null,
+  }));
+  const exerciseBlocks = groupExercisesForDisplay(renderExercises);
   const saveStatus = getSaveStatus({
     persistMode: formSession.persistMode,
     hasSaveFailed,
@@ -246,6 +261,12 @@ export default function WorkoutForm(props: WorkoutFormProps) {
     }
   };
 
+  const replaceExercises = (exercises: WorkoutDraft["exercises"]) => {
+    replace(exercises);
+  };
+
+  const createSupersetGroupId = () => globalThis.crypto.randomUUID();
+
   return (
     <form noValidate onSubmit={handleSubmit(onSubmit)} aria-busy={isSubmitting}>
       <WorkoutFormActionHeader saveStatus={saveStatus} />
@@ -256,30 +277,98 @@ export default function WorkoutForm(props: WorkoutFormProps) {
         <FieldSet>
           <FieldLegend>Exercises</FieldLegend>
 
-          {fields.map((field, index) => {
-            const exerciseName = watchedExercises?.[index]?.name || "";
-            const templateExercise = getTemplateExerciseByName({
-              exerciseName,
-              templateValuesByExerciseName:
-                formSession.templateValuesByExerciseName,
+          {exerciseBlocks.map((block) => {
+            const blockContent = block.exercises.map((_, offset) => {
+              const index = block.startIndex + offset;
+              const field = fields[index];
+              const exerciseName = renderExercises[index]?.name ?? "";
+              const exerciseGroupId =
+                renderExercises[index]?.supersetGroupId ?? null;
+              const templateExercise = getTemplateExerciseByName({
+                exerciseName,
+                templateValuesByExerciseName:
+                  formSession.templateValuesByExerciseName,
+              });
+
+              if (!field) {
+                return null;
+              }
+
+              return (
+                <ExerciseItem
+                  key={field.id}
+                  index={index}
+                  control={control}
+                  getValues={getValues}
+                  exercises={formSession.exerciseNames}
+                  exerciseName={exerciseName}
+                  onRemove={() =>
+                    replaceExercises(
+                      removeExerciseAtIndex(getValues("exercises"), index),
+                    )
+                  }
+                  onMoveUp={() =>
+                    replaceExercises(
+                      moveExerciseBlock(getValues("exercises"), index, "up"),
+                    )
+                  }
+                  onMoveDown={() =>
+                    replaceExercises(
+                      moveExerciseBlock(getValues("exercises"), index, "down"),
+                    )
+                  }
+                  onStartSupersetWithNext={() =>
+                    replaceExercises(
+                      startSupersetWithNext(
+                        getValues("exercises"),
+                        index,
+                        createSupersetGroupId(),
+                      ),
+                    )
+                  }
+                  onJoinPreviousSuperset={() =>
+                    replaceExercises(
+                      joinSupersetWithPrevious(
+                        getValues("exercises"),
+                        index,
+                        createSupersetGroupId,
+                      ),
+                    )
+                  }
+                  onRemoveFromSuperset={() =>
+                    replaceExercises(
+                      removeExerciseFromSuperset(getValues("exercises"), index),
+                    )
+                  }
+                  isFirst={block.startIndex === 0}
+                  isLast={block.endIndex === renderExercises.length - 1}
+                  canStartSupersetWithNext={
+                    index < renderExercises.length - 1 &&
+                    !exerciseGroupId &&
+                    !renderExercises[index + 1]?.supersetGroupId
+                  }
+                  canJoinPreviousSuperset={index > 0 && !exerciseGroupId}
+                  isInSuperset={Boolean(exerciseGroupId)}
+                  workoutId={formSession.workoutId}
+                  templateExercise={templateExercise}
+                />
+              );
             });
 
+            if (block.kind === "single") {
+              return blockContent;
+            }
+
             return (
-              <ExerciseItem
-                key={field.id}
-                index={index}
-                control={control}
-                getValues={getValues}
-                exercises={formSession.exerciseNames}
-                exerciseName={exerciseName}
-                onRemove={() => remove(index)}
-                onMoveUp={() => move(index, index - 1)}
-                onMoveDown={() => move(index, index + 1)}
-                isFirst={index === 0}
-                isLast={index === fields.length - 1}
-                workoutId={formSession.workoutId}
-                templateExercise={templateExercise}
-              />
+              <div
+                key={`superset-${renderExercises[block.startIndex]?.id ?? block.startIndex}`}
+                className="space-y-3 rounded-xl border border-dashed p-3"
+              >
+                <div className="text-muted-foreground text-xs font-semibold uppercase tracking-[0.2em]">
+                  Superset
+                </div>
+                <div className="space-y-4">{blockContent}</div>
+              </div>
             );
           })}
 
@@ -290,6 +379,7 @@ export default function WorkoutForm(props: WorkoutFormProps) {
               append({
                 name: "",
                 notes: "",
+                supersetGroupId: null,
                 sets: [{ weight: "", reps: "", rpe: "" }],
               })
             }

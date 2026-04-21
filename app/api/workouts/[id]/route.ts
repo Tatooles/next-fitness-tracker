@@ -153,6 +153,7 @@ export async function PATCH(
             workoutId,
             name: exerciseData.name,
             notes: exerciseData.notes,
+            supersetGroupId: exerciseData.supersetGroupId,
           })
           .returning();
 
