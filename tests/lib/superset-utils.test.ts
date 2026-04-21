@@ -120,7 +120,7 @@ describe("superset utilities", () => {
     ]);
   });
 
-  it("clears a split superset when a standalone exercise moves into the middle of it", () => {
+  it("moves a standalone exercise past the entire adjacent superset block", () => {
     const updated = moveExerciseBlock(
       [
         { ...exercises[0], supersetGroupId: "superset-a" },
@@ -132,14 +132,48 @@ describe("superset utilities", () => {
     );
 
     expect(updated.map((exercise) => exercise.name)).toEqual([
-      "Bench Press",
       "Bicep Curl",
+      "Bench Press",
       "Chest Supported Row",
     ]);
     expect(updated.map((exercise) => exercise.supersetGroupId)).toEqual([
       null,
-      null,
-      null,
+      "superset-a",
+      "superset-a",
+    ]);
+  });
+
+  it("moves a superset past the entire adjacent superset block", () => {
+    const updated = moveExerciseBlock(
+      [
+        { ...exercises[0], name: "Bench Press", supersetGroupId: "superset-a" },
+        {
+          ...exercises[1],
+          name: "Chest Supported Row",
+          supersetGroupId: "superset-a",
+        },
+        { ...exercises[0], name: "Arnold Press", supersetGroupId: "superset-b" },
+        {
+          ...exercises[1],
+          name: "Barbell JM Press",
+          supersetGroupId: "superset-b",
+        },
+      ],
+      0,
+      "down",
+    );
+
+    expect(updated.map((exercise) => exercise.name)).toEqual([
+      "Arnold Press",
+      "Barbell JM Press",
+      "Bench Press",
+      "Chest Supported Row",
+    ]);
+    expect(updated.map((exercise) => exercise.supersetGroupId)).toEqual([
+      "superset-b",
+      "superset-b",
+      "superset-a",
+      "superset-a",
     ]);
   });
 

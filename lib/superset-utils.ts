@@ -169,6 +169,7 @@ export function moveExerciseBlock<T extends ExerciseWithSupersetGroup>(
 ): T[] {
   const nextExercises = cloneExercises(exercises);
   const { startIndex, endIndex } = getSupersetBlockRange(nextExercises, index);
+  const blockSize = endIndex - startIndex + 1;
 
   if (direction === "up" && startIndex === 0) {
     return nextExercises;
@@ -178,9 +179,15 @@ export function moveExerciseBlock<T extends ExerciseWithSupersetGroup>(
     return nextExercises;
   }
 
+  const adjacentBlockRange =
+    direction === "up"
+      ? getSupersetBlockRange(nextExercises, startIndex - 1)
+      : getSupersetBlockRange(nextExercises, endIndex + 1);
   const block = nextExercises.splice(startIndex, endIndex - startIndex + 1);
   const insertionIndex =
-    direction === "up" ? startIndex - 1 : startIndex + 1;
+    direction === "up"
+      ? adjacentBlockRange.startIndex
+      : adjacentBlockRange.endIndex - blockSize + 1;
 
   nextExercises.splice(insertionIndex, 0, ...block);
 
