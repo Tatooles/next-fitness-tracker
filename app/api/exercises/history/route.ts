@@ -30,9 +30,22 @@ export async function GET(request: NextRequest) {
   try {
     const rows = await db
       .select({
-        workout,
-        exercise,
-        set,
+        workout: {
+          date: workout.date,
+          name: workout.name,
+        },
+        exercise: {
+          id: exercise.id,
+          notes: exercise.notes,
+          workoutId: exercise.workoutId,
+        },
+        set: {
+          id: set.id,
+          reps: set.reps,
+          weight: set.weight,
+          rpe: set.rpe,
+          exerciseId: set.exerciseId,
+        },
       })
       .from(workout)
       .innerJoin(exercise, eq(exercise.workoutId, workout.id))

@@ -27,9 +27,14 @@ export interface RouteTestDatabase {
   client: Client;
   db: LibSQLDatabase<typeof schema>;
   filePath: string;
+  hasSupersetGroupId: boolean;
 }
 
-export async function createRouteTestDatabase(): Promise<RouteTestDatabase> {
+export async function createRouteTestDatabase({
+  includeSupersetGroupId = true,
+}: {
+  includeSupersetGroupId?: boolean;
+} = {}): Promise<RouteTestDatabase> {
   const filePath = path.join(
     os.tmpdir(),
     `next-fitness-tracker-route-test-${Date.now()}-${Math.random()
@@ -51,15 +56,26 @@ export async function createRouteTestDatabase(): Promise<RouteTestDatabase> {
       date TEXT NOT NULL
     )
   `);
-  await client.execute(`
-    CREATE TABLE exercise (
-      id INTEGER PRIMARY KEY,
-      name TEXT NOT NULL,
-      notes TEXT NOT NULL,
-      superset_group_id TEXT,
-      workout_id INTEGER NOT NULL REFERENCES workout(id) ON DELETE CASCADE
-    )
-  `);
+  await client.execute(
+    includeSupersetGroupId
+      ? `
+        CREATE TABLE exercise (
+          id INTEGER PRIMARY KEY,
+          name TEXT NOT NULL,
+          notes TEXT NOT NULL,
+          superset_group_id TEXT,
+          workout_id INTEGER NOT NULL REFERENCES workout(id) ON DELETE CASCADE
+        )
+      `
+      : `
+        CREATE TABLE exercise (
+          id INTEGER PRIMARY KEY,
+          name TEXT NOT NULL,
+          notes TEXT NOT NULL,
+          workout_id INTEGER NOT NULL REFERENCES workout(id) ON DELETE CASCADE
+        )
+      `,
+  );
   await client.execute(`
     CREATE TABLE "set" (
       id INTEGER PRIMARY KEY,
@@ -83,6 +99,7 @@ export async function createRouteTestDatabase(): Promise<RouteTestDatabase> {
     client,
     db: drizzle(client, { schema }),
     filePath,
+    hasSupersetGroupId: includeSupersetGroupId,
   };
 }
 
@@ -113,15 +130,30 @@ export async function seedWorkout(
     .returning({ id: schema.workout.id });
 
   for (const exerciseInput of input.exercises ?? []) {
-    const [insertedExercise] = await database.db
-      .insert(schema.exercise)
-      .values({
-        workoutId: insertedWorkout.id,
-        name: exerciseInput.name,
-        notes: exerciseInput.notes ?? "",
-        supersetGroupId: exerciseInput.supersetGroupId ?? null,
-      })
-      .returning({ id: schema.exercise.id });
+    const [insertedExercise] = database.hasSupersetGroupId
+      ? await database.db
+          .insert(schema.exercise)
+          .values({
+            workoutId: insertedWorkout.id,
+            name: exerciseInput.name,
+            notes: exerciseInput.notes ?? "",
+            supersetGroupId: exerciseInput.supersetGroupId ?? null,
+          })
+          .returning({ id: schema.exercise.id })
+      : (
+          await database.client.execute({
+            sql: `
+              INSERT INTO exercise (name, notes, workout_id)
+              VALUES (?, ?, ?)
+              RETURNING id
+            `,
+            args: [
+              exerciseInput.name,
+              exerciseInput.notes ?? "",
+              insertedWorkout.id,
+            ],
+          })
+        ).rows.map((row) => ({ id: Number(row.id) }));
 
     if (exerciseInput.sets?.length) {
       await database.db.insert(schema.set).values(

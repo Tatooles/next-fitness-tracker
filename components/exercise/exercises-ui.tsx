@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback, useEffect } from "react";
+import { useMemo, useState } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -16,8 +16,17 @@ export default function ExercisesUI({
   exerciseSummaries: ExerciseSummary[];
 }) {
   const [inputValue, setInputValue] = useState("");
-  const [initialList] = useState(exerciseSummaries);
-  const [filteredList, setFilteredList] = useState(exerciseSummaries);
+  const filteredList = useMemo(() => {
+    const searchValue = inputValue.trim().toLowerCase();
+
+    if (!searchValue) {
+      return exerciseSummaries;
+    }
+
+    return exerciseSummaries.filter((exerciseSummary) =>
+      exerciseSummary.name.toLowerCase().includes(searchValue),
+    );
+  }, [exerciseSummaries, inputValue]);
 
   const formatDate = (date: Date): string => {
     const today = new Date();
@@ -59,27 +68,6 @@ export default function ExercisesUI({
     if (!mostRecent) return "Never";
     return formatDate(mostRecent);
   };
-
-  const searchHandler = useCallback(() => {
-    const filteredData = initialList.filter((exerciseSummary) => {
-      return exerciseSummary.name
-        .toLowerCase()
-        .includes(inputValue.toLowerCase());
-    });
-    setFilteredList(filteredData);
-  }, [initialList, inputValue]);
-
-  useEffect(() => {
-    // Timeout so search doesn't fire on every key input
-    const timer = setTimeout(() => {
-      searchHandler();
-    }, 500);
-
-    // Cleanup timeout
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [searchHandler]);
 
   return (
     <>
