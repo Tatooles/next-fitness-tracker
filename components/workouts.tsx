@@ -95,17 +95,17 @@ function WorkoutDetails({
   return (
     <AccordionItem key={workout.id} value={getAccordionItemValue(workout.id)}>
       <AccordionTrigger>
-        {formatDate(workout.date)} - {workout.name}
+        <div className="flex w-full flex-col gap-1 pr-3 sm:flex-row sm:items-center sm:justify-between">
+          <span className="text-base">{workout.name}</span>
+          <span className="text-muted-foreground text-xs font-medium">
+            {formatDate(workout.date)}
+          </span>
+        </div>
       </AccordionTrigger>
       <AccordionContent>
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3 px-1">
           <div className="flex flex-wrap justify-start gap-3">
-            <Button
-              asChild
-              variant="outline"
-              size="sm"
-              className="border-green-500 text-green-500 hover:bg-green-500 hover:text-white"
-            >
+            <Button asChild variant="outline" size="sm">
               <Link
                 href={`/workouts/edit/${workout.id}`}
                 aria-label="Edit workout"
@@ -114,12 +114,7 @@ function WorkoutDetails({
                 <span className="hidden sm:inline">Edit</span>
               </Link>
             </Button>
-            <Button
-              asChild
-              variant="outline"
-              size="sm"
-              className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
-            >
+            <Button asChild variant="outline" size="sm">
               <Link
                 href={`/workouts/duplicate/${workout.id}`}
                 aria-label="Duplicate workout"
@@ -131,7 +126,6 @@ function WorkoutDetails({
             <Button
               variant="outline"
               size="sm"
-              className="border-purple-500 text-purple-500 hover:bg-purple-500 hover:text-white"
               onClick={handleCopyWorkout}
               aria-label="Copy workout to clipboard"
               disabled={!data}
@@ -144,7 +138,7 @@ function WorkoutDetails({
                 <Button
                   variant="outline"
                   size="sm"
-                  className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                  className="border-destructive/60 text-destructive hover:bg-destructive hover:text-destructive-foreground"
                   aria-label="Delete workout"
                 >
                   <Trash2 aria-hidden="true" />
@@ -178,13 +172,13 @@ function WorkoutDetails({
             </AlertDialog>
           </div>
           {duration.trim() ? (
-            <div className="text-muted-foreground text-sm font-medium">
+            <div className="border-border/70 bg-secondary/70 text-muted-foreground rounded-md border px-3 py-1.5 text-sm font-medium">
               Duration: {duration}
             </div>
           ) : null}
         </div>
         {workout.notes.trim() && (
-          <div className="border-border mb-4 rounded-lg border p-4">
+          <div className="border-border/80 bg-secondary/50 mb-4 rounded-lg border p-4">
             <p className="text-muted-foreground text-left text-sm leading-6 whitespace-pre-wrap">
               {workout.notes}
             </p>
@@ -197,8 +191,8 @@ function WorkoutDetails({
           </div>
         )}
         {!isLoading && error && (
-          <div className="space-y-3 rounded-lg border border-red-200 p-4 text-center">
-            <p className="text-sm text-red-600">{errorMessage}</p>
+          <div className="border-destructive/30 bg-destructive/10 space-y-3 rounded-lg border p-4 text-center">
+            <p className="text-destructive text-sm">{errorMessage}</p>
             <Button
               variant="outline"
               size="sm"
@@ -221,9 +215,9 @@ function WorkoutDetails({
               block.kind === "superset" ? (
                 <div
                   key={`superset-${block.startIndex}-${block.supersetGroupId}`}
-                  className="space-y-3 rounded-xl border border-dashed border-yellow-500/40 bg-yellow-500/5 p-3 dark:border-yellow-400/35 dark:bg-yellow-400/5"
+                  className="border-primary/45 bg-primary/8 space-y-3 rounded-lg border border-dashed p-3"
                 >
-                  <div className="text-xs font-semibold uppercase tracking-[0.2em] text-yellow-700 dark:text-yellow-300">
+                  <div className="text-primary text-xs font-semibold tracking-[0.2em] uppercase">
                     Superset
                   </div>
                   <div className="space-y-4">
@@ -287,7 +281,7 @@ export default function Workouts({ workouts }: { workouts: WorkoutSummary[] }) {
     <Accordion
       type="single"
       collapsible
-      className="space-y-2"
+      className="space-y-3"
       value={openAccordionItem}
       onValueChange={handleAccordionValueChange}
     >

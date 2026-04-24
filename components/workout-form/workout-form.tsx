@@ -271,11 +271,16 @@ export default function WorkoutForm(props: WorkoutFormProps) {
     <form noValidate onSubmit={handleSubmit(onSubmit)} aria-busy={isSubmitting}>
       <WorkoutFormActionHeader saveStatus={saveStatus} />
 
-      <FieldSet disabled={isSubmitting} className="mx-auto max-w-2xl p-4">
+      <FieldSet
+        disabled={isSubmitting}
+        className="mx-auto w-full max-w-3xl px-4 py-5 sm:px-6"
+      >
         <WorkoutFormHeader control={control} />
 
-        <FieldSet>
-          <FieldLegend>Exercises</FieldLegend>
+        <FieldSet className="gap-4">
+          <FieldLegend className="text-primary text-sm font-semibold tracking-[0.2em] uppercase">
+            Exercises
+          </FieldLegend>
 
           {exerciseBlocks.map((block) => {
             const blockContent = block.exercises.map((_, offset) => {
@@ -362,9 +367,9 @@ export default function WorkoutForm(props: WorkoutFormProps) {
             return (
               <div
                 key={`superset-${renderExercises[block.startIndex]?.id ?? block.startIndex}`}
-                className="space-y-3 rounded-xl border border-dashed border-yellow-500/40 bg-yellow-500/5 p-3 dark:border-yellow-400/35 dark:bg-yellow-400/5"
+                className="border-primary/45 bg-primary/8 space-y-3 rounded-lg border border-dashed p-3"
               >
-                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-yellow-700 dark:text-yellow-300">
+                <div className="text-primary text-xs font-semibold tracking-[0.2em] uppercase">
                   Superset
                 </div>
                 <div className="space-y-4">{blockContent}</div>
@@ -388,7 +393,7 @@ export default function WorkoutForm(props: WorkoutFormProps) {
           </Button>
         </FieldSet>
 
-        <div className="rounded-lg border p-4">
+        <div className="border-border/80 bg-card rounded-lg border p-4 shadow-sm shadow-black/20">
           <Controller
             name="durationMinutes"
             control={control}
@@ -400,7 +405,7 @@ export default function WorkoutForm(props: WorkoutFormProps) {
               >
                 <FieldLabel
                   htmlFor={field.name}
-                  className="text-base font-semibold"
+                  className="text-muted-foreground text-sm font-semibold"
                 >
                   Workout Duration
                 </FieldLabel>
@@ -413,7 +418,7 @@ export default function WorkoutForm(props: WorkoutFormProps) {
                       min="1"
                       step="1"
                       inputMode="numeric"
-                      className="bg-background/50 hover:bg-background/80 h-11 w-full pr-12 text-center text-lg tabular-nums transition-colors"
+                      className="h-11 w-full pr-12 text-center text-lg tabular-nums"
                       value={field.value ?? ""}
                       onChange={(event) =>
                         field.onChange(

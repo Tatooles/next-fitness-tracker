@@ -2,6 +2,7 @@
 
 import { Download, Dumbbell, Home, ListChecks } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import {
   Sidebar,
@@ -15,7 +16,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { ThemeToggle } from "./theme-toggle";
 import { UserButton, useUser } from "@clerk/nextjs";
 
 const items = [
@@ -44,6 +44,7 @@ const items = [
 export function AppSidebar() {
   const { setOpenMobile, isMobile } = useSidebar();
   const { user } = useUser();
+  const pathname = usePathname() ?? "/";
 
   const handleLinkClick = () => {
     if (isMobile) {
@@ -54,13 +55,29 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarContent>
-        <SidebarGroup>
+        <SidebarGroup className="gap-5 p-3">
           <SidebarGroupContent>
-            <SidebarGroupLabel>Lifting Log</SidebarGroupLabel>
-            <SidebarMenu>
+            <SidebarGroupLabel className="text-sidebar-foreground mb-3 h-auto px-2 py-2 text-sm font-black tracking-wide">
+              <span className="flex items-center gap-2">
+                <span className="bg-sidebar-primary text-sidebar-primary-foreground flex size-8 items-center justify-center rounded-md">
+                  <Dumbbell className="size-4" />
+                </span>
+                Lifting Log
+              </span>
+            </SidebarGroupLabel>
+            <SidebarMenu className="gap-1.5">
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild size="lg" className="text-base">
+                  <SidebarMenuButton
+                    asChild
+                    size="lg"
+                    isActive={
+                      item.url === "/"
+                        ? pathname === item.url
+                        : pathname.startsWith(item.url)
+                    }
+                    className="text-base font-semibold"
+                  >
                     <Link
                       href={item.url}
                       onClick={handleLinkClick}
@@ -79,7 +96,7 @@ export function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <div className="flex items-center gap-3 rounded-lg px-3 py-2">
+            <div className="border-sidebar-border bg-sidebar-accent/45 flex items-center gap-3 rounded-lg border px-3 py-3">
               <UserButton
                 appearance={{
                   elements: {
@@ -89,14 +106,13 @@ export function AppSidebar() {
                 }}
               />
               <div className="flex min-w-0 flex-1 flex-col">
-                <span className="truncate text-base font-semibold">
+                <span className="truncate text-sm font-semibold">
                   {user?.fullName || user?.username || "User"}
                 </span>
-                <span className="text-muted-foreground truncate text-sm">
+                <span className="text-sidebar-foreground/55 truncate text-xs">
                   {user?.primaryEmailAddress?.emailAddress || ""}
                 </span>
               </div>
-              <ThemeToggle />
             </div>
           </SidebarMenuItem>
         </SidebarMenu>

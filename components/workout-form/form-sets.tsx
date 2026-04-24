@@ -29,9 +29,17 @@ export default function FormSets({
 
   return (
     <FieldSet className="flex flex-col gap-2">
-      <FieldLegend variant="label">Sets</FieldLegend>
+      <FieldLegend
+        variant="label"
+        className="text-muted-foreground text-xs font-semibold tracking-[0.18em] uppercase"
+      >
+        Sets
+      </FieldLegend>
       {fields.map((field, index) => (
-        <div key={field.id} className="flex items-center justify-between gap-2">
+        <div
+          key={field.id}
+          className="border-border/70 bg-secondary/45 flex items-center justify-between gap-2 rounded-md border p-2"
+        >
           <Controller
             name={`exercises.${exerciseIndex}.sets.${index}.weight`}
             control={control}
@@ -41,7 +49,7 @@ export default function FormSets({
                 id={field.name}
                 placeholder={templateExercise?.sets[index]?.weight ?? "Weight"}
                 inputMode="decimal"
-                className="w-20 text-[16px]"
+                className="h-10 w-20 text-center text-[16px]"
               />
             )}
           />
@@ -54,7 +62,7 @@ export default function FormSets({
                 id={field.name}
                 placeholder={templateExercise?.sets[index]?.reps ?? "Reps"}
                 inputMode="decimal"
-                className="w-16 text-[16px]"
+                className="h-10 w-16 text-center text-[16px]"
               />
             )}
           />
@@ -67,7 +75,7 @@ export default function FormSets({
                 id={field.name}
                 placeholder={templateExercise?.sets[index]?.rpe ?? "RPE"}
                 inputMode="decimal"
-                className="w-20 text-[16px]"
+                className="h-10 w-20 text-center text-[16px]"
               />
             )}
           />
@@ -76,7 +84,7 @@ export default function FormSets({
             variant="ghost"
             size="icon"
             onClick={() => remove(index)}
-            className="hover:bg-destructive/10 hover:text-destructive text-red-600 transition-colors"
+            className="text-destructive hover:bg-destructive/10 hover:text-destructive"
           >
             <Trash2 size={20} />
           </Button>
@@ -87,7 +95,6 @@ export default function FormSets({
           type="button"
           variant="outline"
           size="sm"
-          className="border-green-500 text-green-500 hover:bg-green-500 hover:text-white"
           onClick={() =>
             append({
               weight: "",
@@ -103,7 +110,6 @@ export default function FormSets({
             type="button"
             variant="outline"
             size="sm"
-            className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
             onClick={() =>
               append({
                 weight: getValues(

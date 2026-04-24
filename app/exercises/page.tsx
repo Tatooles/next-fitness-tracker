@@ -19,8 +19,13 @@ async function getExerciseSummary() {
 
 export default async function ExercisesPage() {
   return (
-    <div className="mx-auto max-w-2xl p-5 text-center">
-      <h1 className="mb-5 text-4xl font-semibold">Exercises</h1>
+    <div className="mx-auto flex max-w-3xl flex-col gap-5 px-5 py-6 sm:px-8">
+      <div>
+        <p className="text-primary text-sm font-semibold tracking-[0.24em] uppercase">
+          Movement History
+        </p>
+        <h1 className="mt-2 text-4xl font-black tracking-tight">Exercises</h1>
+      </div>
       <ExercisesUI exerciseSummaries={await getExerciseSummary()} />
     </div>
   );

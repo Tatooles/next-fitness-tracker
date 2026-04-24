@@ -74,12 +74,12 @@ export default function ExercisesUI({
       <Input
         type="search"
         placeholder="Search exercises"
-        className="mb-6 text-base"
+        className="text-base"
         onChange={(e) => {
           setInputValue(e.target.value);
         }}
       />
-      <Accordion type="single" collapsible className="space-y-2">
+      <Accordion type="single" collapsible className="space-y-3">
         {filteredList.map((exerciseSummary) => (
           <AccordionItem
             key={exerciseSummary.name}
@@ -87,7 +87,7 @@ export default function ExercisesUI({
           >
             <AccordionTrigger>
               <div className="flex w-full items-center justify-between pr-3">
-                <span>{exerciseSummary.name}</span>
+                <span className="text-base">{exerciseSummary.name}</span>
                 <span className="text-muted-foreground text-xs font-normal">
                   {getLastPerformedDate(exerciseSummary)}
                 </span>
@@ -102,6 +102,16 @@ export default function ExercisesUI({
           </AccordionItem>
         ))}
       </Accordion>
+      {filteredList.length === 0 && (
+        <div className="border-border/80 bg-card rounded-lg border p-6 text-center shadow-sm shadow-black/20">
+          <p className="text-foreground text-sm font-semibold">
+            No exercises found
+          </p>
+          <p className="text-muted-foreground mt-2 text-sm">
+            Logged exercises will appear here once workout data is available.
+          </p>
+        </div>
+      )}
     </>
   );
 }
