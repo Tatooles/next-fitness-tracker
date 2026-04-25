@@ -22,7 +22,7 @@ vi.mock("@/db/drizzle", () => ({
   },
 }));
 
-import { getExerciseSummaryForUser } from "@/lib/exercise-summary";
+import { getExerciseSummaryForUser } from "@/app/exercises/data";
 
 describe("getExerciseSummaryForUser", () => {
   let database: RouteTestDatabase;

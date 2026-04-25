@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import ExercisesUI from "@/components/exercise/exercises-ui";
-import { getExerciseSummaryForUser } from "@/lib/exercise-summary";
+import { getExerciseSummaryForUser } from "@/app/exercises/data";
 
 async function getExerciseSummary() {
   const { userId, redirectToSignIn } = await auth();
