@@ -130,4 +130,19 @@ describe("ExerciseSelector", () => {
       expect(queryCreateOption("Romanian Deadlift")).toBeNull();
     });
   });
+
+  it("uses a mobile-friendly command surface", async () => {
+    await renderSelector();
+
+    const content = document.querySelector('[data-slot="popover-content"]');
+    const list = document.querySelector('[data-slot="command-list"]');
+
+    expect(content?.className).toContain("w-[calc(100vw-2rem)]");
+    expect(content?.className).toContain(
+      "sm:w-[var(--radix-popover-trigger-width)]",
+    );
+    expect(list?.className).toContain(
+      "max-h-[min(calc(100vh-13rem),24rem)]",
+    );
+  });
 });

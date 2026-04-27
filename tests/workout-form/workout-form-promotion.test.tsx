@@ -197,6 +197,40 @@ describe("WorkoutForm promotion flow", () => {
     });
   });
 
+  it("places workout duration before the exercise list", async () => {
+    render(
+      <WorkoutForm
+        initialValues={buildWorkoutDraft()}
+        persistMode="update"
+        exerciseNames={exerciseNamesFixture}
+        workoutId={17}
+      />,
+    );
+
+    const durationLabel = await screen.findByText("Workout Duration");
+    const exercisesLegend = screen.getByText("Exercises");
+
+    expect(
+      durationLabel.compareDocumentPosition(exercisesLegend) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it("renders workout duration as a compact numeric field", async () => {
+    render(
+      <WorkoutForm
+        initialValues={buildWorkoutDraft()}
+        persistMode="update"
+        exerciseNames={exerciseNamesFixture}
+        workoutId={17}
+      />,
+    );
+
+    const durationInput = await screen.findByLabelText("Workout Duration");
+
+    expect(durationInput.className).toContain("w-36");
+  });
+
   it("does not re-fill a cleared create date on rerender with the same seed", async () => {
     vi.spyOn(Date.prototype, "toLocaleDateString").mockReturnValue(
       "2026-04-06",

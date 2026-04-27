@@ -11,7 +11,7 @@ interface WorkoutFormHeaderProps {
 
 export default function WorkoutFormHeader({ control }: WorkoutFormHeaderProps) {
   return (
-    <div className="border-border bg-card grid grid-cols-1 gap-4 rounded-lg border p-4 shadow-md shadow-black/25 sm:gap-5 md:grid-cols-3">
+    <div className="border-border bg-card grid min-w-0 grid-cols-1 gap-4 rounded-lg border p-4 shadow-md shadow-black/25 sm:gap-5 md:grid-cols-3">
       <Controller
         name="date"
         control={control}
@@ -52,6 +52,46 @@ export default function WorkoutFormHeader({ control }: WorkoutFormHeaderProps) {
               placeholder="Enter workout name"
               {...field}
             />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        )}
+      />
+      <Controller
+        name="durationMinutes"
+        control={control}
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid}>
+            <FieldLabel
+              htmlFor={field.name}
+              className="text-foreground/85 text-sm font-semibold"
+            >
+              Workout Duration
+            </FieldLabel>
+            <div className="relative w-36 max-w-full">
+              <Input
+                id={field.name}
+                aria-invalid={fieldState.invalid}
+                type="number"
+                min="1"
+                step="1"
+                inputMode="numeric"
+                className="h-10 w-36 max-w-full pr-10 text-center text-base tabular-nums sm:h-11 sm:pr-12"
+                value={field.value ?? ""}
+                onChange={(event) =>
+                  field.onChange(
+                    event.target.value === ""
+                      ? null
+                      : Number(event.target.value),
+                  )
+                }
+                onBlur={field.onBlur}
+                name={field.name}
+                ref={field.ref}
+              />
+              <span className="text-muted-foreground pointer-events-none absolute inset-y-0 right-2 flex items-center text-sm font-medium sm:right-3">
+                min
+              </span>
+            </div>
             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}

@@ -76,6 +76,57 @@ describe("ExerciseActionsMenu", () => {
     expect(screen.queryByText("Remove From Superset")).toBeNull();
   });
 
+  it("labels the trigger for assistive technology", () => {
+    render(
+      <ExerciseActionsMenu
+        exerciseName="Bench Press"
+        onDelete={() => {}}
+        onMoveUp={() => {}}
+        onMoveDown={() => {}}
+        onStartSupersetWithNext={() => {}}
+        onJoinPreviousSuperset={() => {}}
+        onRemoveFromSuperset={() => {}}
+        isFirst={false}
+        isLast={false}
+        canStartSupersetWithNext={true}
+        canJoinPreviousSuperset={true}
+        isInSuperset={false}
+      />,
+    );
+
+    expect(
+      screen.getByRole("button", {
+        name: "Exercise actions for Bench Press",
+      }),
+    ).toBeTruthy();
+  });
+
+  it("shows a change exercise action when a callback is provided", () => {
+    const onChangeExercise = vi.fn();
+
+    render(
+      <ExerciseActionsMenu
+        exerciseName="Bench Press"
+        onChangeExercise={onChangeExercise}
+        onDelete={() => {}}
+        onMoveUp={() => {}}
+        onMoveDown={() => {}}
+        onStartSupersetWithNext={() => {}}
+        onJoinPreviousSuperset={() => {}}
+        onRemoveFromSuperset={() => {}}
+        isFirst={false}
+        isLast={false}
+        canStartSupersetWithNext={false}
+        canJoinPreviousSuperset={false}
+        isInSuperset={false}
+      />,
+    );
+
+    fireEvent.click(screen.getByText("Change Exercise"));
+
+    expect(onChangeExercise).toHaveBeenCalledTimes(1);
+  });
+
   it("shows remove from superset for grouped exercises and hides create actions", () => {
     render(
       <ExerciseActionsMenu

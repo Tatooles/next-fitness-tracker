@@ -75,14 +75,17 @@ export default function ExerciseSelector({
           <ChevronsUpDown />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-full p-0" align="start">
+      <PopoverContent
+        className="w-[calc(100vw-2rem)] max-w-md p-0 sm:w-[var(--radix-popover-trigger-width)]"
+        align="start"
+      >
         <Command shouldFilter={false}>
           <CommandInput
             placeholder="Search or add exercise..."
             className="h-11 text-base"
             onInput={(e) => setSearchValue(e.currentTarget.value)}
           />
-          <CommandList>
+          <CommandList className="max-h-[min(calc(100vh-13rem),24rem)]">
             <CommandEmpty>No matching exercises.</CommandEmpty>
             <CommandGroup>
               {filteredExercises.map((exercise) => (
