@@ -37,7 +37,9 @@ describe("GET /api/exercises/history", () => {
   let database: RouteTestDatabase;
 
   beforeEach(async () => {
-    database = await createRouteTestDatabase();
+    database = await createRouteTestDatabase({
+      includeSupersetGroupId: false,
+    });
     dbRef.current = database.db;
     authState.userId = "user-1";
     authMock.mockImplementation(async () => ({ userId: authState.userId }));

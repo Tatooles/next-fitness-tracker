@@ -52,7 +52,7 @@ export default function ExerciseItem({
   templateExercise,
 }: ExerciseItemProps) {
   return (
-    <div className="space-y-4 rounded-lg border p-3">
+    <div className="border-border bg-card space-y-4 rounded-lg border p-3 shadow-md shadow-black/25 sm:p-4">
       <div className="flex items-center">
         <Controller
           control={control}
@@ -104,7 +104,7 @@ export default function ExerciseItem({
               id={field.name}
               aria-invalid={fieldState.invalid}
               placeholder="Add notes"
-              className="bg-background/50 hover:bg-background/80 resize-none text-base transition-colors"
+              className="resize-none text-base"
             />
             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>

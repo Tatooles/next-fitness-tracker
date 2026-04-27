@@ -5,45 +5,81 @@ import {
   CardContent,
   CardFooter,
   CardHeader,
+  CardDescription,
   CardTitle,
 } from "@/components/ui/card";
+import { Dumbbell, ListChecks } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="bg-background text-foreground flex flex-col items-center px-4 pt-6 text-center sm:px-6 sm:pt-10 md:min-h-[70vh] md:justify-center md:py-12 lg:px-8">
-      <h1 className="mb-8 text-4xl font-extrabold tracking-tight sm:mb-10 sm:text-5xl">
-        Track Your Strength Journey
-      </h1>
-      <div className="flex flex-col justify-center gap-6 sm:flex-row sm:gap-8">
-        <Card>
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-5 py-8 sm:px-8 lg:py-12">
+      <header className="max-w-3xl">
+        <p className="text-primary text-sm font-semibold tracking-[0.24em] uppercase">
+          Training Log
+        </p>
+        <h1 className="text-foreground mt-3 text-4xl font-black tracking-tight sm:text-5xl">
+          Lift, log, repeat.
+        </h1>
+        <p className="text-muted-foreground mt-4 max-w-2xl text-base leading-7">
+          A focused workspace for recording workouts, reviewing exercise
+          history, and keeping the details tight between sessions.
+        </p>
+      </header>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card className="min-h-64 justify-between">
           <CardHeader>
-            <CardTitle className="text-2xl sm:text-3xl">
-              Log Your Workouts
-            </CardTitle>
+            <div className="bg-primary text-primary-foreground mb-4 flex size-11 items-center justify-center rounded-md">
+              <Dumbbell className="size-5" />
+            </div>
+            <CardTitle className="text-2xl">Workouts</CardTitle>
+            <CardDescription>
+              Create sessions, edit details, duplicate previous days, and keep
+              notes close to the work.
+            </CardDescription>
           </CardHeader>
-          <CardContent className="text-muted-foreground">
-            Effortlessly create, view, and manage your training sessions. Record
-            every set, rep, and note to stay on top of your game.
+          <CardContent className="grid grid-cols-3 gap-2 text-center text-sm">
+            <div className="border-border/70 bg-secondary/70 rounded-md border p-3">
+              Sets
+            </div>
+            <div className="border-border/70 bg-secondary/70 rounded-md border p-3">
+              Notes
+            </div>
+            <div className="border-border/70 bg-secondary/70 rounded-md border p-3">
+              Time
+            </div>
           </CardContent>
-          <CardFooter className="justify-center">
-            <Button asChild size="lg" className="w-full sm:w-auto">
-              <Link href="/workouts">View Workouts</Link>
+          <CardFooter>
+            <Button asChild size="lg" className="w-full">
+              <Link href="/workouts">Open Workouts</Link>
             </Button>
           </CardFooter>
         </Card>
-        <Card>
+
+        <Card className="min-h-64 justify-between">
           <CardHeader>
-            <CardTitle className="text-2xl sm:text-3xl">
-              Analyze Your Progress
-            </CardTitle>
+            <div className="border-primary/40 bg-primary/15 text-primary mb-4 flex size-11 items-center justify-center rounded-md border">
+              <ListChecks className="size-5" />
+            </div>
+            <CardTitle className="text-2xl">Exercises</CardTitle>
+            <CardDescription>
+              Scan movement history, compare top sets, and review exercise
+              performance across workouts.
+            </CardDescription>
           </CardHeader>
-          <CardContent className="text-muted-foreground">
-            Dive into your exercise history. Compare performances, visualize
-            your strength gains, and stay motivated.
+          <CardContent className="space-y-2 text-sm">
+            <div className="border-border/70 bg-secondary/70 flex justify-between rounded-md border p-3">
+              <span className="text-muted-foreground">Heaviest rep</span>
+              <span className="text-foreground font-semibold">Tracked</span>
+            </div>
+            <div className="border-border/70 bg-secondary/70 flex justify-between rounded-md border p-3">
+              <span className="text-muted-foreground">Calculated 1RM</span>
+              <span className="text-foreground font-semibold">Estimated</span>
+            </div>
           </CardContent>
-          <CardFooter className="justify-center">
-            <Button asChild size="lg" className="w-full sm:w-auto">
-              <Link href="/exercises">View Exercises</Link>
+          <CardFooter>
+            <Button asChild variant="outline" size="lg" className="w-full">
+              <Link href="/exercises">Open Exercises</Link>
             </Button>
           </CardFooter>
         </Card>

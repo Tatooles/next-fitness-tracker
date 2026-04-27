@@ -40,8 +40,7 @@ export default function ExerciseSelector({
           exercise.toLocaleLowerCase().includes(normalizedSearchValue),
         );
   const hasExactExistingMatch = exercises.some(
-    (exercise) =>
-      exercise.trim().toLocaleLowerCase() === normalizedSearchValue,
+    (exercise) => exercise.trim().toLocaleLowerCase() === normalizedSearchValue,
   );
   const shouldShowCreateOption =
     trimmedSearchValue.length > 0 && !hasExactExistingMatch;
@@ -68,7 +67,7 @@ export default function ExerciseSelector({
           aria-expanded={open}
           title={displayValue}
           className={cn(
-            "bg-background/50 hover:bg-background/80 grid h-10 w-full flex-1 grid-cols-[minmax(0,1fr)_auto] text-base transition-colors sm:h-11",
+            "border-border bg-input hover:bg-input/90 grid h-10 w-full flex-1 grid-cols-[minmax(0,1fr)_auto] text-base shadow-sm shadow-black/20 transition-colors sm:h-11",
             !value && "text-muted-foreground",
           )}
         >

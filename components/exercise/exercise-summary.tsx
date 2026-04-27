@@ -69,10 +69,7 @@ export default function ExerciseSummaryComponent({
   return (
     <div className="flex flex-col gap-4">
       <ExerciseHistoryModal exerciseName={exerciseSummary.name}>
-        <Button
-          variant="outline"
-          className="hover:bg-primary/10 hover:text-primary w-full transition-colors"
-        >
+        <Button variant="outline" className="w-full">
           <History />
           View Exercise History
         </Button>
@@ -105,11 +102,9 @@ function SummaryItem({
   date?: string | null;
 }) {
   return (
-    <div className="flex items-center justify-between rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
-      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-        {label}
-      </span>
-      <span className="rounded-full bg-amber-100 px-3 py-1 text-sm font-semibold text-amber-800 dark:bg-amber-700 dark:text-amber-100">
+    <div className="border-border/70 bg-secondary/70 flex items-center justify-between rounded-lg border p-3">
+      <span className="text-muted-foreground text-sm font-medium">{label}</span>
+      <span className="border-primary/30 bg-primary/12 text-foreground rounded-full border px-3 py-1 text-sm font-semibold">
         {value} {unit && unit}
         {date && (
           <>

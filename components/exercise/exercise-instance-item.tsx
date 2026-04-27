@@ -13,9 +13,9 @@ export default function ExerciseInstanceItem({
   const { name, date, sets, notes, workoutName } = exercise;
 
   return (
-    <div className="border-border overflow-hidden rounded-lg border shadow-xs">
+    <div className="border-border/80 bg-card overflow-hidden rounded-lg border shadow-xs shadow-black/20">
       {(showName || showDate) && (
-        <div className="border-border border-b p-4">
+        <div className="border-border/80 bg-secondary/35 border-b p-4">
           {showName && (
             <h3 className="text-card-foreground text-xl font-semibold">
               {name}
@@ -28,7 +28,7 @@ export default function ExerciseInstanceItem({
               </p>
             )}
             {workoutName && (
-              <span className="bg-primary/10 text-primary max-w-[180px] truncate rounded-full px-2.5 py-0.5 text-xs font-medium">
+              <span className="border-primary/30 bg-primary/12 text-primary max-w-[180px] truncate rounded-full border px-2.5 py-0.5 text-xs font-medium">
                 {workoutName}
               </span>
             )}
@@ -39,7 +39,7 @@ export default function ExerciseInstanceItem({
         {sets.length > 0 && (
           <div className="mt-2">
             {/* Header Row */}
-            <div className="border-border text-muted-foreground mb-2 flex border-b pb-2 text-sm font-medium">
+            <div className="border-border/80 text-muted-foreground mb-2 flex border-b pb-2 text-sm font-medium">
               <div className="w-1/3 px-1 text-center">Weight</div>
               <div className="w-1/3 px-1 text-center">Reps</div>
               <div className="w-1/3 px-1 text-center">RPE</div>
@@ -48,7 +48,10 @@ export default function ExerciseInstanceItem({
             {sets.map(
               (set: Set, index) =>
                 (set.reps || set.weight || set.rpe) && (
-                  <div key={index} className="flex py-1.5 text-sm">
+                  <div
+                    key={index}
+                    className="odd:bg-secondary/35 flex rounded-md py-1.5 text-sm"
+                  >
                     <div className="w-1/3 px-1 text-center">
                       {set.weight || "-"}
                     </div>

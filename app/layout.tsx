@@ -33,8 +33,8 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+    { media: "(prefers-color-scheme: light)", color: "#faf8f6" },
+    { media: "(prefers-color-scheme: dark)", color: "#050505" },
   ],
 };
 
@@ -47,12 +47,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <ClerkProvider afterSignOutUrl="/">
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
+          <ThemeProvider disableTransitionOnChange>
             <SidebarProvider>
               <AppSidebar />
               <div id="modal"></div>

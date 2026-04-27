@@ -11,7 +11,7 @@ interface WorkoutFormHeaderProps {
 
 export default function WorkoutFormHeader({ control }: WorkoutFormHeaderProps) {
   return (
-    <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3">
+    <div className="border-border bg-card grid grid-cols-1 gap-4 rounded-lg border p-4 shadow-md shadow-black/25 sm:gap-5 md:grid-cols-3">
       <Controller
         name="date"
         control={control}
@@ -19,7 +19,7 @@ export default function WorkoutFormHeader({ control }: WorkoutFormHeaderProps) {
           <Field data-invalid={fieldState.invalid}>
             <FieldLabel
               htmlFor={field.name}
-              className="text-base font-semibold"
+              className="text-foreground/85 text-sm font-semibold"
             >
               Date
             </FieldLabel>
@@ -27,7 +27,7 @@ export default function WorkoutFormHeader({ control }: WorkoutFormHeaderProps) {
               id={field.name}
               aria-invalid={fieldState.invalid}
               type="date"
-              className="bg-background/50 hover:bg-background/80 h-10 w-full text-base transition-colors sm:h-11"
+              className="h-10 w-full text-base sm:h-11"
               {...field}
             />
             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -41,14 +41,14 @@ export default function WorkoutFormHeader({ control }: WorkoutFormHeaderProps) {
           <Field data-invalid={fieldState.invalid}>
             <FieldLabel
               htmlFor={field.name}
-              className="text-base font-semibold"
+              className="text-foreground/85 text-sm font-semibold"
             >
               Workout Name
             </FieldLabel>
             <Input
               id={field.name}
               aria-invalid={fieldState.invalid}
-              className="bg-background/50 hover:bg-background/80 h-10 text-base transition-colors sm:h-11"
+              className="h-10 text-base sm:h-11"
               placeholder="Enter workout name"
               {...field}
             />
@@ -63,7 +63,7 @@ export default function WorkoutFormHeader({ control }: WorkoutFormHeaderProps) {
           <Field data-invalid={fieldState.invalid} className="md:col-span-3">
             <FieldLabel
               htmlFor={field.name}
-              className="text-base font-semibold"
+              className="text-foreground/85 text-sm font-semibold"
             >
               Workout Notes
             </FieldLabel>
@@ -71,7 +71,7 @@ export default function WorkoutFormHeader({ control }: WorkoutFormHeaderProps) {
               id={field.name}
               aria-invalid={fieldState.invalid}
               placeholder="Add overall workout notes"
-              className="bg-background/50 hover:bg-background/80 min-h-24 resize-y text-base transition-colors"
+              className="min-h-24 resize-y text-base"
               {...field}
             />
             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
