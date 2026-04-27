@@ -4,6 +4,7 @@ import { Download, Dumbbell, Home, ListChecks } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { ThemeToggle } from "@/components/theme-toggle";
 import {
   Sidebar,
   SidebarContent,
@@ -94,7 +95,10 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <SidebarMenu>
+        <SidebarMenu className="gap-2">
+          <SidebarMenuItem>
+            <ThemeToggle />
+          </SidebarMenuItem>
           <SidebarMenuItem>
             <div className="border-sidebar-border bg-sidebar-accent/45 flex items-center gap-3 rounded-lg border px-3 py-3">
               <UserButton

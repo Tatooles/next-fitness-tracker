@@ -4,18 +4,25 @@ import React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 
+import { ThemeProvider } from "@/components/theme-provider";
 import { SidebarProvider } from "@/components/ui/sidebar";
 
 vi.mock("next/link", () => ({
-  default: ({
-    href,
-    children,
-    ...props
-  }: React.AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }) => (
-    <a href={href} {...props}>
-      {children}
-    </a>
-  ),
+  default: (
+    props: React.AnchorHTMLAttributes<HTMLAnchorElement> & {
+      href: string;
+      prefetch?: boolean;
+    },
+  ) => {
+    const { href, children, prefetch, ...anchorProps } = props;
+    void prefetch;
+
+    return (
+      <a href={href} {...anchorProps}>
+        {children}
+      </a>
+    );
+  },
 }));
 
 vi.mock("@clerk/nextjs", () => ({
@@ -55,15 +62,17 @@ describe("AppSidebar", () => {
     vi.restoreAllMocks();
   });
 
-  it("does not expose light or system theme controls", () => {
+  it("exposes light, system, and dark theme controls", () => {
     render(
-      <SidebarProvider>
-        <AppSidebar />
-      </SidebarProvider>,
+      <ThemeProvider>
+        <SidebarProvider>
+          <AppSidebar />
+        </SidebarProvider>
+      </ThemeProvider>,
     );
 
-    expect(screen.queryByText("Light")).toBeNull();
-    expect(screen.queryByText("System")).toBeNull();
-    expect(screen.queryByLabelText("Toggle theme")).toBeNull();
+    expect(screen.getByLabelText("Light theme")).toBeTruthy();
+    expect(screen.getByLabelText("System theme")).toBeTruthy();
+    expect(screen.getByLabelText("Dark theme")).toBeTruthy();
   });
 });

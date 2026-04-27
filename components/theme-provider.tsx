@@ -1,23 +1,18 @@
 "use client";
 
-import * as React from "react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
+import type * as React from "react";
 
 export function ThemeProvider({
   children,
   ...props
 }: React.ComponentProps<typeof NextThemesProvider>) {
-  React.useEffect(() => {
-    document.documentElement.classList.add("dark");
-  }, []);
-
   return (
     <NextThemesProvider
       {...props}
       attribute="class"
-      defaultTheme="dark"
-      forcedTheme="dark"
-      enableSystem={false}
+      defaultTheme="system"
+      enableSystem
     >
       {children}
     </NextThemesProvider>

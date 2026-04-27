@@ -28,16 +28,16 @@ describe("ThemeProvider", () => {
     vi.restoreAllMocks();
   });
 
-  it("renders children while forcing the app into dark mode", async () => {
+  it("renders children without forcing the app into dark mode", async () => {
     render(
       <ThemeProvider>
-        <div>Dark-only app</div>
+        <div>Theme-aware app</div>
       </ThemeProvider>,
     );
 
-    expect(screen.getByText("Dark-only app")).toBeTruthy();
+    expect(screen.getByText("Theme-aware app")).toBeTruthy();
     await waitFor(() => {
-      expect(document.documentElement.classList.contains("dark")).toBe(true);
+      expect(document.documentElement.classList.contains("dark")).toBe(false);
     });
   });
 });
