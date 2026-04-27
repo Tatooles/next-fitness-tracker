@@ -52,7 +52,7 @@ export default function ExerciseItem({
   templateExercise,
 }: ExerciseItemProps) {
   return (
-    <div className="border-border/80 bg-card space-y-4 rounded-lg border p-3 shadow-sm shadow-black/20 sm:p-4">
+    <div className="border-border bg-card space-y-4 rounded-lg border p-3 shadow-md shadow-black/25 sm:p-4">
       <div className="flex items-center">
         <Controller
           control={control}

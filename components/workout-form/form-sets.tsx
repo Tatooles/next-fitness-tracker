@@ -31,14 +31,14 @@ export default function FormSets({
     <FieldSet className="flex flex-col gap-2">
       <FieldLegend
         variant="label"
-        className="text-muted-foreground text-xs font-semibold tracking-[0.18em] uppercase"
+        className="text-foreground/80 text-xs font-semibold tracking-[0.18em] uppercase"
       >
         Sets
       </FieldLegend>
       {fields.map((field, index) => (
         <div
           key={field.id}
-          className="border-border/70 bg-secondary/45 flex items-center justify-between gap-2 rounded-md border p-2"
+          className="flex items-center justify-between gap-2 rounded-md py-1"
         >
           <Controller
             name={`exercises.${exerciseIndex}.sets.${index}.weight`}

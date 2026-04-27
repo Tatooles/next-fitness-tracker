@@ -11,7 +11,7 @@ interface WorkoutFormHeaderProps {
 
 export default function WorkoutFormHeader({ control }: WorkoutFormHeaderProps) {
   return (
-    <div className="border-border/80 bg-card grid grid-cols-1 gap-4 rounded-lg border p-4 shadow-sm shadow-black/20 sm:gap-5 md:grid-cols-3">
+    <div className="border-border bg-card grid grid-cols-1 gap-4 rounded-lg border p-4 shadow-md shadow-black/25 sm:gap-5 md:grid-cols-3">
       <Controller
         name="date"
         control={control}
@@ -19,7 +19,7 @@ export default function WorkoutFormHeader({ control }: WorkoutFormHeaderProps) {
           <Field data-invalid={fieldState.invalid}>
             <FieldLabel
               htmlFor={field.name}
-              className="text-muted-foreground text-sm font-semibold"
+              className="text-foreground/85 text-sm font-semibold"
             >
               Date
             </FieldLabel>
@@ -41,7 +41,7 @@ export default function WorkoutFormHeader({ control }: WorkoutFormHeaderProps) {
           <Field data-invalid={fieldState.invalid}>
             <FieldLabel
               htmlFor={field.name}
-              className="text-muted-foreground text-sm font-semibold"
+              className="text-foreground/85 text-sm font-semibold"
             >
               Workout Name
             </FieldLabel>
@@ -63,7 +63,7 @@ export default function WorkoutFormHeader({ control }: WorkoutFormHeaderProps) {
           <Field data-invalid={fieldState.invalid} className="md:col-span-3">
             <FieldLabel
               htmlFor={field.name}
-              className="text-muted-foreground text-sm font-semibold"
+              className="text-foreground/85 text-sm font-semibold"
             >
               Workout Notes
             </FieldLabel>

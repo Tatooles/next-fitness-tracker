@@ -367,7 +367,7 @@ export default function WorkoutForm(props: WorkoutFormProps) {
             return (
               <div
                 key={`superset-${renderExercises[block.startIndex]?.id ?? block.startIndex}`}
-                className="border-primary/45 bg-primary/8 space-y-3 rounded-lg border border-dashed p-3"
+                className="border-primary/60 bg-primary/12 space-y-3 rounded-lg border border-dashed p-3"
               >
                 <div className="text-primary text-xs font-semibold tracking-[0.2em] uppercase">
                   Superset
@@ -393,7 +393,7 @@ export default function WorkoutForm(props: WorkoutFormProps) {
           </Button>
         </FieldSet>
 
-        <div className="border-border/80 bg-card rounded-lg border p-4 shadow-sm shadow-black/20">
+        <div className="border-border bg-card rounded-lg border p-4 shadow-md shadow-black/25">
           <Controller
             name="durationMinutes"
             control={control}
@@ -405,7 +405,7 @@ export default function WorkoutForm(props: WorkoutFormProps) {
               >
                 <FieldLabel
                   htmlFor={field.name}
-                  className="text-muted-foreground text-sm font-semibold"
+                  className="text-foreground/85 text-sm font-semibold"
                 >
                   Workout Duration
                 </FieldLabel>
