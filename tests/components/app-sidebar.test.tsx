@@ -25,6 +25,10 @@ vi.mock("next/link", () => ({
   },
 }));
 
+vi.mock("next/navigation", () => ({
+  usePathname: () => "/workouts/create",
+}));
+
 vi.mock("@clerk/nextjs", () => ({
   UserButton: () => <button type="button">User menu</button>,
   useUser: () => ({
