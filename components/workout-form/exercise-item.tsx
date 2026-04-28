@@ -77,6 +77,13 @@ export default function ExerciseItem({
                       setIsChangingExercise(false);
                     }}
                     exercises={exercises}
+                    openOnMount={shouldShowExerciseSelector}
+                    hideTriggerWhenOpen={shouldShowExerciseSelector}
+                    onOpenChange={(nextOpen) => {
+                      if (!nextOpen && exerciseName) {
+                        setIsChangingExercise(false);
+                      }
+                    }}
                   />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />

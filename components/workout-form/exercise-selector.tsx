@@ -21,14 +21,20 @@ interface ExerciseSelectorProps {
   value: string;
   onChange: (value: string) => void;
   exercises: string[];
+  openOnMount?: boolean;
+  hideTriggerWhenOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export default function ExerciseSelector({
   value,
   onChange,
   exercises,
+  openOnMount = false,
+  hideTriggerWhenOpen = false,
+  onOpenChange,
 }: ExerciseSelectorProps) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(openOnMount);
   const [searchValue, setSearchValue] = useState("");
   const displayValue = value || "Select exercise";
   const trimmedSearchValue = searchValue.trim();
@@ -51,11 +57,55 @@ export default function ExerciseSelector({
     }
 
     setOpen(nextOpen);
+    onOpenChange?.(nextOpen);
   }
 
   function handleExerciseSelect(nextValue: string) {
     onChange(nextValue);
-    setOpen(false);
+    handleOpenChange(false);
+  }
+
+  const shouldHideTrigger = hideTriggerWhenOpen && open;
+  const commandSurface = (
+    <Command shouldFilter={false}>
+      <CommandInput
+        placeholder="Search or add exercise..."
+        className="h-11 text-base"
+        onInput={(e) => setSearchValue(e.currentTarget.value)}
+      />
+      <CommandList className="max-h-[min(calc(100vh-13rem),24rem)]">
+        <CommandEmpty>No matching exercises.</CommandEmpty>
+        <CommandGroup>
+          {filteredExercises.map((exercise) => (
+            <CommandItem
+              value={exercise}
+              key={exercise}
+              onSelect={() => handleExerciseSelect(exercise)}
+              className="hover:bg-primary/10 cursor-pointer text-base transition-colors"
+            >
+              {exercise}
+            </CommandItem>
+          ))}
+          {shouldShowCreateOption && (
+            <CommandItem
+              value={trimmedSearchValue}
+              onSelect={() => handleExerciseSelect(trimmedSearchValue)}
+              className="hover:bg-primary/10 cursor-pointer text-base transition-colors"
+            >
+              Add &quot;{trimmedSearchValue}&quot;
+            </CommandItem>
+          )}
+        </CommandGroup>
+      </CommandList>
+    </Command>
+  );
+
+  if (shouldHideTrigger) {
+    return (
+      <div className="bg-popover text-popover-foreground w-full overflow-hidden rounded-md border p-0 shadow-md">
+        {commandSurface}
+      </div>
+    );
   }
 
   return (
@@ -78,38 +128,10 @@ export default function ExerciseSelector({
       <PopoverContent
         className="w-[calc(100vw-2rem)] max-w-md p-0 sm:w-[var(--radix-popover-trigger-width)]"
         align="start"
+        side="bottom"
+        avoidCollisions={false}
       >
-        <Command shouldFilter={false}>
-          <CommandInput
-            placeholder="Search or add exercise..."
-            className="h-11 text-base"
-            onInput={(e) => setSearchValue(e.currentTarget.value)}
-          />
-          <CommandList className="max-h-[min(calc(100vh-13rem),24rem)]">
-            <CommandEmpty>No matching exercises.</CommandEmpty>
-            <CommandGroup>
-              {filteredExercises.map((exercise) => (
-                <CommandItem
-                  value={exercise}
-                  key={exercise}
-                  onSelect={() => handleExerciseSelect(exercise)}
-                  className="hover:bg-primary/10 cursor-pointer text-base transition-colors"
-                >
-                  {exercise}
-                </CommandItem>
-              ))}
-              {shouldShowCreateOption && (
-                <CommandItem
-                  value={trimmedSearchValue}
-                  onSelect={() => handleExerciseSelect(trimmedSearchValue)}
-                  className="hover:bg-primary/10 cursor-pointer text-base transition-colors"
-                >
-                  Add &quot;{trimmedSearchValue}&quot;
-                </CommandItem>
-              )}
-            </CommandGroup>
-          </CommandList>
-        </Command>
+        {commandSurface}
       </PopoverContent>
     </Popover>
   );

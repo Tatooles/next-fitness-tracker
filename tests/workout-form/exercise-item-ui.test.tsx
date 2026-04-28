@@ -11,15 +11,32 @@ vi.mock("@/components/workout-form/exercise-selector", () => ({
   default: ({
     value,
     onChange,
+    openOnMount,
+    hideTriggerWhenOpen,
   }: {
     value: string;
     onChange: (value: string) => void;
     exercises: string[];
-  }) => (
-    <button type="button" onClick={() => onChange("Overhead Press")}>
-      {value || "Select exercise"}
-    </button>
-  ),
+    openOnMount?: boolean;
+    hideTriggerWhenOpen?: boolean;
+  }) =>
+    openOnMount && hideTriggerWhenOpen ? (
+      <div
+        role="dialog"
+        data-open-on-mount={String(Boolean(openOnMount))}
+        onClick={() => onChange("Overhead Press")}
+      >
+        Selector open for {value || "new exercise"}
+      </div>
+    ) : (
+      <button
+        type="button"
+        data-open-on-mount={String(Boolean(openOnMount))}
+        onClick={() => onChange("Overhead Press")}
+      >
+        {value || "Select exercise"}
+      </button>
+    ),
 }));
 
 vi.mock("@/components/workout-form/exercise-actions-menu", () => ({
@@ -51,9 +68,21 @@ const workoutDraftFixture: WorkoutDraft = {
   ],
 };
 
-function ExerciseItemHarness() {
+function ExerciseItemHarness({
+  exerciseName = "Bench Press",
+}: {
+  exerciseName?: string;
+} = {}) {
   const form = useForm<WorkoutDraft>({
-    defaultValues: workoutDraftFixture,
+    defaultValues: {
+      ...workoutDraftFixture,
+      exercises: [
+        {
+          ...workoutDraftFixture.exercises[0],
+          name: exerciseName,
+        },
+      ],
+    },
   });
 
   return (
@@ -62,7 +91,7 @@ function ExerciseItemHarness() {
       control={form.control}
       getValues={form.getValues}
       exercises={["Bench Press", "Overhead Press"]}
-      exerciseName="Bench Press"
+      exerciseName={exerciseName}
       onRemove={() => {}}
       onMoveUp={() => {}}
       onMoveDown={() => {}}
@@ -100,7 +129,9 @@ describe("ExerciseItem UI", () => {
       screen.getByRole("button", { name: "Actions for Bench Press" }),
     );
 
-    expect(screen.getByRole("button", { name: "Bench Press" })).toBeTruthy();
+    expect(screen.getByRole("dialog").textContent).toBe(
+      "Selector open for Bench Press",
+    );
   });
 
   it("replaces the exercise heading with the selector when changing exercise", () => {
@@ -111,6 +142,32 @@ describe("ExerciseItem UI", () => {
     );
 
     expect(screen.queryByRole("heading", { name: "Bench Press" })).toBeNull();
-    expect(screen.getByRole("button", { name: "Bench Press" })).toBeTruthy();
+    expect(screen.getByRole("dialog").textContent).toBe(
+      "Selector open for Bench Press",
+    );
+  });
+
+  it("opens the selector immediately when changing exercise", () => {
+    render(<ExerciseItemHarness />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Actions for Bench Press" }),
+    );
+
+    expect(
+      screen
+        .getByRole("dialog")
+        .getAttribute("data-open-on-mount"),
+    ).toBe("true");
+  });
+
+  it("opens the selector immediately for blank exercises", () => {
+    render(<ExerciseItemHarness exerciseName="" />);
+
+    expect(
+      screen
+        .getByRole("dialog")
+        .getAttribute("data-open-on-mount"),
+    ).toBe("true");
   });
 });

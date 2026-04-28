@@ -57,6 +57,38 @@ describe("ExerciseSelector", () => {
     expect(onChange).toHaveBeenCalledWith("Bench Press");
   });
 
+  it("can open the search surface immediately", async () => {
+    render(
+      <ExerciseSelector
+        value="Bench Press"
+        onChange={() => {}}
+        exercises={["Bench Press", "Overhead Press"]}
+        openOnMount={true}
+      />,
+    );
+
+    expect(
+      await screen.findByPlaceholderText("Search or add exercise..."),
+    ).toBeTruthy();
+  });
+
+  it("can hide the combobox trigger while the search surface is open", async () => {
+    render(
+      <ExerciseSelector
+        value="Bench Press"
+        onChange={() => {}}
+        exercises={["Bench Press", "Overhead Press"]}
+        openOnMount={true}
+        hideTriggerWhenOpen={true}
+      />,
+    );
+
+    expect(screen.queryByRole("combobox", { name: "Bench Press" })).toBeNull();
+    expect(
+      await screen.findByPlaceholderText("Search or add exercise..."),
+    ).toBeTruthy();
+  });
+
   it('shows an add option for a non-empty custom value', async () => {
     const { user, input } = await renderSelector();
 
