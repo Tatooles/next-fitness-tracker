@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -36,6 +36,7 @@ export default function ExerciseSelector({
 }: ExerciseSelectorProps) {
   const [open, setOpen] = useState(openOnMount);
   const [searchValue, setSearchValue] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const displayValue = value || "Select exercise";
   const trimmedSearchValue = searchValue.trim();
   const normalizedSearchValue = trimmedSearchValue.toLocaleLowerCase();
@@ -50,6 +51,16 @@ export default function ExerciseSelector({
   );
   const shouldShowCreateOption =
     trimmedSearchValue.length > 0 && !hasExactExistingMatch;
+
+  useEffect(() => {
+    if (open) {
+      const focusTimeout = window.setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 0);
+
+      return () => window.clearTimeout(focusTimeout);
+    }
+  }, [open]);
 
   function handleOpenChange(nextOpen: boolean) {
     if (nextOpen) {
@@ -69,6 +80,8 @@ export default function ExerciseSelector({
   const commandSurface = (
     <Command shouldFilter={false}>
       <CommandInput
+        ref={searchInputRef}
+        autoFocus
         placeholder="Search or add exercise..."
         className="h-11 text-base"
         onInput={(e) => setSearchValue(e.currentTarget.value)}
@@ -134,7 +147,6 @@ export default function ExerciseSelector({
         className="w-[calc(100vw-2rem)] max-w-md p-0 sm:w-[var(--radix-popover-trigger-width)]"
         align="start"
         side="bottom"
-        avoidCollisions={false}
       >
         {commandSurface}
       </PopoverContent>

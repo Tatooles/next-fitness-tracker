@@ -72,6 +72,32 @@ describe("ExerciseSelector", () => {
     ).toBeTruthy();
   });
 
+  it("focuses the search input when opened immediately", async () => {
+    render(
+      <ExerciseSelector
+        value="Bench Press"
+        onChange={() => {}}
+        exercises={["Bench Press", "Overhead Press"]}
+        openOnMount={true}
+        hideTriggerWhenOpen={true}
+      />,
+    );
+
+    const input = await screen.findByPlaceholderText("Search or add exercise...");
+
+    await waitFor(() => {
+      expect(document.activeElement).toBe(input);
+    });
+  });
+
+  it("focuses the search input when the popover opens from the trigger", async () => {
+    const { input } = await renderSelector();
+
+    await waitFor(() => {
+      expect(document.activeElement).toBe(input);
+    });
+  });
+
   it("can hide the combobox trigger while the search surface is open", async () => {
     render(
       <ExerciseSelector
