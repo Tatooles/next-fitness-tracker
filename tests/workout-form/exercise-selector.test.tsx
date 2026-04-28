@@ -89,6 +89,27 @@ describe("ExerciseSelector", () => {
     ).toBeTruthy();
   });
 
+  it("notifies direct-open callers when Escape closes the search surface", async () => {
+    const user = userEvent.setup();
+    const onOpenChange = vi.fn();
+
+    render(
+      <ExerciseSelector
+        value="Bench Press"
+        onChange={() => {}}
+        exercises={["Bench Press", "Overhead Press"]}
+        openOnMount={true}
+        hideTriggerWhenOpen={true}
+        onOpenChange={onOpenChange}
+      />,
+    );
+
+    const input = await screen.findByPlaceholderText("Search or add exercise...");
+    await user.type(input, "{Escape}");
+
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
+
   it('shows an add option for a non-empty custom value', async () => {
     const { user, input } = await renderSelector();
 

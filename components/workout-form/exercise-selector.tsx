@@ -72,6 +72,11 @@ export default function ExerciseSelector({
         placeholder="Search or add exercise..."
         className="h-11 text-base"
         onInput={(e) => setSearchValue(e.currentTarget.value)}
+        onKeyDown={(event) => {
+          if (event.key === "Escape" && hideTriggerWhenOpen) {
+            handleOpenChange(false);
+          }
+        }}
       />
       <CommandList className="max-h-[min(calc(100vh-13rem),24rem)]">
         <CommandEmpty>No matching exercises.</CommandEmpty>
