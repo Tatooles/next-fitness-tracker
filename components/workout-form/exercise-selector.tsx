@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -36,6 +36,7 @@ export default function ExerciseSelector({
 }: ExerciseSelectorProps) {
   const [open, setOpen] = useState(openOnMount);
   const [searchValue, setSearchValue] = useState("");
+  const directOpenSurfaceRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const displayValue = value || "Select exercise";
   const trimmedSearchValue = searchValue.trim();
@@ -62,14 +63,14 @@ export default function ExerciseSelector({
     }
   }, [open]);
 
-  function handleOpenChange(nextOpen: boolean) {
+  const handleOpenChange = useCallback((nextOpen: boolean) => {
     if (nextOpen) {
       setSearchValue("");
     }
 
     setOpen(nextOpen);
     onOpenChange?.(nextOpen);
-  }
+  }, [onOpenChange]);
 
   function handleExerciseSelect(nextValue: string) {
     onChange(nextValue);
@@ -77,6 +78,30 @@ export default function ExerciseSelector({
   }
 
   const shouldHideTrigger = hideTriggerWhenOpen && open;
+
+  useEffect(() => {
+    if (!shouldHideTrigger) {
+      return;
+    }
+
+    function handlePointerDown(event: PointerEvent) {
+      const target = event.target;
+
+      if (
+        target instanceof Node &&
+        !directOpenSurfaceRef.current?.contains(target)
+      ) {
+        handleOpenChange(false);
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+    };
+  }, [handleOpenChange, shouldHideTrigger]);
+
   const commandSurface = (
     <Command shouldFilter={false}>
       <CommandInput
@@ -120,7 +145,10 @@ export default function ExerciseSelector({
 
   if (shouldHideTrigger) {
     return (
-      <div className="bg-popover text-popover-foreground w-full overflow-hidden rounded-md border p-0 shadow-md">
+      <div
+        ref={directOpenSurfaceRef}
+        className="bg-popover text-popover-foreground w-full overflow-hidden rounded-md border p-0 shadow-md"
+      >
         {commandSurface}
       </div>
     );

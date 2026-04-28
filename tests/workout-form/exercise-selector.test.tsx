@@ -136,6 +136,30 @@ describe("ExerciseSelector", () => {
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 
+  it("notifies direct-open callers when tapping outside closes the search surface", async () => {
+    const user = userEvent.setup();
+    const onOpenChange = vi.fn();
+
+    render(
+      <>
+        <button type="button">Outside target</button>
+        <ExerciseSelector
+          value="Bench Press"
+          onChange={() => {}}
+          exercises={["Bench Press", "Overhead Press"]}
+          openOnMount={true}
+          hideTriggerWhenOpen={true}
+          onOpenChange={onOpenChange}
+        />
+      </>,
+    );
+
+    await screen.findByPlaceholderText("Search or add exercise...");
+    await user.click(screen.getByRole("button", { name: "Outside target" }));
+
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
+
   it('shows an add option for a non-empty custom value', async () => {
     const { user, input } = await renderSelector();
 
