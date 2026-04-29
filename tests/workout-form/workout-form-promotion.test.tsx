@@ -197,6 +197,60 @@ describe("WorkoutForm promotion flow", () => {
     });
   });
 
+  it("places workout duration before the exercise list", async () => {
+    render(
+      <WorkoutForm
+        initialValues={buildWorkoutDraft()}
+        persistMode="update"
+        exerciseNames={exerciseNamesFixture}
+        workoutId={17}
+      />,
+    );
+
+    const durationLabel = await screen.findByText("Workout Duration");
+    const exercisesLegend = screen.getByText("Exercises");
+
+    expect(
+      durationLabel.compareDocumentPosition(exercisesLegend) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it("renders workout duration as a compact numeric field", async () => {
+    render(
+      <WorkoutForm
+        initialValues={buildWorkoutDraft()}
+        persistMode="update"
+        exerciseNames={exerciseNamesFixture}
+        workoutId={17}
+      />,
+    );
+
+    const durationInput = await screen.findByLabelText("Workout Duration");
+
+    expect(durationInput.className).toContain("w-full");
+    expect(durationInput.className).toContain("text-center");
+  });
+
+  it("groups workout date and duration in a compact metadata row", async () => {
+    render(
+      <WorkoutForm
+        initialValues={buildWorkoutDraft()}
+        persistMode="update"
+        exerciseNames={exerciseNamesFixture}
+        workoutId={17}
+      />,
+    );
+
+    const dateInput = await screen.findByLabelText("Date");
+    const metadataRow = dateInput.closest('[data-slot="field"]')?.parentElement;
+
+    expect(metadataRow?.className).toContain(
+      "grid-cols-[minmax(0,1fr)_8rem]",
+    );
+    expect(metadataRow?.textContent).toContain("Workout Duration");
+  });
+
   it("does not re-fill a cleared create date on rerender with the same seed", async () => {
     vi.spyOn(Date.prototype, "toLocaleDateString").mockReturnValue(
       "2026-04-06",

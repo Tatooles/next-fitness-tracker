@@ -1,7 +1,8 @@
 "use client";
+import { useState } from "react";
 import { Controller, Control, UseFormGetValues } from "react-hook-form";
 import { Textarea } from "@/components/ui/textarea";
-import { Field, FieldError } from "@/components/ui/field";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import ExerciseSelector from "@/components/workout-form/exercise-selector";
 import ExerciseActionsMenu from "@/components/workout-form/exercise-actions-menu";
 import FormSets from "@/components/workout-form/form-sets";
@@ -51,39 +52,68 @@ export default function ExerciseItem({
   workoutId,
   templateExercise,
 }: ExerciseItemProps) {
+  const exerciseTitle = exerciseName || `Exercise ${index + 1}`;
+  const [isChangingExercise, setIsChangingExercise] = useState(!exerciseName);
+  const shouldShowExerciseSelector = !exerciseName || isChangingExercise;
+
   return (
-    <div className="border-border bg-card space-y-4 rounded-lg border p-3 shadow-md shadow-black/25 sm:p-4">
-      <div className="flex items-center">
-        <Controller
-          control={control}
-          name={`exercises.${index}.name`}
-          render={({ field, fieldState }) => (
-            <Field className="flex-1">
-              <div className="flex items-center gap-2">
-                <ExerciseSelector
-                  value={field.value}
-                  onChange={field.onChange}
-                  exercises={exercises}
-                />
-                <ExerciseActionsMenu
-                  exerciseName={exerciseName}
-                  workoutId={workoutId}
-                  onDelete={onRemove}
-                  onMoveUp={onMoveUp}
-                  onMoveDown={onMoveDown}
-                  onStartSupersetWithNext={onStartSupersetWithNext}
-                  onJoinPreviousSuperset={onJoinPreviousSuperset}
-                  onRemoveFromSuperset={onRemoveFromSuperset}
-                  isFirst={isFirst}
-                  isLast={isLast}
-                  canStartSupersetWithNext={canStartSupersetWithNext}
-                  canJoinPreviousSuperset={canJoinPreviousSuperset}
-                  isInSuperset={isInSuperset}
-                />
-              </div>
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
+    <div className="border-border bg-card min-w-0 space-y-4 rounded-lg border p-3 shadow-md shadow-black/25 sm:p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <p className="text-muted-foreground text-xs font-semibold tracking-[0.18em] uppercase">
+            Exercise {index + 1}
+          </p>
+          {shouldShowExerciseSelector ? (
+            <Controller
+              control={control}
+              name={`exercises.${index}.name`}
+              render={({ field, fieldState }) => (
+                <Field className="mt-2">
+                  <FieldLabel className="sr-only">Exercise</FieldLabel>
+                  <ExerciseSelector
+                    value={field.value}
+                    onChange={(nextValue) => {
+                      field.onChange(nextValue);
+                      setIsChangingExercise(false);
+                    }}
+                    exercises={exercises}
+                    openOnMount={shouldShowExerciseSelector}
+                    hideTriggerWhenOpen={shouldShowExerciseSelector}
+                    onOpenChange={(nextOpen) => {
+                      if (!nextOpen && exerciseName) {
+                        setIsChangingExercise(false);
+                      }
+                    }}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+          ) : (
+            <h3 className="text-foreground truncate text-lg leading-7 font-bold">
+              {exerciseTitle}
+            </h3>
           )}
+        </div>
+        <ExerciseActionsMenu
+          exerciseName={exerciseName}
+          workoutId={workoutId}
+          onChangeExercise={
+            exerciseName ? () => setIsChangingExercise(true) : undefined
+          }
+          onDelete={onRemove}
+          onMoveUp={onMoveUp}
+          onMoveDown={onMoveDown}
+          onStartSupersetWithNext={onStartSupersetWithNext}
+          onJoinPreviousSuperset={onJoinPreviousSuperset}
+          onRemoveFromSuperset={onRemoveFromSuperset}
+          isFirst={isFirst}
+          isLast={isLast}
+          canStartSupersetWithNext={canStartSupersetWithNext}
+          canJoinPreviousSuperset={canJoinPreviousSuperset}
+          isInSuperset={isInSuperset}
         />
       </div>
 

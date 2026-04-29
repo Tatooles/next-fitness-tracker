@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Controller, useForm, useFieldArray, useWatch } from "react-hook-form";
+import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import ExerciseItem from "@/components/workout-form/exercise-item";
@@ -18,13 +18,9 @@ import type {
   WorkoutFormSeed,
 } from "@/components/workout-form/form-types";
 import {
-  Field,
-  FieldError,
-  FieldLabel,
   FieldLegend,
   FieldSet,
 } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { saveWorkout } from "@/components/workout-form/save-workout";
 import {
   groupExercisesForDisplay,
@@ -273,11 +269,11 @@ export default function WorkoutForm(props: WorkoutFormProps) {
 
       <FieldSet
         disabled={isSubmitting}
-        className="mx-auto w-full max-w-3xl px-4 py-5 sm:px-6"
+        className="mx-auto w-full min-w-0 max-w-3xl px-4 py-5 sm:px-6"
       >
         <WorkoutFormHeader control={control} />
 
-        <FieldSet className="gap-4">
+        <FieldSet className="min-w-0 gap-4">
           <FieldLegend className="text-primary text-sm font-semibold tracking-[0.2em] uppercase">
             Exercises
           </FieldLegend>
@@ -393,56 +389,6 @@ export default function WorkoutForm(props: WorkoutFormProps) {
           </Button>
         </FieldSet>
 
-        <div className="border-border bg-card rounded-lg border p-4 shadow-md shadow-black/25">
-          <Controller
-            name="durationMinutes"
-            control={control}
-            render={({ field, fieldState }) => (
-              <Field
-                data-invalid={fieldState.invalid}
-                orientation="horizontal"
-                className="justify-between"
-              >
-                <FieldLabel
-                  htmlFor={field.name}
-                  className="text-foreground/85 text-sm font-semibold"
-                >
-                  Workout Duration
-                </FieldLabel>
-                <div className="w-32 shrink-0 sm:w-36">
-                  <div className="relative">
-                    <Input
-                      id={field.name}
-                      aria-invalid={fieldState.invalid}
-                      type="number"
-                      min="1"
-                      step="1"
-                      inputMode="numeric"
-                      className="h-11 w-full pr-12 text-center text-lg tabular-nums"
-                      value={field.value ?? ""}
-                      onChange={(event) =>
-                        field.onChange(
-                          event.target.value === ""
-                            ? null
-                            : Number(event.target.value),
-                        )
-                      }
-                      onBlur={field.onBlur}
-                      name={field.name}
-                      ref={field.ref}
-                    />
-                    <span className="text-muted-foreground pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm font-medium">
-                      min
-                    </span>
-                  </div>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </div>
-              </Field>
-            )}
-          />
-        </div>
       </FieldSet>
     </form>
   );

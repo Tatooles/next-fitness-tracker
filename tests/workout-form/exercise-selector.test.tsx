@@ -57,6 +57,109 @@ describe("ExerciseSelector", () => {
     expect(onChange).toHaveBeenCalledWith("Bench Press");
   });
 
+  it("can open the search surface immediately", async () => {
+    render(
+      <ExerciseSelector
+        value="Bench Press"
+        onChange={() => {}}
+        exercises={["Bench Press", "Overhead Press"]}
+        openOnMount={true}
+      />,
+    );
+
+    expect(
+      await screen.findByPlaceholderText("Search or add exercise..."),
+    ).toBeTruthy();
+  });
+
+  it("focuses the search input when opened immediately", async () => {
+    render(
+      <ExerciseSelector
+        value="Bench Press"
+        onChange={() => {}}
+        exercises={["Bench Press", "Overhead Press"]}
+        openOnMount={true}
+        hideTriggerWhenOpen={true}
+      />,
+    );
+
+    const input = await screen.findByPlaceholderText("Search or add exercise...");
+
+    await waitFor(() => {
+      expect(document.activeElement).toBe(input);
+    });
+  });
+
+  it("focuses the search input when the popover opens from the trigger", async () => {
+    const { input } = await renderSelector();
+
+    await waitFor(() => {
+      expect(document.activeElement).toBe(input);
+    });
+  });
+
+  it("can hide the combobox trigger while the search surface is open", async () => {
+    render(
+      <ExerciseSelector
+        value="Bench Press"
+        onChange={() => {}}
+        exercises={["Bench Press", "Overhead Press"]}
+        openOnMount={true}
+        hideTriggerWhenOpen={true}
+      />,
+    );
+
+    expect(screen.queryByRole("combobox", { name: "Bench Press" })).toBeNull();
+    expect(
+      await screen.findByPlaceholderText("Search or add exercise..."),
+    ).toBeTruthy();
+  });
+
+  it("notifies direct-open callers when Escape closes the search surface", async () => {
+    const user = userEvent.setup();
+    const onOpenChange = vi.fn();
+
+    render(
+      <ExerciseSelector
+        value="Bench Press"
+        onChange={() => {}}
+        exercises={["Bench Press", "Overhead Press"]}
+        openOnMount={true}
+        hideTriggerWhenOpen={true}
+        onOpenChange={onOpenChange}
+      />,
+    );
+
+    const input = await screen.findByPlaceholderText("Search or add exercise...");
+    await user.type(input, "{Escape}");
+
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
+
+  it("notifies direct-open callers when tapping outside closes the search surface", async () => {
+    const user = userEvent.setup();
+    const onOpenChange = vi.fn();
+
+    render(
+      <>
+        <button type="button">Outside target</button>
+        <ExerciseSelector
+          value="Bench Press"
+          onChange={() => {}}
+          exercises={["Bench Press", "Overhead Press"]}
+          openOnMount={true}
+          hideTriggerWhenOpen={true}
+          onOpenChange={onOpenChange}
+        />
+      </>,
+    );
+
+    await screen.findByPlaceholderText("Search or add exercise...");
+    await user.click(screen.getByRole("button", { name: "Outside target" }));
+
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
+
   it('shows an add option for a non-empty custom value', async () => {
     const { user, input } = await renderSelector();
 
@@ -129,5 +232,20 @@ describe("ExerciseSelector", () => {
     await waitFor(() => {
       expect(queryCreateOption("Romanian Deadlift")).toBeNull();
     });
+  });
+
+  it("uses a mobile-friendly command surface", async () => {
+    await renderSelector();
+
+    const content = document.querySelector('[data-slot="popover-content"]');
+    const list = document.querySelector('[data-slot="command-list"]');
+
+    expect(content?.className).toContain("w-[calc(100vw-2rem)]");
+    expect(content?.className).toContain(
+      "sm:w-[var(--radix-popover-trigger-width)]",
+    );
+    expect(list?.className).toContain(
+      "max-h-[min(calc(100vh-13rem),24rem)]",
+    );
   });
 });

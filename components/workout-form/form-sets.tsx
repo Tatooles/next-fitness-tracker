@@ -28,18 +28,28 @@ export default function FormSets({
   });
 
   return (
-    <FieldSet className="flex flex-col gap-2">
+    <FieldSet className="flex min-w-0 flex-col gap-2">
       <FieldLegend
         variant="label"
         className="text-foreground/80 text-xs font-semibold tracking-[0.18em] uppercase"
       >
         Sets
       </FieldLegend>
+      <div className="text-muted-foreground grid grid-cols-[1.75rem_minmax(0,1fr)_minmax(0,0.8fr)_minmax(0,0.85fr)_2rem] items-center gap-1.5 px-1 text-center text-[0.68rem] font-semibold tracking-[0.16em] uppercase sm:gap-2">
+        <span className="text-left">Set</span>
+        <span>Weight</span>
+        <span>Reps</span>
+        <span>RPE</span>
+        <span className="sr-only">Actions</span>
+      </div>
       {fields.map((field, index) => (
         <div
           key={field.id}
-          className="flex items-center justify-between gap-2 rounded-md py-1"
+          className="grid grid-cols-[1.75rem_minmax(0,1fr)_minmax(0,0.8fr)_minmax(0,0.85fr)_2rem] items-center gap-1.5 rounded-md py-1 sm:gap-2"
         >
+          <div className="text-muted-foreground flex h-10 items-center justify-start pl-1 text-sm font-semibold tabular-nums">
+            {index + 1}
+          </div>
           <Controller
             name={`exercises.${exerciseIndex}.sets.${index}.weight`}
             control={control}
@@ -47,9 +57,10 @@ export default function FormSets({
               <Input
                 {...field}
                 id={field.name}
+                aria-label={`Set ${index + 1} weight`}
                 placeholder={templateExercise?.sets[index]?.weight ?? "Weight"}
                 inputMode="decimal"
-                className="h-10 w-20 text-center text-[16px]"
+                className="h-10 w-full px-1.5 text-center text-[16px] sm:px-2"
               />
             )}
           />
@@ -60,9 +71,10 @@ export default function FormSets({
               <Input
                 {...field}
                 id={field.name}
+                aria-label={`Set ${index + 1} reps`}
                 placeholder={templateExercise?.sets[index]?.reps ?? "Reps"}
                 inputMode="decimal"
-                className="h-10 w-16 text-center text-[16px]"
+                className="h-10 w-full px-1.5 text-center text-[16px] sm:px-2"
               />
             )}
           />
@@ -73,18 +85,21 @@ export default function FormSets({
               <Input
                 {...field}
                 id={field.name}
+                aria-label={`Set ${index + 1} RPE`}
                 placeholder={templateExercise?.sets[index]?.rpe ?? "RPE"}
                 inputMode="decimal"
-                className="h-10 w-20 text-center text-[16px]"
+                className="h-10 w-full px-1.5 text-center text-[16px] sm:px-2"
               />
             )}
           />
           <Button
             type="button"
             variant="ghost"
-            size="icon"
+            size="icon-sm"
             onClick={() => remove(index)}
-            className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+            aria-label={`Delete set ${index + 1}`}
+            title={`Delete set ${index + 1}`}
+            className="text-destructive/80 hover:bg-destructive/10 hover:text-destructive"
           >
             <Trash2 size={20} />
           </Button>

@@ -7,6 +7,7 @@ import {
   Link2,
   Link2Off,
   MoreVertical,
+  Pencil,
   Trash2,
 } from "lucide-react";
 import ExerciseHistoryModal from "@/components/exercise/exercise-history-modal";
@@ -20,6 +21,7 @@ import {
 interface ExerciseActionsMenuProps {
   exerciseName: string;
   workoutId?: number;
+  onChangeExercise?: () => void;
   onDelete: () => void;
   onMoveUp: () => void;
   onMoveDown: () => void;
@@ -36,6 +38,7 @@ interface ExerciseActionsMenuProps {
 export default function ExerciseActionsMenu({
   exerciseName,
   workoutId,
+  onChangeExercise,
   onDelete,
   onMoveUp,
   onMoveDown,
@@ -51,7 +54,13 @@ export default function ExerciseActionsMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button type="button" variant="ghost" size="icon">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          aria-label={`Exercise actions for ${exerciseName || "exercise"}`}
+          title={`Exercise actions for ${exerciseName || "exercise"}`}
+        >
           <MoreVertical />
         </Button>
       </DropdownMenuTrigger>
@@ -65,6 +74,12 @@ export default function ExerciseActionsMenu({
             View History
           </DropdownMenuItem>
         </ExerciseHistoryModal>
+        {onChangeExercise ? (
+          <DropdownMenuItem onClick={onChangeExercise}>
+            <Pencil />
+            Change Exercise
+          </DropdownMenuItem>
+        ) : null}
         <DropdownMenuItem onClick={onMoveUp} disabled={isFirst}>
           <ArrowUp />
           Move Up
