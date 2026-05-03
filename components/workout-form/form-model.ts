@@ -75,7 +75,7 @@ function zeroWorkoutSetValues(workout: WorkoutDraft): WorkoutDraft {
 function toTemplateValuesByExerciseName(
   exercises: ExerciseTemplateValues[],
 ): ExerciseTemplateValuesByName {
-  const templateValuesByExerciseName = {} as ExerciseTemplateValuesByName;
+  const templateValuesByExerciseName: ExerciseTemplateValuesByName = {};
 
   for (const exercise of exercises) {
     if (!Object.hasOwn(templateValuesByExerciseName, exercise.name)) {
@@ -95,10 +95,10 @@ async function getSignedInUserId(): Promise<string> {
   const { userId, redirectToSignIn } = await auth();
 
   if (!userId) {
-    redirectToSignIn();
+    return redirectToSignIn();
   }
 
-  return userId!;
+  return userId;
 }
 
 async function getExerciseNames(userId: string): Promise<string[]> {

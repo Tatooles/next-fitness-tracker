@@ -2,16 +2,8 @@ import { and, asc, desc, eq } from "drizzle-orm";
 import { db } from "@/db/drizzle";
 import { exercise, set, workout } from "@/db/schema";
 import { NextRequest, NextResponse } from "next/server";
-import { Set } from "@/lib/types";
+import type { ExerciseHistoryEntry } from "@/lib/types";
 import { jsonError, requireUserId } from "@/lib/api/route-helpers";
-
-export interface GroupedExercise {
-  date: string;
-  notes: string | null;
-  workoutId: number | null;
-  workoutName: string | null;
-  sets: Set[];
-}
 
 export async function GET(request: NextRequest) {
   const userIdResult = await requireUserId();
@@ -55,7 +47,7 @@ export async function GET(request: NextRequest) {
       )
       .orderBy(desc(workout.date), asc(set.id));
 
-    const historyByExerciseId = new Map<number, GroupedExercise>();
+    const historyByExerciseId = new Map<number, ExerciseHistoryEntry>();
 
     rows.forEach((row) => {
       if (!historyByExerciseId.has(row.exercise.id)) {
@@ -69,7 +61,10 @@ export async function GET(request: NextRequest) {
       }
 
       if (row.set) {
-        historyByExerciseId.get(row.exercise.id)!.sets.push(row.set as Set);
+        const exerciseHistory = historyByExerciseId.get(row.exercise.id);
+        if (exerciseHistory) {
+          exerciseHistory.sets.push(row.set);
+        }
       }
     });
 

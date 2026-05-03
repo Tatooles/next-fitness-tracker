@@ -3,7 +3,7 @@ import { Controller, Control } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
-import { TWorkoutFormSchema } from "@/lib/types";
+import type { TWorkoutFormSchema } from "@/lib/types";
 
 interface WorkoutFormHeaderProps {
   control: Control<TWorkoutFormSchema>;
@@ -31,9 +31,7 @@ export default function WorkoutFormHeader({ control }: WorkoutFormHeaderProps) {
                 className="h-10 w-full text-base sm:h-11"
                 {...field}
               />
-              {fieldState.invalid && (
-                <FieldError errors={[fieldState.error]} />
-              )}
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
@@ -73,9 +71,7 @@ export default function WorkoutFormHeader({ control }: WorkoutFormHeaderProps) {
                   min
                 </span>
               </div>
-              {fieldState.invalid && (
-                <FieldError errors={[fieldState.error]} />
-              )}
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />

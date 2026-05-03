@@ -5,7 +5,7 @@ import { createClient, type Client } from "@libsql/client";
 import { drizzle, type LibSQLDatabase } from "drizzle-orm/libsql";
 import * as schema from "@/db/schema";
 
-export interface SeedWorkoutInput {
+interface SeedWorkoutInput {
   userId: string;
   date?: string;
   name?: string;

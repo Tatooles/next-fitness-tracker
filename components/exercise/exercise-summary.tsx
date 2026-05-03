@@ -1,5 +1,5 @@
 import ExerciseHistoryModal from "@/components/exercise/exercise-history-modal";
-import { ExerciseSummary, Set } from "@/lib/types";
+import type { ExerciseSummary, Set } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { History } from "lucide-react";
 import { formatDate } from "@/lib/utils";
@@ -52,13 +52,13 @@ export default function ExerciseSummaryComponent({
     if (reps === 1) {
       return weight;
     } else if (reps < 6) {
-      // Use Brzycki
+      // Brzycki formula.
       return weight / (1.0278 - 0.0278 * reps);
     } else if (reps < 11) {
-      // Use Epley
+      // Epley formula.
       return weight * (1 + reps / 30);
     } else {
-      // Use lombardi
+      // Lombardi formula.
       return weight * Math.pow(reps, 0.1);
     }
   };

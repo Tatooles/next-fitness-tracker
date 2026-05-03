@@ -3,7 +3,7 @@ import "server-only";
 import { eq } from "drizzle-orm";
 import { db } from "@/db/drizzle";
 import { exercise, set, workout } from "@/db/schema";
-import type { ExerciseSummary, Set } from "@/lib/types";
+import type { ExerciseSummary } from "@/lib/types";
 
 export async function getExerciseSummaryForUser(
   userId: string,
@@ -58,10 +58,10 @@ export async function getExerciseSummaryForUser(
         workoutId: exercise.workoutId,
         date: workout.date,
         userId: workout.userId,
-        sets: set ? [set as Set] : [],
+        sets: set ? [set] : [],
       });
     } else if (set) {
-      exerciseInstance.sets.push(set as Set);
+      exerciseInstance.sets.push(set);
     }
   });
 

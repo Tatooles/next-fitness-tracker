@@ -1,4 +1,4 @@
-import { DateExercise, Set } from "@/lib/types";
+import type { DateExercise, Set } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 
 export default function ExerciseInstanceItem({
@@ -38,13 +38,11 @@ export default function ExerciseInstanceItem({
       <div className="p-4">
         {sets.length > 0 && (
           <div className="mt-2">
-            {/* Header Row */}
             <div className="border-border/80 text-muted-foreground mb-2 flex border-b pb-2 text-sm font-medium">
               <div className="w-1/3 px-1 text-center">Weight</div>
               <div className="w-1/3 px-1 text-center">Reps</div>
               <div className="w-1/3 px-1 text-center">RPE</div>
             </div>
-            {/* Data Rows */}
             {sets.map(
               (set: Set, index) =>
                 (set.reps || set.weight || set.rpe) && (

@@ -2,7 +2,7 @@ type ExerciseWithSupersetGroup = {
   supersetGroupId: string | null;
 };
 
-export type ExerciseDisplayBlock<T extends ExerciseWithSupersetGroup> =
+type ExerciseDisplayBlock<T extends ExerciseWithSupersetGroup> =
   | {
       kind: "single";
       startIndex: number;

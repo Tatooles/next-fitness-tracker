@@ -1,31 +1,11 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { NextRequest } from "next/server";
 import { exercise, set, workout } from "@/db/schema";
-import { createRouteTestDatabase, destroyRouteTestDatabase, type RouteTestDatabase } from "@/tests/support/route-test-db";
-
-const { authMock, authState, dbRef } = vi.hoisted(() => ({
-  authMock: vi.fn(),
-  authState: {
-    userId: null as string | null,
-  },
-  dbRef: {
-    current: null as RouteTestDatabase["db"] | null,
-  },
-}));
-
-vi.mock("@clerk/nextjs/server", () => ({
-  auth: authMock,
-}));
-
-vi.mock("@/db/drizzle", () => ({
-  get db() {
-    if (!dbRef.current) {
-      throw new Error("Test database has not been initialized");
-    }
-
-    return dbRef.current;
-  },
-}));
+import type { RouteTestDatabase } from "@/tests/support/route-test-db";
+import {
+  setupRouteTestDatabase,
+  teardownRouteTestDatabase,
+} from "@/tests/support/route-handler-test";
 
 import { GET } from "@/app/api/export/route";
 
@@ -33,16 +13,11 @@ describe("export route supersets", () => {
   let database: RouteTestDatabase;
 
   beforeEach(async () => {
-    database = await createRouteTestDatabase();
-    dbRef.current = database.db;
-    authState.userId = "user-1";
-    authMock.mockImplementation(async () => ({ userId: authState.userId }));
+    database = await setupRouteTestDatabase();
   });
 
   afterEach(async () => {
-    dbRef.current = null;
-    authState.userId = null;
-    await destroyRouteTestDatabase(database);
+    await teardownRouteTestDatabase(database);
   });
 
   it("includes a Superset row before grouped exercises in csv exports", async () => {

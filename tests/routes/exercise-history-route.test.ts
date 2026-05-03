@@ -1,35 +1,14 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { NextRequest } from "next/server";
 import {
-  createRouteTestDatabase,
-  destroyRouteTestDatabase,
   seedWorkout,
   type RouteTestDatabase,
 } from "@/tests/support/route-test-db";
-
-const { authMock, authState, dbRef } = vi.hoisted(() => ({
-  authMock: vi.fn(),
-  authState: {
-    userId: null as string | null,
-  },
-  dbRef: {
-    current: null as RouteTestDatabase["db"] | null,
-  },
-}));
-
-vi.mock("@clerk/nextjs/server", () => ({
-  auth: authMock,
-}));
-
-vi.mock("@/db/drizzle", () => ({
-  get db() {
-    if (!dbRef.current) {
-      throw new Error("Test database has not been initialized");
-    }
-
-    return dbRef.current;
-  },
-}));
+import {
+  setRouteTestUserId,
+  setupRouteTestDatabase,
+  teardownRouteTestDatabase,
+} from "@/tests/support/route-handler-test";
 
 import { GET } from "@/app/api/exercises/history/route";
 
@@ -37,22 +16,17 @@ describe("GET /api/exercises/history", () => {
   let database: RouteTestDatabase;
 
   beforeEach(async () => {
-    database = await createRouteTestDatabase({
+    database = await setupRouteTestDatabase({
       includeSupersetGroupId: false,
     });
-    dbRef.current = database.db;
-    authState.userId = "user-1";
-    authMock.mockImplementation(async () => ({ userId: authState.userId }));
   });
 
   afterEach(async () => {
-    dbRef.current = null;
-    authState.userId = null;
-    await destroyRouteTestDatabase(database);
+    await teardownRouteTestDatabase(database);
   });
 
   it("returns 401 for unauthenticated requests", async () => {
-    authState.userId = null;
+    setRouteTestUserId(null);
 
     const response = await GET(
       new NextRequest(

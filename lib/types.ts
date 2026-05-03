@@ -26,7 +26,6 @@ export interface ExerciseInstance {
   supersetGroupId: string | null;
   workoutId: number;
   sets: Set[];
-  // It would make sense for ExerciseInstance to contain date :/
 }
 
 export interface ExerciseThin {
@@ -57,6 +56,14 @@ export interface ExerciseSummary {
   exercises: DateExercise[];
 }
 
+export interface ExerciseHistoryEntry {
+  date: string;
+  notes: string | null;
+  workoutId: number | null;
+  workoutName: string | null;
+  sets: Set[];
+}
+
 export interface Set {
   id: number;
   weight: string;
@@ -64,6 +71,42 @@ export interface Set {
   rpe: string;
   exerciseId: number;
 }
+
+const setSchema: z.ZodType<Set> = z.object({
+  id: z.number().int(),
+  weight: z.string(),
+  reps: z.string(),
+  rpe: z.string(),
+  exerciseId: z.number().int(),
+});
+
+const exerciseInstanceSchema: z.ZodType<ExerciseInstance> = z.object({
+  id: z.number().int(),
+  name: z.string(),
+  notes: z.string(),
+  supersetGroupId: z.string().nullable(),
+  workoutId: z.number().int(),
+  sets: setSchema.array(),
+});
+
+export const workoutSchema: z.ZodType<Workout> = z.object({
+  id: z.number().int(),
+  name: z.string(),
+  notes: z.string(),
+  durationMinutes: z.number().int().nullable(),
+  userId: z.string().nullable(),
+  date: z.string(),
+  exercises: exerciseInstanceSchema.array(),
+});
+
+export const exerciseHistoryEntrySchema: z.ZodType<ExerciseHistoryEntry> =
+  z.object({
+    date: z.string(),
+    notes: z.string().nullable(),
+    workoutId: z.number().int().nullable(),
+    workoutName: z.string().nullable(),
+    sets: setSchema.array(),
+  });
 
 const nullableDurationMinutesSchema = z
   .number({ error: "Workout duration must be a whole number of minutes" })

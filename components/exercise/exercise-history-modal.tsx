@@ -10,9 +10,11 @@ import {
 import { useAuth } from "@clerk/nextjs";
 import { useState } from "react";
 import useSWR from "swr";
-import { GroupedExercise } from "@/app/api/exercises/history/route";
+import type { ExerciseHistoryEntry } from "@/lib/types";
+import { exerciseHistoryEntrySchema } from "@/lib/types";
 import ExerciseInstanceItem from "./exercise-instance-item";
 import { Spinner } from "@/components/ui/spinner";
+import { errorResponseSchema, parseJsonResponse } from "@/lib/json-response";
 
 function getExerciseHistoryKey({
   exerciseName,
@@ -33,7 +35,7 @@ async function getExerciseHistory(exerciseName: string) {
     let errorMessage = `Failed to fetch data: ${response.status} ${response.statusText}`;
 
     try {
-      const errorBody = (await response.json()) as { error?: string };
+      const errorBody = await parseJsonResponse(response, errorResponseSchema);
       if (errorBody.error) {
         errorMessage = errorBody.error;
       }
@@ -44,7 +46,7 @@ async function getExerciseHistory(exerciseName: string) {
     throw new Error(errorMessage);
   }
 
-  return (await response.json()) as GroupedExercise[];
+  return parseJsonResponse(response, exerciseHistoryEntrySchema.array());
 }
 
 export default function ExerciseHistoryModal({
@@ -110,7 +112,7 @@ export default function ExerciseHistoryModal({
 
           {!isLoading && !error && exerciseHistory.length > 0 && (
             <div className="max-h-[calc(80vh-8rem)] space-y-4 overflow-y-auto px-6 pb-6">
-              {exerciseHistory.map((exercise: GroupedExercise) => (
+              {exerciseHistory.map((exercise: ExerciseHistoryEntry) => (
                 <ExerciseInstanceItem
                   exercise={exercise}
                   showName={false}
