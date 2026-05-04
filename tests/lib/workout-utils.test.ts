@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { copyWorkoutToClipboard } from "@/lib/workout-utils";
 import type { Workout } from "@/lib/types";
 
@@ -14,6 +14,8 @@ vi.mock("sonner", () => ({
     error: toastErrorMock,
   },
 }));
+
+let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
 const workoutFixture: Workout = {
   id: 1,
@@ -52,6 +54,7 @@ const workoutFixture: Workout = {
 
 describe("copyWorkoutToClipboard", () => {
   beforeEach(() => {
+    consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     toastSuccessMock.mockReset();
     toastErrorMock.mockReset();
     writeTextMock.mockReset();
@@ -60,6 +63,10 @@ describe("copyWorkoutToClipboard", () => {
         writeText: writeTextMock,
       },
     });
+  });
+
+  afterEach(() => {
+    consoleErrorSpy.mockRestore();
   });
 
   it("adds explicit superset boundaries around grouped exercises", async () => {
@@ -71,5 +78,22 @@ describe("copyWorkoutToClipboard", () => {
       ),
     );
     expect(toastSuccessMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows a copy failure toast when clipboard text cannot be prepared", async () => {
+    await copyWorkoutToClipboard({
+      ...workoutFixture,
+      date: "not-a-date",
+    });
+
+    expect(writeTextMock).not.toHaveBeenCalled();
+    expect(toastSuccessMock).not.toHaveBeenCalled();
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      "Failed to copy workout:",
+      expect.any(RangeError),
+    );
+    expect(toastErrorMock).toHaveBeenCalledWith(
+      "Failed to copy workout to clipboard",
+    );
   });
 });

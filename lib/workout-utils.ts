@@ -31,7 +31,7 @@ function formatExerciseText(exercise: ExerciseInstance) {
   return text;
 }
 
-export const copyWorkoutToClipboard = async (workout: Workout) => {
+function buildWorkoutClipboardText(workout: Workout) {
   let text = `${workout.name} - ${formatDate(workout.date)}\n\n`;
 
   if (workout.durationMinutes) {
@@ -66,7 +66,12 @@ export const copyWorkoutToClipboard = async (workout: Workout) => {
     text += "\n";
   });
 
+  return text;
+}
+
+export const copyWorkoutToClipboard = async (workout: Workout) => {
   try {
+    const text = buildWorkoutClipboardText(workout);
     await navigator.clipboard.writeText(text);
     toast.success("Workout copied to clipboard!");
   } catch (error) {
