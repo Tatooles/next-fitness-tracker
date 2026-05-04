@@ -1,6 +1,6 @@
 import * as xlsx from "xlsx";
 import { db } from "@/db/drizzle";
-import { Workout } from "@/lib/types";
+import type { Workout } from "@/lib/types";
 import { NextRequest } from "next/server";
 import { jsonError, requireUserId } from "@/lib/api/route-helpers";
 import { groupExercisesForDisplay } from "@/lib/superset-utils";

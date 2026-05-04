@@ -25,11 +25,13 @@ import { Button } from "@/components/ui/button";
 import { LoadingOverlay } from "@/components/loading-overlay";
 import { Spinner } from "@/components/ui/spinner";
 import ExerciseInstanceItem from "@/components/exercise/exercise-instance-item";
-import { Workout, WorkoutSummary } from "@/lib/types";
+import type { WorkoutSummary } from "@/lib/types";
+import { workoutSchema } from "@/lib/types";
 import { formatDate, formatWorkoutDuration } from "@/lib/utils";
 import { copyWorkoutToClipboard } from "@/lib/workout-utils";
 import { groupExercisesForDisplay } from "@/lib/superset-utils";
 import { Copy, Files, Pencil, Trash2 } from "lucide-react";
+import { errorResponseSchema, parseJsonResponse } from "@/lib/json-response";
 
 function getAccordionItemValue(workoutId: number) {
   return `workout-${workoutId}`;
@@ -46,7 +48,7 @@ async function fetchWorkoutDetails(workoutId: number) {
     let errorMessage = `Failed to load workout: ${response.status} ${response.statusText}`;
 
     try {
-      const errorBody = (await response.json()) as { error?: string };
+      const errorBody = await parseJsonResponse(response, errorResponseSchema);
       if (errorBody.error) {
         errorMessage = errorBody.error;
       }
@@ -57,7 +59,7 @@ async function fetchWorkoutDetails(workoutId: number) {
     throw new Error(errorMessage);
   }
 
-  return (await response.json()) as Workout;
+  return parseJsonResponse(response, workoutSchema);
 }
 
 function WorkoutDetails({
@@ -159,7 +161,7 @@ function WorkoutDetails({
                     onClick={() => {
                       onDelete(workout.id).catch((error) => {
                         console.error(
-                          "An error occurred while deleting exercise:",
+                          "An error occurred while deleting workout:",
                           error,
                         );
                       });
@@ -259,22 +261,22 @@ export default function Workouts({ workouts }: { workouts: WorkoutSummary[] }) {
 
   const deleteWorkout = async (workoutId: number) => {
     setIsLoading(true);
-    await fetch(`/api/workouts/${workoutId}`, {
-      method: "DELETE",
-    })
-      .then((response) => {
-        if (response.ok) {
-          router.refresh();
-        } else {
-          console.error("Failed to delete exercise.");
-        }
-      })
-      .catch((error) => {
-        console.error("An error occurred while deleting exercise:", error);
-      })
-      .finally(() => {
-        setIsLoading(false);
+
+    try {
+      const response = await fetch(`/api/workouts/${workoutId}`, {
+        method: "DELETE",
       });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to delete workout: ${response.status} ${response.statusText}`,
+        );
+      }
+
+      router.refresh();
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

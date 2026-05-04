@@ -1,41 +1,54 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Next Fitness Tracker
 
-## Getting Started
+A Next.js App Router workout log for tracking workouts, exercises, exercise history, and spreadsheet exports.
 
-This project targets Node.js 24. If you use `nvm`, run `nvm use` before installing dependencies or starting the dev server.
+## Requirements
 
-First, run the development server:
+- Node.js 24
+- pnpm
+- Turso/LibSQL database credentials
+- Clerk authentication credentials
+
+## Development
+
+Use the pinned Node version, install dependencies, and start the dev server:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+nvm use
+pnpm install
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+Create `.env.local` with the required local credentials. Do not commit it.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+Expected database variables:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```bash
+TURSO_DATABASE_URL=
+TURSO_AUTH_TOKEN=
+```
 
-# App Ideas
+Expected Clerk variables are the standard Next.js Clerk keys used by `@clerk/nextjs`.
 
-## Features to Add
+## Useful Commands
 
-- Dark mode
-- shadcn/ui calendar
-- How to page to tell the user how to use the app
-- Stats on the home page or a stats page
-- Workout names prefill from a list of existing exercises
-- Search bar on exercises page
-- Workout form on a page rather than a modal
-  - Previous instances of an exercise from that can be viewed in a modal
-  - Allow save while staying on the page
-- Better editing algorithm
-- Implement max width for larger screen sizes
+```bash
+pnpm test
+pnpm lint
+pnpm build
+pnpm db:generate
+pnpm db:migrate
+pnpm db:studio
+```
+
+## Project Shape
+
+- `app/` contains App Router pages, route handlers, metadata, and loading UI.
+- `components/` contains app and form UI.
+- `db/` and `migrations/` contain the Drizzle schema and migrations.
+- `lib/` contains shared data, route, parsing, and formatting helpers.
+- `tests/` contains Vitest unit and route-handler tests.

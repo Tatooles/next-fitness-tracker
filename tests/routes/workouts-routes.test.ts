@@ -1,37 +1,16 @@
-import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { count, eq } from "drizzle-orm";
 import { NextRequest } from "next/server";
 import { exercise, set, workout } from "@/db/schema";
 import {
-  createRouteTestDatabase,
-  destroyRouteTestDatabase,
   seedWorkout,
   type RouteTestDatabase,
 } from "@/tests/support/route-test-db";
-
-const { authMock, authState, dbRef } = vi.hoisted(() => ({
-  authMock: vi.fn(),
-  authState: {
-    userId: null as string | null,
-  },
-  dbRef: {
-    current: null as RouteTestDatabase["db"] | null,
-  },
-}));
-
-vi.mock("@clerk/nextjs/server", () => ({
-  auth: authMock,
-}));
-
-vi.mock("@/db/drizzle", () => ({
-  get db() {
-    if (!dbRef.current) {
-      throw new Error("Test database has not been initialized");
-    }
-
-    return dbRef.current;
-  },
-}));
+import {
+  setRouteTestUserId,
+  setupRouteTestDatabase,
+  teardownRouteTestDatabase,
+} from "@/tests/support/route-handler-test";
 
 import { POST } from "@/app/api/workouts/route";
 import { DELETE, GET, PATCH } from "@/app/api/workouts/[id]/route";
@@ -40,16 +19,11 @@ describe("workout route handlers", () => {
   let database: RouteTestDatabase;
 
   beforeEach(async () => {
-    database = await createRouteTestDatabase();
-    dbRef.current = database.db;
-    authState.userId = "user-1";
-    authMock.mockImplementation(async () => ({ userId: authState.userId }));
+    database = await setupRouteTestDatabase();
   });
 
   afterEach(async () => {
-    dbRef.current = null;
-    authState.userId = null;
-    await destroyRouteTestDatabase(database);
+    await teardownRouteTestDatabase(database);
   });
 
   describe("POST /api/workouts", () => {
@@ -120,7 +94,7 @@ describe("workout route handlers", () => {
     });
 
     it("returns 401 for unauthenticated create requests", async () => {
-      authState.userId = null;
+      setRouteTestUserId(null);
 
       const response = await POST(
         createJsonRequest(
@@ -324,7 +298,7 @@ describe("workout route handlers", () => {
         userId: "user-1",
         exercises: [],
       });
-      authState.userId = null;
+      setRouteTestUserId(null);
 
       const response = await PATCH(
         createJsonRequest(
@@ -423,7 +397,7 @@ describe("workout route handlers", () => {
         ],
       });
 
-      authState.userId = "user-1";
+      setRouteTestUserId("user-1");
 
       const response = await PATCH(
         createJsonRequest(
@@ -545,7 +519,7 @@ describe("workout route handlers", () => {
         userId: "user-1",
         exercises: [],
       });
-      authState.userId = null;
+      setRouteTestUserId(null);
 
       const response = await GET(
         new NextRequest(`http://localhost/api/workouts/${workoutId}`),
@@ -634,7 +608,7 @@ describe("workout route handlers", () => {
         userId: "user-1",
         exercises: [],
       });
-      authState.userId = null;
+      setRouteTestUserId(null);
 
       const response = await DELETE(
         new NextRequest(`http://localhost/api/workouts/${workoutId}`, {
@@ -672,7 +646,7 @@ describe("workout route handlers", () => {
         ],
       });
 
-      authState.userId = "user-1";
+      setRouteTestUserId("user-1");
 
       const response = await DELETE(
         new NextRequest(`http://localhost/api/workouts/${workoutId}`, {

@@ -1,20 +1,20 @@
 "use client";
 
 import { toast } from "sonner";
+import * as z from "zod";
 import type {
   PersistMode,
   WorkoutDraft,
 } from "@/components/workout-form/form-types";
+import { parseJsonResponse } from "@/lib/json-response";
 
-export type SaveWorkoutInput = {
+type SaveWorkoutInput = {
   persistMode: PersistMode;
   values: WorkoutDraft;
   workoutId?: number;
 };
 
-export type SaveWorkoutResult =
-  | { ok: true; workoutId: number }
-  | { ok: false };
+type SaveWorkoutResult = { ok: true; workoutId: number } | { ok: false };
 
 type SaveRequestConfig = {
   url: string;
@@ -22,6 +22,10 @@ type SaveRequestConfig = {
   failureMessage: string;
   errorContext: string;
 };
+
+const createWorkoutResponseSchema = z.object({
+  workoutId: z.number().int().positive(),
+});
 
 async function performSaveRequest(
   values: WorkoutDraft,
@@ -54,14 +58,6 @@ async function performSaveRequest(
   }
 }
 
-function isPositiveInteger(value: unknown): value is number {
-  return (
-    typeof value === "number" &&
-    Number.isSafeInteger(value) &&
-    value > 0
-  );
-}
-
 export async function saveWorkout({
   persistMode,
   values,
@@ -80,18 +76,10 @@ export async function saveWorkout({
     }
 
     try {
-      const data: unknown = await response.json();
-
-      if (
-        typeof data !== "object" ||
-        data === null ||
-        !("workoutId" in data) ||
-        !isPositiveInteger(data.workoutId)
-      ) {
-        console.error("saveWorkout(create): invalid response payload", data);
-        toast.error("Failed to create workout");
-        return { ok: false };
-      }
+      const data = await parseJsonResponse(
+        response,
+        createWorkoutResponseSchema,
+      );
 
       return {
         ok: true,

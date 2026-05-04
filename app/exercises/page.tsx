@@ -6,15 +6,10 @@ async function getExerciseSummary() {
   const { userId, redirectToSignIn } = await auth();
 
   if (!userId) {
-    redirectToSignIn();
+    return redirectToSignIn();
   }
 
-  try {
-    return await getExerciseSummaryForUser(userId!);
-  } catch (error) {
-    console.error("Failed to fetch exercises", error);
-    return [];
-  }
+  return getExerciseSummaryForUser(userId);
 }
 
 export default async function ExercisesPage() {

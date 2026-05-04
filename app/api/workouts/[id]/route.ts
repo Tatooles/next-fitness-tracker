@@ -2,8 +2,9 @@ import { and, eq, inArray } from "drizzle-orm";
 import { db } from "@/db/drizzle";
 import { exercise, set, workout } from "@/db/schema";
 import { NextRequest, NextResponse } from "next/server";
-import { Workout } from "@/lib/types";
+import type { Workout } from "@/lib/types";
 import { workoutFormSchema } from "@/lib/types";
+import { insertWorkoutExercises } from "@/lib/api/workout-write";
 import {
   jsonError,
   parseJsonBody,
@@ -126,13 +127,12 @@ export async function PATCH(
 
   try {
     await db.transaction(async (tx) => {
-      // Update workout table
       await tx
         .update(workout)
         .set({ name, notes, durationMinutes, date })
         .where(and(eq(workout.id, workoutId), eq(workout.userId, userId)));
 
-      // Delete old exercises and sets
+      // PATCH currently rewrites child rows so removed sets and exercises stay deleted.
       const oldExercises = await tx
         .select({ id: exercise.id })
         .from(exercise)
@@ -145,27 +145,7 @@ export async function PATCH(
         await tx.delete(exercise).where(inArray(exercise.id, oldExerciseIds));
       }
 
-      // Re-insert exercises and sets
-      for (const exerciseData of exercises) {
-        const [newExercise] = await tx
-          .insert(exercise)
-          .values({
-            workoutId,
-            name: exerciseData.name,
-            notes: exerciseData.notes,
-            supersetGroupId: exerciseData.supersetGroupId,
-          })
-          .returning();
-
-        const setValues = exerciseData.sets.map((set) => ({
-          ...set,
-          exerciseId: newExercise.id,
-        }));
-
-        if (setValues.length) {
-          await tx.insert(set).values(setValues);
-        }
-      }
+      await insertWorkoutExercises(tx, workoutId, exercises);
     });
   } catch (error) {
     console.error("Transaction failed", error);

@@ -23,9 +23,7 @@ export type CreateWorkoutFormSeed = Omit<WorkoutFormSeed, "persistMode"> & {
   persistMode: "create";
 };
 
-export type SaveState = "idle" | "saving" | "saved" | "failed";
-
-export type CreateWorkoutFormProps = {
+type CreateWorkoutFormProps = {
   initialValues: WorkoutDraft;
   persistMode: "create";
   exerciseNames: string[];
