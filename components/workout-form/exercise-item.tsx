@@ -1,20 +1,19 @@
 "use client";
 import { useState } from "react";
-import { Controller, Control, UseFormGetValues } from "react-hook-form";
 import { Textarea } from "@/components/ui/textarea";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import ExerciseSelector from "@/components/workout-form/exercise-selector";
 import ExerciseActionsMenu from "@/components/workout-form/exercise-actions-menu";
 import FormSets from "@/components/workout-form/form-sets";
-import type {
-  ExerciseTemplateValues,
-  WorkoutDraft,
-} from "@/components/workout-form/form-types";
+import {
+  getFieldErrors,
+  type WorkoutTanStackForm,
+} from "@/components/workout-form/tanstack-form";
+import type { ExerciseTemplateValues } from "@/components/workout-form/form-types";
 
 interface ExerciseItemProps {
   index: number;
-  control: Control<WorkoutDraft>;
-  getValues: UseFormGetValues<WorkoutDraft>;
+  form: WorkoutTanStackForm;
   exercises: string[];
   exerciseName: string;
   onRemove: () => void;
@@ -34,8 +33,7 @@ interface ExerciseItemProps {
 
 export default function ExerciseItem({
   index,
-  control,
-  getValues,
+  form,
   exercises,
   exerciseName,
   onRemove,
@@ -64,16 +62,14 @@ export default function ExerciseItem({
             Exercise {index + 1}
           </p>
           {shouldShowExerciseSelector ? (
-            <Controller
-              control={control}
-              name={`exercises.${index}.name`}
-              render={({ field, fieldState }) => (
+            <form.Field name={`exercises[${index}].name`}>
+              {(field) => (
                 <Field className="mt-2">
                   <FieldLabel className="sr-only">Exercise</FieldLabel>
                   <ExerciseSelector
-                    value={field.value}
+                    value={field.state.value}
                     onChange={(nextValue) => {
-                      field.onChange(nextValue);
+                      form.setFieldValue(`exercises[${index}].name`, nextValue);
                       setIsChangingExercise(false);
                     }}
                     exercises={exercises}
@@ -85,12 +81,10 @@ export default function ExerciseItem({
                       }
                     }}
                   />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
+                  <FieldError errors={getFieldErrors(field)} />
                 </Field>
               )}
-            />
+            </form.Field>
           ) : (
             <h3 className="text-foreground truncate text-lg leading-7 font-bold">
               {exerciseTitle}
@@ -119,27 +113,32 @@ export default function ExerciseItem({
 
       <FormSets
         exerciseIndex={index}
-        control={control}
-        getValues={getValues}
+        form={form}
         templateExercise={templateExercise}
       />
 
-      <Controller
-        control={control}
-        name={`exercises.${index}.notes`}
-        render={({ field, fieldState }) => (
-          <Field data-invalid={fieldState.invalid}>
+      <form.Field name={`exercises[${index}].notes`}>
+        {(field) => (
+          <Field data-invalid={!field.state.meta.isValid}>
             <Textarea
-              {...field}
               id={field.name}
-              aria-invalid={fieldState.invalid}
+              aria-invalid={!field.state.meta.isValid}
               placeholder="Add notes"
               className="resize-none text-base"
+              name={field.name}
+              value={field.state.value}
+              onBlur={field.handleBlur}
+              onChange={(event) =>
+                form.setFieldValue(
+                  `exercises[${index}].notes`,
+                  event.target.value,
+                )
+              }
             />
-            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            <FieldError errors={getFieldErrors(field)} />
           </Field>
         )}
-      />
+      </form.Field>
     </div>
   );
 }

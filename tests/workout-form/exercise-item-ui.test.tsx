@@ -3,7 +3,7 @@
 import React from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { useForm } from "react-hook-form";
+import { useForm } from "@tanstack/react-form";
 import ExerciseItem from "@/components/workout-form/exercise-item";
 import type { WorkoutDraft } from "@/components/workout-form/form-types";
 
@@ -88,8 +88,7 @@ function ExerciseItemHarness({
   return (
     <ExerciseItem
       index={0}
-      control={form.control}
-      getValues={form.getValues}
+      form={form}
       exercises={["Bench Press", "Overhead Press"]}
       exerciseName={exerciseName}
       onRemove={() => {}}
@@ -115,9 +114,7 @@ describe("ExerciseItem UI", () => {
   it("gives selected exercises a scannable card heading", () => {
     render(<ExerciseItemHarness />);
 
-    expect(
-      screen.getByRole("heading", { name: "Bench Press" }),
-    ).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Bench Press" })).toBeTruthy();
   });
 
   it("hides the selector for named exercises until the action menu requests it", () => {
@@ -154,20 +151,16 @@ describe("ExerciseItem UI", () => {
       screen.getByRole("button", { name: "Actions for Bench Press" }),
     );
 
-    expect(
-      screen
-        .getByRole("dialog")
-        .getAttribute("data-open-on-mount"),
-    ).toBe("true");
+    expect(screen.getByRole("dialog").getAttribute("data-open-on-mount")).toBe(
+      "true",
+    );
   });
 
   it("opens the selector immediately for blank exercises", () => {
     render(<ExerciseItemHarness exerciseName="" />);
 
-    expect(
-      screen
-        .getByRole("dialog")
-        .getAttribute("data-open-on-mount"),
-    ).toBe("true");
+    expect(screen.getByRole("dialog").getAttribute("data-open-on-mount")).toBe(
+      "true",
+    );
   });
 });
