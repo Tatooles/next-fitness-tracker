@@ -3,7 +3,7 @@
 import React from "react";
 import { afterEach, describe, expect, it } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
-import { useForm } from "react-hook-form";
+import { useForm } from "@tanstack/react-form";
 import FormSets from "@/components/workout-form/form-sets";
 import type { WorkoutDraft } from "@/components/workout-form/form-types";
 
@@ -30,13 +30,7 @@ function FormSetsHarness() {
     defaultValues: workoutDraftFixture,
   });
 
-  return (
-    <FormSets
-      exerciseIndex={0}
-      control={form.control}
-      getValues={form.getValues}
-    />
-  );
+  return <FormSets exerciseIndex={0} form={form} />;
 }
 
 describe("FormSets UI", () => {
