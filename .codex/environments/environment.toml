@@ -3,7 +3,4 @@ version = 1
 name = "next-fitness-tracker"
 
 [setup]
-script = '''
-cp ~/.config/dev-envs/next-fitness-tracker.env.local .env.local
-pnpm install
-'''
+script = "pnpm install"
