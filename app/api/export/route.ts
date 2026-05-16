@@ -1,4 +1,4 @@
-import * as xlsx from "xlsx";
+import ExcelJS from "exceljs";
 import { db } from "@/db/drizzle";
 import type { Workout } from "@/lib/types";
 import { NextRequest } from "next/server";
@@ -7,12 +7,10 @@ import { groupExercisesForDisplay } from "@/lib/superset-utils";
 
 const EXPORT_FORMATS = {
   xlsx: {
-    bookType: "xlsx" as const,
     mimeType:
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   },
   csv: {
-    bookType: "csv" as const,
     mimeType: "text/csv",
   },
 };
@@ -73,16 +71,15 @@ export async function GET(request: NextRequest) {
     input.push([]);
     input.push([]);
   }
-  const wb = xlsx.utils.book_new();
-  const ws = xlsx.utils.aoa_to_sheet(input);
-
-  xlsx.utils.book_append_sheet(wb, ws, "Workout Data");
-
   const exportFormat = EXPORT_FORMATS[fileType];
-  const excelBuffer = xlsx.write(wb, {
-    bookType: exportFormat.bookType,
-    type: "buffer",
-  });
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet("Workout Data");
+  worksheet.addRows(input);
+
+  const excelBuffer =
+    fileType === "xlsx"
+      ? await workbook.xlsx.writeBuffer()
+      : await workbook.csv.writeBuffer();
 
   const headers = new Headers();
   headers.append("Content-Type", exportFormat.mimeType);
