@@ -16,7 +16,7 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@clerk/nextjs": "^7.0.8",
+    "@clerk/nextjs": "^7.3.5",
     "@hookform/resolvers": "^5.2.2",
     "@libsql/client": "^0.17.2",
     "@radix-ui/react-accordion": "^1.2.12",
@@ -33,6 +33,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.0.4",
     "drizzle-orm": "^0.45.2",
+    "exceljs": "^4.4.0",
     "lucide-react": "^1.7.0",
     "next": "^16.2.6",
     "next-themes": "^0.4.6",
@@ -41,7 +42,6 @@
     "react-hook-form": "^7.72.1",
     "sonner": "^2.0.3",
     "swr": "^2.4.1",
-    "xlsx": "^0.18.5",
     "zod": "^4.3.6"
   },
   "devDependencies": {
@@ -56,16 +56,24 @@
     "eslint-config-next": "^16.2.6",
     "eslint-config-prettier": "^10.1.8",
     "jsdom": "^29.0.1",
-    "postcss": "^8.5.8",
+    "postcss": "^8.5.14",
     "prettier": "3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.2.2",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "6.0.2",
-    "vitest": "^3.2.4"
+    "vite": "7.3.3",
+    "vitest": "^4.1.6"
   },
   "engines": {
     "node": "24.x"
+  },
+  "pnpm": {
+    "overrides": {
+      "esbuild": "^0.25.12",
+      "postcss": "^8.5.14",
+      "vite": "7.3.3"
+    }
   }
 }
