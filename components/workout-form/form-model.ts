@@ -1,10 +1,12 @@
 import "server-only";
 
-import { auth } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 import { db } from "@/db/drizzle";
 import type { Workout } from "@/lib/types";
 import { exercise, workout as workoutTable } from "@/db/schema";
+import { cookies } from "next/headers";
+import { getIronSession } from "iron-session";
+import { sessionOptions, type SessionData } from "@/lib/session";
 import type {
   CreateWorkoutFormSeed,
   ExerciseTemplateValues,
@@ -14,6 +16,12 @@ import type {
   WorkoutFormSeed,
   WorkoutFormSeedMode,
 } from "@/components/workout-form/form-types";
+
+async function getSessionUserId(): Promise<number> {
+  const cookieStore = await cookies();
+  const session = await getIronSession<SessionData>(cookieStore, sessionOptions);
+  return session.userId ?? 0;
+}
 
 function cloneWorkoutDraft(values: WorkoutDraft): WorkoutDraft {
   return structuredClone(values);
@@ -59,7 +67,6 @@ function toDuplicateWorkoutDraft(workout: Workout): WorkoutDraft {
 
 function zeroWorkoutSetValues(workout: WorkoutDraft): WorkoutDraft {
   const zeroedWorkout = cloneWorkoutDraft(workout);
-
   zeroedWorkout.exercises.forEach((exercise) => {
     exercise.notes = "";
     exercise.sets.forEach((set) => {
@@ -68,7 +75,6 @@ function zeroWorkoutSetValues(workout: WorkoutDraft): WorkoutDraft {
       set.rpe = "";
     });
   });
-
   return zeroedWorkout;
 }
 
@@ -76,7 +82,6 @@ function toTemplateValuesByExerciseName(
   exercises: ExerciseTemplateValues[],
 ): ExerciseTemplateValuesByName {
   const templateValuesByExerciseName: ExerciseTemplateValuesByName = {};
-
   for (const exercise of exercises) {
     if (!Object.hasOwn(templateValuesByExerciseName, exercise.name)) {
       Object.defineProperty(templateValuesByExerciseName, exercise.name, {
@@ -87,21 +92,10 @@ function toTemplateValuesByExerciseName(
       });
     }
   }
-
   return templateValuesByExerciseName;
 }
 
-async function getSignedInUserId(): Promise<string> {
-  const { userId, redirectToSignIn } = await auth();
-
-  if (!userId) {
-    return redirectToSignIn();
-  }
-
-  return userId;
-}
-
-async function getExerciseNames(userId: string): Promise<string[]> {
+async function getExerciseNames(userId: number): Promise<string[]> {
   const exerciseNames = await db
     .selectDistinct({ name: exercise.name })
     .from(workoutTable)
@@ -114,7 +108,7 @@ async function getExerciseNames(userId: string): Promise<string[]> {
 }
 
 async function getOwnedWorkout(
-  userId: string,
+  userId: number,
   workoutId: number,
 ): Promise<Workout | null> {
   const ownedWorkout = await db.query.workout.findFirst({
@@ -131,7 +125,6 @@ async function getOwnedWorkout(
       },
     },
   });
-
   return ownedWorkout ?? null;
 }
 
@@ -175,7 +168,6 @@ export function buildDuplicateWorkoutFormSeed(
   exerciseNames: string[] = [],
 ): CreateWorkoutFormSeed {
   const workoutTemplate = toDuplicateWorkoutDraft(workout);
-
   return {
     persistMode: "create",
     exerciseNames,
@@ -208,7 +200,7 @@ export async function buildWorkoutFormSeed({
   kind: WorkoutFormSeedMode;
   workoutId?: number;
 }): Promise<WorkoutFormSeed | null> {
-  const userId = await getSignedInUserId();
+  const userId = await getSessionUserId();
 
   if (kind === "create") {
     return buildBlankWorkoutFormSeed(await getExerciseNames(userId));

@@ -5,7 +5,7 @@ export const workout = sqliteTable(
   "workout",
   {
     id: integer("id").primaryKey(),
-    userId: text("user_id", { length: 64 }),
+    userId: integer("user_id").references(() => user.id, { onDelete: "cascade" }),
     name: text("name", { length: 256 }).notNull(),
     notes: text("notes").notNull().default(""),
     durationMinutes: integer("duration_minutes"),
@@ -61,4 +61,15 @@ export const setRelations = relations(set, ({ one }) => ({
     fields: [set.exerciseId],
     references: [exercise.id],
   }),
+}));
+
+export const user = sqliteTable("user", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  username: text("username", { length: 64 }).notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
+  createdAt: text("created_at").notNull(),
+});
+
+export const userRelations = relations(user, ({ many }) => ({
+  workouts: many(workout),
 }));

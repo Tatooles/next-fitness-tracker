@@ -1,0 +1,61 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to Azure App Service
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - name: Install dependencies (skip scripts)
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Approve and run build scripts
+        run: pnpm rebuild
+
+      - name: Build Next.js application
+        run: pnpm build
+        env:
+          NODE_ENV: production
+          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+          NEXT_PUBLIC_BANNER_ENABLED: true
+
+      - name: Create deployment package
+        run: |
+          mkdir -p deployment-package
+          cp -r .next deployment-package/
+          cp -r public deployment-package/ 2>/dev/null || true
+          cp package.json deployment-package/
+          cp next.config.js deployment-package/ 2>/dev/null || true
+          cp next.config.mjs deployment-package/ 2>/dev/null || true
+
+      - name: Install production dependencies with npm
+        working-directory: deployment-package
+        run: npm install --omit=dev --ignore-scripts
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ vars.WEBAPP_NAME }}
+          slot-name: 'Production'
+          package: deployment-package
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}

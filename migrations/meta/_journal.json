@@ -22,6 +22,13 @@
       "when": 1776546869558,
       "tag": "0002_harsh_shiva",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1780734551102,
+      "tag": "0003_outstanding_wolverine",
+      "breakpoints": true
     }
   ]
 }

@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { auth } from "@clerk/nextjs/server";
+import { cookies } from "next/headers";
+import { getIronSession } from "iron-session";
+import { sessionOptions, type SessionData } from "@/lib/session";
 import { db } from "@/db/drizzle";
 import { Button } from "@/components/ui/button";
 import type { WorkoutSummary } from "@/lib/types";
@@ -9,11 +11,9 @@ import { desc, eq } from "drizzle-orm";
 import { workout } from "@/db/schema";
 
 async function getWorkouts() {
-  const { userId, redirectToSignIn } = await auth();
-
-  if (!userId) {
-    return redirectToSignIn();
-  }
+  const cookieStore = await cookies();
+  const session = await getIronSession<SessionData>(cookieStore, sessionOptions);
+  const userId = session.userId ?? 0;
 
   const data: WorkoutSummary[] = await db
     .select({
@@ -26,13 +26,11 @@ async function getWorkouts() {
     .from(workout)
     .where(eq(workout.userId, userId))
     .orderBy(desc(workout.date));
-
   return data;
 }
 
 export default async function WorkoutsPage() {
   const workouts = await getWorkouts();
-
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-5 px-5 py-6 sm:px-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">

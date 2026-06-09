@@ -1,9 +1,7 @@
 "use client";
-
-import { Download, Dumbbell, Home, ListChecks } from "lucide-react";
+import { Download, Dumbbell, Home, ListChecks, LogOut } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-
+import { usePathname, useRouter } from "next/navigation";
 import { ThemeToggle } from "@/components/theme-toggle";
 import {
   Sidebar,
@@ -17,40 +15,44 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { UserButton, useUser } from "@clerk/nextjs";
+import { useState, useEffect } from "react";
 
 const items = [
-  {
-    title: "Home",
-    url: "/",
-    icon: Home,
-  },
-  {
-    title: "Workouts",
-    url: "/workouts",
-    icon: Dumbbell,
-  },
-  {
-    title: "Exercises",
-    url: "/exercises",
-    icon: ListChecks,
-  },
-  {
-    title: "Export",
-    url: "/export",
-    icon: Download,
-  },
+  { title: "Home", url: "/", icon: Home },
+  { title: "Workouts", url: "/workouts", icon: Dumbbell },
+  { title: "Exercises", url: "/exercises", icon: ListChecks },
+  { title: "Export", url: "/export", icon: Download },
 ];
 
 export function AppSidebar() {
   const { setOpenMobile, isMobile } = useSidebar();
-  const { user } = useUser();
   const pathname = usePathname() ?? "/";
+  const router = useRouter();
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+  fetch("/api/auth/me")
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.isLoggedIn) {
+        setUsername(data.username);
+      } else {
+        setUsername("");
+      }
+    })
+    .catch(() => {
+      setUsername("");
+    });
+}, [pathname]);
 
   const handleLinkClick = () => {
-    if (isMobile) {
-      setOpenMobile(false);
-    }
+    if (isMobile) setOpenMobile(false);
+  };
+
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    router.push("/login");
+    router.refresh();
   };
 
   return (
@@ -96,28 +98,29 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu className="gap-2">
+          {username && (
+            <SidebarMenuItem>
+              <div className="border-sidebar-border bg-sidebar-accent/45 flex items-center gap-3 rounded-lg border px-3 py-3">
+                <div className="bg-primary text-primary-foreground flex size-10 items-center justify-center rounded-full font-bold uppercase">
+                  {username[0]}
+                </div>
+                <div className="flex min-w-0 flex-1 flex-col">
+                  <span className="truncate text-sm font-semibold">
+                    {username}
+                  </span>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="text-muted-foreground hover:text-destructive transition-colors"
+                  aria-label="Logout"
+                >
+                  <LogOut className="size-4" />
+                </button>
+              </div>
+            </SidebarMenuItem>
+          )}
           <SidebarMenuItem>
             <ThemeToggle />
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <div className="border-sidebar-border bg-sidebar-accent/45 flex items-center gap-3 rounded-lg border px-3 py-3">
-              <UserButton
-                appearance={{
-                  elements: {
-                    avatarBox: "h-10 w-10",
-                    userButtonTrigger: "focus:shadow-none",
-                  },
-                }}
-              />
-              <div className="flex min-w-0 flex-1 flex-col">
-                <span className="truncate text-sm font-semibold">
-                  {user?.fullName || user?.username || "User"}
-                </span>
-                <span className="text-sidebar-foreground/55 truncate text-xs">
-                  {user?.primaryEmailAddress?.emailAddress || ""}
-                </span>
-              </div>
-            </div>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>

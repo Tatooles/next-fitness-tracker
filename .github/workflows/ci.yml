@@ -1,0 +1,48 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: ['**']
+
+jobs:
+  build:
+    name: Lint, Test, and Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run lint
+        run: pnpm lint
+
+      - name: Run tests
+        run: pnpm vitest run tests/lib tests/components/theme-provider.test.tsx tests/workout-form/exercise-item-ui.test.tsx tests/workout-form/exercise-selector.test.tsx tests/workout-form/form-sets-ui.test.tsx tests/components/exercises-ui.test.tsx tests/components/exercise-actions-menu.test.tsx
+        env:
+          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
+          NEXT_PUBLIC_BANNER_ENABLED: true
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+
+      - name: Build
+        run: pnpm build
+        env:
+          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
+          NEXT_PUBLIC_BANNER_ENABLED: true
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}

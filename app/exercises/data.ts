@@ -6,7 +6,7 @@ import { exercise, set, workout } from "@/db/schema";
 import type { ExerciseSummary } from "@/lib/types";
 
 export async function getExerciseSummaryForUser(
-  userId: string,
+  userId: number,
 ): Promise<ExerciseSummary[]> {
   const rows = await db
     .select({

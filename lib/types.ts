@@ -5,7 +5,7 @@ export interface Workout {
   name: string;
   notes: string;
   durationMinutes: number | null;
-  userId: string | null;
+  userId: number | null;
   date: string;
   exercises: ExerciseInstance[];
 }
@@ -18,7 +18,6 @@ export interface WorkoutSummary {
   date: string;
 }
 
-// Reps and sets are strings because they can be a range
 export interface ExerciseInstance {
   id: number;
   name: string;
@@ -40,7 +39,7 @@ export interface ExerciseThin {
 }
 
 export interface DateExercise {
-  userId?: string | null;
+  userId?: number | null;
   date?: string | null;
   id?: number | null;
   name?: string | null;
@@ -94,7 +93,7 @@ export const workoutSchema: z.ZodType<Workout> = z.object({
   name: z.string(),
   notes: z.string(),
   durationMinutes: z.number().int().nullable(),
-  userId: z.string().nullable(),
+  userId: z.number().int().nullable(),
   date: z.string(),
   exercises: exerciseInstanceSchema.array(),
 });

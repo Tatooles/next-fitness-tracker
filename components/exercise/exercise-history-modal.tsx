@@ -7,16 +7,40 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useAuth } from "@clerk/nextjs";
 import { useState } from "react";
 import useSWR from "swr";
 import type { ExerciseHistoryEntry } from "@/lib/types";
 import ExerciseInstanceItem from "./exercise-instance-item";
 import { Spinner } from "@/components/ui/spinner";
-import {
-  getExerciseHistory,
-  getExerciseHistoryKey,
-} from "@/components/exercise/exercise-history-data";
+import { errorResponseSchema, parseJsonResponse } from "@/lib/json-response";
+import { exerciseHistoryEntrySchema } from "@/lib/types";
+
+const DEFAULT_USER_ID = "default-user";
+
+function getExerciseHistoryKey(exerciseName: string) {
+  return ["exercise-history", DEFAULT_USER_ID, exerciseName] as const;
+}
+
+async function getExerciseHistory(exerciseName: string) {
+  const response = await fetch(
+    `/api/exercises/history?name=${encodeURIComponent(exerciseName)}`,
+  );
+
+  if (!response.ok) {
+    let errorMessage = `Failed to fetch data: ${response.status} ${response.statusText}`;
+    try {
+      const errorBody = await parseJsonResponse(response, errorResponseSchema);
+      if (errorBody.error) {
+        errorMessage = errorBody.error;
+      }
+    } catch (jsonError) {
+      console.error("Failed to parse error JSON:", jsonError);
+    }
+    throw new Error(errorMessage);
+  }
+
+  return parseJsonResponse(response, exerciseHistoryEntrySchema.array());
+}
 
 export default function ExerciseHistoryModal({
   exerciseName,
@@ -27,10 +51,9 @@ export default function ExerciseHistoryModal({
   filterOutWorkoutId?: number;
   children: React.ReactNode;
 }) {
-  const { userId } = useAuth();
   const [open, setOpen] = useState(false);
   const { data, error, isLoading } = useSWR(
-    open ? getExerciseHistoryKey({ exerciseName, userId }) : null,
+    open ? getExerciseHistoryKey(exerciseName) : null,
     () => getExerciseHistory(exerciseName),
     {
       dedupingInterval: 0,
@@ -45,12 +68,8 @@ export default function ExerciseHistoryModal({
       ? error.message
       : "An unexpected error occurred. Please try again.";
 
-  const handleOpenChange = (newOpen: boolean) => {
-    setOpen(newOpen);
-  };
-
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="max-h-[80vh] w-11/12 rounded-lg p-0 sm:max-w-md">
         <DialogHeader className="border-border border-b p-4">
